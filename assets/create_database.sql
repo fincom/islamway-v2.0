@@ -22,8 +22,6 @@ CREATE TABLE scholar (
     page_url TEXT,
     view_count INTEGER NOT NULL DEFAULT 0,
     popularity INTEGER NOT NULL DEFAULT 0,
-    country TEXT,
-    biography TEXT
 );
 CREATE INDEX index__scholar__name ON scholar (name ASC);
 
