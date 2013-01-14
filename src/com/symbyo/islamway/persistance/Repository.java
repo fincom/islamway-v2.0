@@ -19,7 +19,7 @@ public class Repository extends SQLiteOpenHelper {
 	private final Context mContext;
 	private static Repository mInstance = null;
 	
-	public synchronized Repository getInstance(Context context) {
+	public synchronized static Repository getInstance(Context context) {
 		if (mInstance == null) {
 			mInstance = new Repository(context);
 		}
@@ -121,5 +121,10 @@ public class Repository extends SQLiteOpenHelper {
 			int new_version) {
 		onCreate(database);
 	}
-
+////////////////////////////////////////////////////////////////////////////////
+	/*
+	public List<Scholar> getAllQuranScholars() {
+		ScholarMapper mapper = new ScholarMapper(mContext);
+		return mapper.findAllByParameters(params);
+	}*/
 }

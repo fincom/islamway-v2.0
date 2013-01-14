@@ -13,7 +13,7 @@ public class Scholar extends DomainObject {
 	private final int mViewCount;
 	private final int mPopularity;
 
-	protected Scholar(int id, int server_id, String name, String email, 
+	public Scholar(int id, int server_id, String name, String email, 
 			String phone, String page_url, int view_count, int popularity) {
 		super(id);
 		mServerId = server_id;
