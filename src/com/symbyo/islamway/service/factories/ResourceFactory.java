@@ -6,8 +6,10 @@ import com.symbyo.islamway.service.restclients.RestClient;
 
 public abstract class ResourceFactory {
 	protected final String mUrlFormat;
-	public ResourceFactory(@NonNull String url_format) {
+	protected final RestClient.HTTPMethod mHTTPMethod;
+	public ResourceFactory(@NonNull String url_format, RestClient.HTTPMethod http_method) {
 		mUrlFormat = url_format;
+		mHTTPMethod = http_method;
 	}
 	public abstract RestClient createRestClient();
 }

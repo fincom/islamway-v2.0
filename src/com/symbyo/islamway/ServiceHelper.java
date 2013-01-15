@@ -82,7 +82,8 @@ public class ServiceHelper {
 		pIntent.putExtra(EXTRA_CALLBACK_ACTION, ACTION_INVALIDATE_SCHOLAR_LIST);
 		
 		// build the service intent and start the service.
-		Intent intent = new Intent(action);
+		Intent intent = new Intent(mContext, IWService.class);
+		intent.setAction(action);
 		if (resource_id != null) {
 			intent.putExtra(IWService.EXTRA_RESOURCE_ID, resource_id.intValue());
 		}
@@ -116,6 +117,10 @@ public class ServiceHelper {
 	}
 	
 	// Public Interface ///////////////////////////////////////////////////////
+	/**
+	 * Gets all scholars that have quran content.
+	 * @return request id.
+	 */
 	public int getQuranScholars() {
 		return getQuranScholars(REQUEST_ID_NONE);
 	}

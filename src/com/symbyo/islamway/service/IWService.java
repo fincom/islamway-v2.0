@@ -8,6 +8,8 @@ import android.content.Intent;
 
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
+import com.symbyo.islamway.service.restclients.Page;
+import com.symbyo.islamway.service.restclients.Response;
 import com.symbyo.islamway.service.restclients.RestClient;
 
 /**
@@ -81,7 +83,12 @@ public class IWService extends IntentService {
 		if (params != null) {
 			rest_client.setParameters(params);
 		}
-		String response = rest_client.getResponse();
+		Response response = rest_client.getResponse();
+		for (Page page : response) {
+			String responseText = page.getResponseText();
+			// TODO parse the responseText.
+			// TODO process the parsed object.
+		}
 	}
 
 	private @NonNull
@@ -91,7 +98,7 @@ public class IWService extends IntentService {
 		if (action.equals(ACTION_GET_QURAN_SCHOLARS)) {
 			/** < /recitations/scholars */
 			url_format += Section.QURAN.toString() + "/scholars";
-			result = new ScholarResourceFactory(url_format);
+			result = new ScholarResourceFactory(url_format, RestClient.HTTPMethod.GET);
 		}
 		if (result == null) {
 			throw new NullPointerException("ResourceFactory is null");

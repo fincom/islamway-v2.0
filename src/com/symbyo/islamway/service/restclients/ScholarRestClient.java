@@ -6,8 +6,9 @@ import org.eclipse.jdt.annotation.NonNull;
 
 public class ScholarRestClient extends RestClient {
 
-	public ScholarRestClient(@NonNull String url_format) {
-		super(url_format);
+	public ScholarRestClient(@NonNull String url_format, RestClient.HTTPMethod http_method) {
+		
+		super(url_format, http_method);
 	}
 
 	protected void appendParameters() {
@@ -18,12 +19,20 @@ public class ScholarRestClient extends RestClient {
 	}
 
 	@Override
-	protected void prepareUrl() {
+	protected String prepareUrl() {
 		if (mResourceId == RESOURCE_ID_NONE) {
-			return;
+			mUrl = mUrlFormat;
+		} else {
+			mUrl = String.format(Locale.US, mUrlFormat, mResourceId);
 		}
-		mUrl = String.format(Locale.US, mUrlFormat, mResourceId);
-		appendParameters();
+		/*URL result = null;
+		try {
+			result = new URL(mUrl);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			throw new Error(e.getLocalizedMessage());
+		}*/
+		return mUrl;
 	}
 
 }

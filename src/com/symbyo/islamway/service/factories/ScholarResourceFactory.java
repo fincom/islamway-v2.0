@@ -7,15 +7,15 @@ import com.symbyo.islamway.service.restclients.ScholarRestClient;
 
 public class ScholarResourceFactory extends ResourceFactory {
 
-	public ScholarResourceFactory(@NonNull String url_format) {
-		super(url_format);
+	public ScholarResourceFactory(@NonNull String url_format, RestClient.HTTPMethod http_method) {
+		super(url_format, http_method);
 	}
 
 	@SuppressWarnings("null")
 	@Override
 	public RestClient createRestClient() {
 		
-		return new ScholarRestClient(mUrlFormat);
+		return new ScholarRestClient(mUrlFormat, mHTTPMethod);
 	}
 
 }
