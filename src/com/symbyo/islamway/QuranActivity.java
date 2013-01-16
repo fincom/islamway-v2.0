@@ -26,10 +26,10 @@ public class QuranActivity extends SlidingFragmentActivity {
         
         // TODO: remove test code
         //TEST BEGIN
-        if (isNetworkAvailable()) {
+        //if (isNetworkAvailable()) {
         	ServiceHelper helper = ServiceHelper.getInstance(getApplicationContext());
             int request_id = helper.getQuranScholars();
-        }
+        //}
         //TEST END
     }
 

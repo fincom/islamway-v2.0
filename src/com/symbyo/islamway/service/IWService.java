@@ -8,6 +8,7 @@ import android.content.Intent;
 
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
+import com.symbyo.islamway.service.restclients.NetworkException;
 import com.symbyo.islamway.service.restclients.Page;
 import com.symbyo.islamway.service.restclients.Response;
 import com.symbyo.islamway.service.restclients.RestClient;
@@ -83,11 +84,17 @@ public class IWService extends IntentService {
 		if (params != null) {
 			rest_client.setParameters(params);
 		}
-		Response response = rest_client.getResponse();
-		for (Page page : response) {
-			String responseText = page.getResponseText();
-			// TODO parse the responseText.
-			// TODO process the parsed object.
+		Response response;
+		try {
+			response = rest_client.getResponse();
+			for (Page page : response) {
+				String responseText = page.getResponseText();
+
+			}
+		} catch (NetworkException e) {
+			// TODO handle network errors
+			e.printStackTrace();
+			return;
 		}
 	}
 

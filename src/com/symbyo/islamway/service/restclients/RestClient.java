@@ -59,7 +59,7 @@ public abstract class RestClient {
 		return this;
 	}
 
-	public Response getResponse() {
+	public Response getResponse() throws NetworkException {
 		HttpURLConnection conn = null;
 		Response result = null;
 		try {
@@ -75,9 +75,10 @@ public abstract class RestClient {
 			e.printStackTrace();
 			throw new Error(e.getLocalizedMessage());
 		} catch (IOException e) {
-			// TODO handle the connection error.
 			e.printStackTrace();
-			
+			NetworkException exp = new NetworkException();
+			exp.setStackTrace(e.getStackTrace());
+			throw exp;
 		} finally {
 			if (conn != null) {
 				conn.disconnect();
