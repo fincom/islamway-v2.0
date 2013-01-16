@@ -1,13 +1,21 @@
 package com.symbyo.islamway.service;
 
+import java.util.List;
+
 import org.eclipse.jdt.annotation.NonNull;
 
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
+import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
+import com.symbyo.islamway.service.parsers.Parser;
 import com.symbyo.islamway.service.restclients.NetworkException;
 import com.symbyo.islamway.service.restclients.Page;
 import com.symbyo.islamway.service.restclients.Response;
@@ -78,6 +86,7 @@ public class IWService extends IntentService {
 		}
 		ResourceFactory factory = createResourceFactory(action);
 		RestClient rest_client = factory.createRestClient();
+		Parser parser = factory.createParser();
 		if (resource_id >= 0) {
 			rest_client.setResourceId(resource_id);
 		}
@@ -87,15 +96,27 @@ public class IWService extends IntentService {
 		Response response;
 		try {
 			response = rest_client.getResponse();
+			List<? extends DomainObject> domain_collection = null;
 			for (Page page : response) {
-				String responseText = page.getResponseText();
-
+				String json = page.getResponseText();
+				domain_collection = parser.parse(json, response.isCollection());
+				// TODO process the domain_collection
 			}
+		} catch (NullPointerException e) {
+			/** a network error has occurred during getting the next page, and
+			 *  the page is null.
+			 */
+			showToast("Network error");
+			e.printStackTrace();
+			return;
 		} catch (NetworkException e) {
-			// TODO handle network errors
+			showToast("Network error");
 			e.printStackTrace();
 			return;
 		}
+		
+		LocalBroadcastManager mngr = LocalBroadcastManager.getInstance(this);
+		mngr.sendBroadcast(pIntent);
 	}
 
 	private @NonNull
@@ -111,6 +132,22 @@ public class IWService extends IntentService {
 			throw new NullPointerException("ResourceFactory is null");
 		}
 		return result;
+	}
+	
+	/**
+	 * Displayes a Toast message on the main UI thread.
+	 * @param msg
+	 */
+	private void showToast(final String msg) {
+		Handler handler = new Handler(Looper.getMainLooper());
+		handler.post(new Runnable() {
+
+			@Override
+			public void run() {
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+			}
+			
+		});
 	}
 
 }

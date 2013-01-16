@@ -87,7 +87,7 @@ public abstract class RestClient {
 		return result;
 	}
 
-	/* package */ String getPage(int page_number) {
+	/* package */ String getPage(int page_number) throws NetworkException {
 		HttpURLConnection conn = null;
 		String result = null;
 		try {
@@ -98,9 +98,14 @@ public abstract class RestClient {
 			setHTTPMethod(conn);
 			result = readResponse(conn.getInputStream());
 			
-		} catch (IOException e) {
-			// TODO handle the connection error.
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
+			throw new Error(e.getLocalizedMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
+			NetworkException exp = new NetworkException();
+			exp.setStackTrace(e.getStackTrace());
+			throw exp;
 		} finally {
 			if (conn != null) {
 				conn.disconnect();

@@ -2,6 +2,8 @@ package com.symbyo.islamway.service.factories;
 
 import org.eclipse.jdt.annotation.NonNull;
 
+import com.symbyo.islamway.service.parsers.Parser;
+import com.symbyo.islamway.service.parsers.ScholarParser;
 import com.symbyo.islamway.service.restclients.RestClient;
 import com.symbyo.islamway.service.restclients.ScholarRestClient;
 
@@ -16,6 +18,11 @@ public class ScholarResourceFactory extends ResourceFactory {
 	public RestClient createRestClient() {
 		
 		return new ScholarRestClient(mUrlFormat, mHTTPMethod);
+	}
+
+	@Override
+	public Parser createParser() {
+		return new ScholarParser();
 	}
 
 }

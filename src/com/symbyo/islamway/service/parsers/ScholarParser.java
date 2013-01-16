@@ -1,0 +1,71 @@
+package com.symbyo.islamway.service.parsers;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+import com.symbyo.islamway.domain.Scholar;
+
+
+public class ScholarParser extends Parser {
+
+	@Override
+	protected List<Scholar> doParse(String json) {
+		Gson gson = new Gson();
+		JSONScholar scholar_raw = gson.fromJson(json, JSONScholar.class);
+		ArrayList<Scholar> result = new ArrayList<Scholar>();
+		result.add(scholar_raw.toScholar());
+		return result;
+	}
+	
+	@Override
+	protected List<Scholar> doParseCollection(String json) {
+		Gson gson = new Gson();
+		JSONResponse response = gson.fromJson(json, JSONResponse.class);
+		ArrayList<Scholar> result = new ArrayList<Scholar>(response.getScholars().size());
+		for (JSONScholar scholar_raw : response.getScholars()) {
+			result.add(scholar_raw.toScholar());
+		}
+		return result;
+	}
+
+	private static class JSONResponse {
+		public final int INVALID = -1;
+
+		@SerializedName("count")
+		private int mCount = INVALID;
+
+		@SerializedName("total_count")
+		private int mTotalCount = INVALID;
+		
+		@SerializedName("items")
+		private ArrayList<JSONScholar> mItems;
+		
+		public ArrayList<JSONScholar> getScholars() {
+			return mItems;
+		}
+	}
+	
+	private static class JSONScholar {
+		
+		@SerializedName("id")
+		private int mServerId;
+		
+		@SerializedName("name")
+		private String mName = null;
+		
+		private String mEmail = null;
+		private String mPhone = null;
+		private String mPageUrl = null;
+		
+		@SerializedName("views_count")
+		private int mViewCount = 0;
+		private int mPopularity = 0;
+		
+		public Scholar toScholar() {
+			return new Scholar(mServerId, mName, mEmail, mPhone, mPageUrl,
+					mViewCount, mPopularity);
+		}
+	}
+}

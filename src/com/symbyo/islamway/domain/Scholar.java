@@ -26,6 +26,19 @@ public class Scholar extends DomainObject {
 		
 	}
 	
+	public Scholar(int server_id, String name, String email, 
+			String phone, String page_url, int view_count, int popularity) {
+		super(INVALID_ID);
+		mServerId = server_id;
+		mName = name;
+		mEmail = email;
+		mPhone = phone;
+		mPageUrl = page_url;
+		mViewCount = view_count;
+		mPopularity = popularity;
+		
+	}
+	
 	protected Scholar(Parcel source) {
 		super(source);
 		mServerId = source.readInt();

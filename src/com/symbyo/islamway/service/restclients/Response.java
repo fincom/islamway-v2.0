@@ -11,6 +11,7 @@ public class Response implements Iterable<Page> {
 	private final int mPagesNumber;
 	private Page mCurrentPage;
 	private int returned_pages = 0;
+	private boolean mIsCollection = false;
 	
 	public Response(RestClient client, String response) {
 		mClient = client;
@@ -34,8 +35,14 @@ public class Response implements Iterable<Page> {
 					/**< return the already fetched first page */
 					return mCurrentPage;
 				}
-				String response = mClient.getPage(++returned_pages);
-				mCurrentPage = new Page(returned_pages, response);
+				String response;
+				try {
+					response = mClient.getPage(++returned_pages);
+					mCurrentPage = new Page(returned_pages, response);
+				} catch (NetworkException e) {
+					e.printStackTrace();
+					return null;
+				}
 				return mCurrentPage;
 			}
 
@@ -51,8 +58,12 @@ public class Response implements Iterable<Page> {
 	private int getPagesNumber(String str) {
 		Gson gson = new Gson();
 		ResponseRaw response = gson.fromJson(str, ResponseRaw.class);
-		// TODO set the mPagesNumber to the pages number.
+		mIsCollection = response.isCollection();
 		return response.getPagesNumber();
+	}
+	
+	public boolean isCollection() {
+		return mIsCollection;
 	}
 	
 	private static class ResponseRaw {
@@ -70,6 +81,10 @@ public class Response implements Iterable<Page> {
 				return 1;
 			}
 			return (int) Math.ceil(mTotalCount / mCount);
+		}
+		
+		public boolean isCollection() {
+			return (mCount != INVALID);
 		}
 	}
 
