@@ -24,6 +24,8 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		EMAIL ("email"),
 		PHONE ("phone"),
 		PAGE_URL ("page_url"),
+		IMAGE_URL ("image_url"),
+		IMAGE_FILE ("image_file"),
 		VIEW_COUNT ("view_count"),
 		POPULARITY ("popularity");
 		
@@ -119,11 +121,15 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 				null : c.getString(c.getColumnIndex(Field.PHONE.toString()));
 		String page_url = c.isNull(c.getColumnIndex(Field.PAGE_URL.toString())) ?
 				null : c.getString(c.getColumnIndex(Field.PAGE_URL.toString()));
+		String image_url = c.isNull(c.getColumnIndex(Field.IMAGE_URL.toString())) ?
+				null : c.getString(c.getColumnIndex(Field.IMAGE_URL.toString()));
+		String image_file = c.isNull(c.getColumnIndex(Field.IMAGE_FILE.toString())) ?
+				null : c.getString(c.getColumnIndex(Field.IMAGE_FILE.toString()));
 		int view_count = c.getInt(c.getColumnIndex(Field.VIEW_COUNT.toString()));
 		int popularity = c.getInt(c.getColumnIndex(Field.POPULARITY.toString()));
 		
-		return new Scholar(id, server_id, 
-				name, email, phone, page_url, view_count, popularity);
+		return new Scholar(id, server_id, name, email, phone, page_url, 
+				image_url, image_file, view_count, popularity);
 	}
 
 	@Override

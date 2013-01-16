@@ -20,6 +20,8 @@ CREATE TABLE scholar (
     email TEXT,
     phone TEXT,
     page_url TEXT,
+    image_url TEXT,
+    image_file TEXT,
     view_count INTEGER NOT NULL DEFAULT 0,
     popularity INTEGER NOT NULL DEFAULT 0,
 );

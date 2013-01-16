@@ -10,30 +10,36 @@ public class Scholar extends DomainObject {
 	private final String mEmail;
 	private final String mPhone;
 	private final String mPageUrl;
+	private final String mImageUrl;
+	private final String mImageFile;
 	private final int mViewCount;
 	private final int mPopularity;
 
 	public Scholar(int id, int server_id, String name, String email, 
-			String phone, String page_url, int view_count, int popularity) {
+			String phone, String page_url, String image_url, String image_file, int view_count, int popularity) {
 		super(id);
 		mServerId = server_id;
 		mName = name;
 		mEmail = email;
 		mPhone = phone;
 		mPageUrl = page_url;
+		mImageUrl = image_url;
+		mImageFile = image_file;
 		mViewCount = view_count;
 		mPopularity = popularity;
 		
 	}
 	
 	public Scholar(int server_id, String name, String email, 
-			String phone, String page_url, int view_count, int popularity) {
+			String phone, String page_url, String image_url, String image_file, int view_count, int popularity) {
 		super(INVALID_ID);
 		mServerId = server_id;
 		mName = name;
 		mEmail = email;
 		mPhone = phone;
 		mPageUrl = page_url;
+		mImageUrl = image_url;
+		mImageFile = image_file;
 		mViewCount = view_count;
 		mPopularity = popularity;
 		
@@ -46,6 +52,8 @@ public class Scholar extends DomainObject {
 		mEmail = source.readString();
 		mPhone = source.readString();
 		mPageUrl = source.readString();
+		mImageUrl = source.readString();
+		mImageFile = source.readString();
 		mViewCount = source.readInt();
 		mPopularity = source.readInt();
 	}
@@ -57,6 +65,8 @@ public class Scholar extends DomainObject {
 		dest.writeString(mEmail);
 		dest.writeString(mPhone);
 		dest.writeString(mPageUrl);
+		dest.writeString(mImageUrl);
+		dest.writeString(mImageFile);
 		dest.writeInt(mViewCount);
 		dest.writeInt(mPopularity);
 	}
@@ -100,6 +110,14 @@ public class Scholar extends DomainObject {
 
 	public int getPopularity() {
 		return mPopularity;
+	}
+
+	public String getImageUrl() {
+		return mImageUrl;
+	}
+
+	public String getImageFile() {
+		return mImageFile;
 	}
 
 }

@@ -55,17 +55,27 @@ public class ScholarParser extends Parser {
 		@SerializedName("name")
 		private String mName = null;
 		
+		@SerializedName("email")
 		private String mEmail = null;
+		
+		@SerializedName("phone")
 		private String mPhone = null;
 		private String mPageUrl = null;
 		
+		@SerializedName("photo")
+		private String mImageUrl = null;
+		
+		private String mImageFile = null;
+		
 		@SerializedName("views_count")
 		private int mViewCount = 0;
+		
+		@SerializedName("popularity")
 		private int mPopularity = 0;
 		
 		public Scholar toScholar() {
 			return new Scholar(mServerId, mName, mEmail, mPhone, mPageUrl,
-					mViewCount, mPopularity);
+					mImageUrl, mImageFile, mViewCount, mPopularity);
 		}
 	}
 }
