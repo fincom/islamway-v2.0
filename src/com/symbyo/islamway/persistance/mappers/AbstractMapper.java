@@ -90,6 +90,17 @@ public abstract class AbstractMapper {
 	private DomainObject load(@NonNull Cursor c) {
 		return doLoad(c);
 	}
+	
+	public void insert(@NonNull DomainObject obj){
+		try {
+			insert(obj, null);
+		} catch (SQLiteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public abstract void insert(@NonNull DomainObject obj, SQLiteDatabase db)
+			throws SQLiteException;
 
 	protected abstract DomainObject doLoad(@NonNull Cursor c);
 }

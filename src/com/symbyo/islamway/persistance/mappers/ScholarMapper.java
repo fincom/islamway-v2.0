@@ -6,9 +6,13 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
+import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.IScholarFinder;
 import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.persistance.Repository;
 
 public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 	
@@ -142,6 +146,15 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		// TODO: return all scholars with quran material.
 		return null;
 		
+	}
+	
+	@Override
+	public void insert(@NonNull DomainObject obj, SQLiteDatabase db)
+			throws SQLiteException {
+		if (db == null || !db.isOpen()) {
+			db = Repository.getInstance(mContext).getWritableDatabase();
+		}
+		// TODO insert the new object into the database.
 	}
 
 }

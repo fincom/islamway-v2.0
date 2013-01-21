@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import junit.framework.Assert;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.symbyo.islamway.persistance.mappers.AbstractMapper;
+import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 
 public class Repository extends SQLiteOpenHelper {
 	
@@ -19,9 +23,19 @@ public class Repository extends SQLiteOpenHelper {
 	private final Context mContext;
 	private static Repository mInstance = null;
 	
+	private int mOpenConnections = 0;
+	
 	public synchronized static Repository getInstance(Context context) {
+		Assert.assertNotNull(context);
 		if (mInstance == null) {
 			mInstance = new Repository(context);
+		}
+		return mInstance;
+	}
+	
+	public synchronized static Repository getInstance() {
+		if (mInstance == null) {
+			return null;
 		}
 		return mInstance;
 	}
@@ -108,8 +122,10 @@ public class Repository extends SQLiteOpenHelper {
 	}
 	
 	@Override
-	public void onOpen(SQLiteDatabase db) {
+	public synchronized void onOpen(SQLiteDatabase db) {
 		super.onOpen(db);
+		// increment the number of open connections.
+		mOpenConnections++;
 		if (!db.isReadOnly()) {
 			// Enable foreign key constraints
 			db.execSQL("PRAGMA foreign_keys=ON;");
@@ -121,10 +137,24 @@ public class Repository extends SQLiteOpenHelper {
 			int new_version) {
 		onCreate(database);
 	}
-////////////////////////////////////////////////////////////////////////////////
-	/*
-	public List<Scholar> getAllQuranScholars() {
-		ScholarMapper mapper = new ScholarMapper(mContext);
-		return mapper.findAllByParameters(params);
-	}*/
+	
+	/**
+	 * implementation to avoid closing the database connection while it is in 
+	 * use by others.
+	 */
+	@Override
+	public synchronized void close() {
+		mOpenConnections--;
+		if (mOpenConnections == 0) {
+			super.close();
+		}
+	}
+	
+	@SuppressWarnings("null")
+	public <T> AbstractMapper getMapper(Class<T> clazz) {
+		if (clazz.equals(ScholarMapper.class)) {
+			return new ScholarMapper(mContext);
+		}
+		return null;
+	}
 }

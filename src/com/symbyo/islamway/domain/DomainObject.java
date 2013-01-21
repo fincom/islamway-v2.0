@@ -29,12 +29,17 @@ public abstract class DomainObject implements Parcelable {
 	public boolean equals(Object object) {
 		if (object != null && object instanceof DomainObject) {
 			DomainObject ormObject = (DomainObject) object;
+			if (ormObject.getId() != INVALID_ID && this.mId != INVALID_ID) {
+				if (ormObject.getId() == this.mId) {
+					return true;
+				}
+			} else  {
+				return isEqual(ormObject);
+			}
 			if (ormObject.getId() == INVALID_ID || this.mId == INVALID_ID) {
 				return false;
 			}
-			if (ormObject.getId() == this.mId) {
-				return true;
-			}
+			
 		}
 		return false;
 	}
@@ -56,4 +61,5 @@ public abstract class DomainObject implements Parcelable {
 		doWriteToParcel(dest, flags);
 	}
 	protected abstract void doWriteToParcel(Parcel dest, int flags);
+	protected abstract boolean isEqual(DomainObject object);
 }

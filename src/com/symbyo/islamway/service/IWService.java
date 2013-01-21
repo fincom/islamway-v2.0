@@ -16,6 +16,7 @@ import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
 import com.symbyo.islamway.service.parsers.Parser;
+import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.NetworkException;
 import com.symbyo.islamway.service.restclients.Page;
 import com.symbyo.islamway.service.restclients.Response;
@@ -87,6 +88,7 @@ public class IWService extends IntentService {
 		ResourceFactory factory = createResourceFactory(action);
 		RestClient rest_client = factory.createRestClient();
 		Parser parser = factory.createParser();
+		Processor processor = factory.createProcessor(this);
 		if (resource_id >= 0) {
 			rest_client.setResourceId(resource_id);
 		}
@@ -100,6 +102,7 @@ public class IWService extends IntentService {
 			for (Page page : response) {
 				String json = page.getResponseText();
 				domain_collection = parser.parse(json, response.isCollection());
+				processor.process(domain_collection);
 				// TODO process the domain_collection
 			}
 		} catch (NullPointerException e) {

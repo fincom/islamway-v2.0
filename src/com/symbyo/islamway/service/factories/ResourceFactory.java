@@ -2,7 +2,10 @@ package com.symbyo.islamway.service.factories;
 
 import org.eclipse.jdt.annotation.NonNull;
 
+import android.content.Context;
+
 import com.symbyo.islamway.service.parsers.Parser;
+import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.RestClient;
 
 public abstract class ResourceFactory {
@@ -14,4 +17,5 @@ public abstract class ResourceFactory {
 	}
 	public abstract RestClient createRestClient();
 	public abstract Parser createParser();
+	public abstract Processor createProcessor(Context context);
 }

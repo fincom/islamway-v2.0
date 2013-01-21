@@ -1,8 +1,5 @@
 package com.symbyo.islamway;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import com.actionbarsherlock.view.Menu;
@@ -11,6 +8,8 @@ import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
 public class QuranActivity extends SlidingFragmentActivity {
+	
+	private int mRequestId = 0;
 
     @Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,8 +26,9 @@ public class QuranActivity extends SlidingFragmentActivity {
         // TODO: remove test code
         //TEST BEGIN
         //if (isNetworkAvailable()) {
-        	ServiceHelper helper = ServiceHelper.getInstance(getApplicationContext());
-            int request_id = helper.getQuranScholars();
+        	@SuppressWarnings("null")
+			ServiceHelper helper = ServiceHelper.getInstance(getApplicationContext());
+            mRequestId = helper.getQuranScholars();
         //}
         //TEST END
     }
@@ -48,7 +48,7 @@ public class QuranActivity extends SlidingFragmentActivity {
     	}
     	return super.onOptionsItemSelected(item);
     }
-    
+    /*
     private boolean isNetworkAvailable() {
         ConnectivityManager cm = (ConnectivityManager) 
           getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -60,5 +60,5 @@ public class QuranActivity extends SlidingFragmentActivity {
         }
         return false;
     }
-    
+    */
 }

@@ -1,5 +1,7 @@
 package com.symbyo.islamway.domain;
 
+import com.symbyo.islamway.persistance.UnitOfWork;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -43,6 +45,8 @@ public class Scholar extends DomainObject {
 		mViewCount = view_count;
 		mPopularity = popularity;
 		
+		/**< register the object as new */
+		UnitOfWork.getCurrent().registerNew(this);
 	}
 	
 	protected Scholar(Parcel source) {
@@ -56,6 +60,22 @@ public class Scholar extends DomainObject {
 		mImageFile = source.readString();
 		mViewCount = source.readInt();
 		mPopularity = source.readInt();
+		
+		/** 
+		 * register the object as new. if the original object was already in 
+		 * the UnitOfWork it won't be added again.
+		 * Note that if the DomainObjects  where not immutable, a bug will 
+		 * appear here.
+		 * consider this case:
+		 * object is registered as new with an instance object1. then passed 
+		 * through Parcel and a new instance of the object (object2) is created 
+		 * through this constructor. if there is made changes to object2 that 
+		 * needs to be saved, it will be ignored. simply because the equality 
+		 * test will reject the second instance on the bases that it is redundant.
+		 * this will not affect this application, since the application does not 
+		 * manipulate the DomainObjects.
+		 * */
+		UnitOfWork.getCurrent().registerNew(this);
 	}
 
 	@Override
@@ -118,6 +138,17 @@ public class Scholar extends DomainObject {
 
 	public String getImageFile() {
 		return mImageFile;
+	}
+
+	@Override
+	protected boolean isEqual(DomainObject object) {
+		if (object != null && object instanceof Scholar) {
+			Scholar obj = (Scholar) object;
+			if (obj.getServerId() == this.mServerId) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

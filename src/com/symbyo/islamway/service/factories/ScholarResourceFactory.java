@@ -2,8 +2,12 @@ package com.symbyo.islamway.service.factories;
 
 import org.eclipse.jdt.annotation.NonNull;
 
+import android.content.Context;
+
 import com.symbyo.islamway.service.parsers.Parser;
 import com.symbyo.islamway.service.parsers.ScholarParser;
+import com.symbyo.islamway.service.processors.Processor;
+import com.symbyo.islamway.service.processors.ScholarProcessor;
 import com.symbyo.islamway.service.restclients.RestClient;
 import com.symbyo.islamway.service.restclients.ScholarRestClient;
 
@@ -23,6 +27,11 @@ public class ScholarResourceFactory extends ResourceFactory {
 	@Override
 	public Parser createParser() {
 		return new ScholarParser();
+	}
+
+	@Override
+	public Processor createProcessor(Context context) {
+		return new ScholarProcessor(context);
 	}
 
 }
