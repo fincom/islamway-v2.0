@@ -1,5 +1,7 @@
 package com.symbyo.islamway.domain;
 
+import junit.framework.Assert;
+
 import com.symbyo.islamway.persistance.UnitOfWork;
 
 import android.os.Parcel;
@@ -75,7 +77,9 @@ public class Scholar extends DomainObject {
 		 * this will not affect this application, since the application does not 
 		 * manipulate the DomainObjects.
 		 * */
-		UnitOfWork.getCurrent().registerNew(this);
+		if (mId == INVALID_ID) {
+			UnitOfWork.getCurrent().registerNew(this);
+		}
 	}
 
 	@Override
@@ -144,6 +148,8 @@ public class Scholar extends DomainObject {
 	protected boolean isEqual(DomainObject object) {
 		if (object != null && object instanceof Scholar) {
 			Scholar obj = (Scholar) object;
+			Assert.assertTrue(obj.getServerId() != INVALID_ID);
+			Assert.assertTrue(this.getServerId() != INVALID_ID);
 			if (obj.getServerId() == this.mServerId) {
 				return true;
 			}
