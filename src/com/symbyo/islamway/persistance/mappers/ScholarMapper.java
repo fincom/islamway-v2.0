@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNull;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Log;
 
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.IScholarFinder;
@@ -115,25 +117,31 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 
 	@Override
 	protected Scholar doLoad(@NonNull Cursor c) {
-		int id = c.getInt(c.getColumnIndex(Field.ID.toString()));
-		int server_id = c.getInt(c.getColumnIndex(Field.SERVER_ID.toString()));
-		String name = c.isNull(c.getColumnIndex(Field.NAME.toString())) ?
-				null : c.getString(c.getColumnIndex(Field.NAME.toString()));
-		String email = c.isNull(c.getColumnIndex(Field.EMAIL.toString())) ?
-				null : c.getString(c.getColumnIndex(Field.EMAIL.toString()));
-		String phone = c.isNull(c.getColumnIndex(Field.PHONE.toString())) ?
-				null : c.getString(c.getColumnIndex(Field.PHONE.toString()));
-		String page_url = c.isNull(c.getColumnIndex(Field.PAGE_URL.toString())) ?
-				null : c.getString(c.getColumnIndex(Field.PAGE_URL.toString()));
-		String image_url = c.isNull(c.getColumnIndex(Field.IMAGE_URL.toString())) ?
-				null : c.getString(c.getColumnIndex(Field.IMAGE_URL.toString()));
-		String image_file = c.isNull(c.getColumnIndex(Field.IMAGE_FILE.toString())) ?
-				null : c.getString(c.getColumnIndex(Field.IMAGE_FILE.toString()));
-		int view_count = c.getInt(c.getColumnIndex(Field.VIEW_COUNT.toString()));
-		int popularity = c.getInt(c.getColumnIndex(Field.POPULARITY.toString()));
-		
-		return new Scholar(id, server_id, name, email, phone, page_url, 
-				image_url, image_file, view_count, popularity);
+		Scholar scholar = null;
+		try {
+			int id = c.getInt(c.getColumnIndexOrThrow(Field.ID.toString()));
+			int server_id = c.getInt(c.getColumnIndexOrThrow(Field.SERVER_ID.toString()));
+			String name = c.isNull(c.getColumnIndexOrThrow(Field.NAME.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(Field.NAME.toString()));
+			String email = c.isNull(c.getColumnIndexOrThrow(Field.EMAIL.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(Field.EMAIL.toString()));
+			String phone = c.isNull(c.getColumnIndexOrThrow(Field.PHONE.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(Field.PHONE.toString()));
+			String page_url = c.isNull(c.getColumnIndexOrThrow(Field.PAGE_URL.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(Field.PAGE_URL.toString()));
+			String image_url = c.isNull(c.getColumnIndexOrThrow(Field.IMAGE_URL.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(Field.IMAGE_URL.toString()));
+			String image_file = c.isNull(c.getColumnIndexOrThrow(Field.IMAGE_FILE.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(Field.IMAGE_FILE.toString()));
+			int view_count = c.getInt(c.getColumnIndexOrThrow(Field.VIEW_COUNT.toString()));
+			int popularity = c.getInt(c.getColumnIndexOrThrow(Field.POPULARITY.toString()));
+			scholar = new Scholar(id, server_id, name, email, phone, page_url, 
+					image_url, image_file, view_count, popularity);
+		} catch (IllegalArgumentException e) {
+			// TODO: remove error checking after testing
+			throw new Error("column index does not exist.");
+		}
+		return scholar;
 	}
 
 	@Override
@@ -151,10 +159,25 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 	@Override
 	public void insert(@NonNull DomainObject obj, SQLiteDatabase db)
 			throws SQLiteException {
+		if (!(obj instanceof Scholar)) {
+			throw new Error("DomainObject not instance of Scholar");
+		}
+		Scholar scholar = (Scholar) obj;
+		Log.d("ScholarMapper", String.format("Scholar server_id: %d", scholar.getServerId()));
 		if (db == null || !db.isOpen()) {
 			db = Repository.getInstance(mContext).getWritableDatabase();
 		}
-		// TODO insert the new object into the database.
+		ContentValues values = new ContentValues();
+		values.put(Field.SERVER_ID.toString(), scholar.getServerId());
+		values.put(Field.NAME.toString(), scholar.getName());
+		values.put(Field.EMAIL.toString(), scholar.getEmail());
+		values.put(Field.PHONE.toString(), scholar.getPhone());
+		values.put(Field.PAGE_URL.toString(), scholar.getPageUrl());
+		values.put(Field.IMAGE_URL.toString(), scholar.getImageUrl());
+		values.put(Field.VIEW_COUNT.toString(), scholar.getViewCount());
+		values.put(Field.POPULARITY.toString(), scholar.getPopularity());
+		
+		db.insertOrThrow(TABLE_NAME, null, values);
 	}
 
 }

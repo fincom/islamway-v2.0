@@ -80,7 +80,7 @@ public class Response implements Iterable<Page> {
 				/**< this is a one object response */
 				return 1;
 			}
-			return (int) Math.ceil(mTotalCount / mCount);
+			return (int) Math.ceil((float)mTotalCount / (float)mCount);
 		}
 		
 		public boolean isCollection() {

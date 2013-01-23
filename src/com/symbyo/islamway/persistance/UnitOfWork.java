@@ -49,7 +49,10 @@ public class UnitOfWork {
 			}
 			db.setTransactionSuccessful();
 		}  catch (SQLiteException e) {
+			e.printStackTrace();
+		} finally {
 			db.endTransaction();
+			newObjects.clear();
 		}
 	}
 }

@@ -10,12 +10,15 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
 import com.symbyo.islamway.service.parsers.Parser;
+import com.symbyo.islamway.service.processors.ProcessingException;
 import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.NetworkException;
 import com.symbyo.islamway.service.restclients.Page;
@@ -97,23 +100,32 @@ public class IWService extends IntentService {
 		}
 		Response response;
 		try {
+			Log.d("IWService", "start");
 			response = rest_client.getResponse();
 			List<? extends DomainObject> domain_collection = null;
 			for (Page page : response) {
+				Log.d("IWService", String.format("page number: %d", page.getNumber()));
 				String json = page.getResponseText();
 				domain_collection = parser.parse(json, response.isCollection());
-				processor.process(domain_collection);
-				// TODO process the domain_collection
+				if (domain_collection != null) {
+					processor.process(domain_collection);
+				}
+				Log.d("IWService", "fetching next page");
 			}
+			Log.d("IWService", "finished");
 		} catch (NullPointerException e) {
 			/** a network error has occurred during getting the next page, and
 			 *  the page is null.
 			 */
-			showToast("Network error");
+			showToast(getString(R.string.err_network));
 			e.printStackTrace();
 			return;
 		} catch (NetworkException e) {
-			showToast("Network error");
+			showToast(getString(R.string.err_network));
+			e.printStackTrace();
+			return;
+		} catch (ProcessingException e) {
+			showToast(getString(R.string.err_processing_data));
 			e.printStackTrace();
 			return;
 		}

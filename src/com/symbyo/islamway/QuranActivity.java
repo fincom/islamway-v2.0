@@ -23,6 +23,7 @@ public class QuranActivity extends SlidingFragmentActivity {
         SlidingMenu sMenu = getSlidingMenu();
         sMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
         
+        
         // TODO: remove test code
         //TEST BEGIN
         //if (isNetworkAvailable()) {

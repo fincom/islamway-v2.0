@@ -30,7 +30,7 @@ public class ScholarResourceFactory extends ResourceFactory {
 	}
 
 	@Override
-	public Processor createProcessor(Context context) {
+	public Processor createProcessor(@NonNull Context context) {
 		return new ScholarProcessor(context);
 	}
 

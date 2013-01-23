@@ -91,12 +91,8 @@ public abstract class AbstractMapper {
 		return doLoad(c);
 	}
 	
-	public void insert(@NonNull DomainObject obj){
-		try {
+	public void insert(@NonNull DomainObject obj) throws SQLiteException {
 			insert(obj, null);
-		} catch (SQLiteException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public abstract void insert(@NonNull DomainObject obj, SQLiteDatabase db)

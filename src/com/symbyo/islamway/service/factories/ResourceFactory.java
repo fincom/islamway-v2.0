@@ -17,5 +17,5 @@ public abstract class ResourceFactory {
 	}
 	public abstract RestClient createRestClient();
 	public abstract Parser createParser();
-	public abstract Processor createProcessor(Context context);
+	public abstract Processor createProcessor(@NonNull Context context);
 }

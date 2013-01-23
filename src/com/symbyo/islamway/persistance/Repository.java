@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.persistance.mappers.AbstractMapper;
 import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 
@@ -61,7 +62,7 @@ public class Repository extends SQLiteOpenHelper {
 		String multiLineComment = null;
 
 		while ((line = reader.readLine()) != null) {
-			line = line.trim();
+			//line = line.trim();
 
 			// Check for start of multi-line comment
 			if (multiLineComment == null) {
@@ -102,13 +103,13 @@ public class Repository extends SQLiteOpenHelper {
 			}
 			// insert test data.
 			// TODO: remove the insert test data.
-			in_stream.close();
+			/*in_stream.close();
 			in_stream = null;
 			in_stream = mContext.getResources().getAssets().open("insert_data.sql");
 			statements = parseSqlFile(in_stream);
 			for (String statement : statements) {
 				db.execSQL(statement);
-			}
+			}*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -152,7 +153,7 @@ public class Repository extends SQLiteOpenHelper {
 	
 	@SuppressWarnings("null")
 	public <T> AbstractMapper getMapper(Class<T> clazz) {
-		if (clazz.equals(ScholarMapper.class)) {
+		if (clazz.equals(Scholar.class)) {
 			return new ScholarMapper(mContext);
 		}
 		return null;

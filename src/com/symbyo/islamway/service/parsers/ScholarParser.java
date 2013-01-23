@@ -3,6 +3,8 @@ package com.symbyo.islamway.service.parsers;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.symbyo.islamway.domain.Scholar;
@@ -74,6 +76,7 @@ public class ScholarParser extends Parser {
 		private int mPopularity = 0;
 		
 		public Scholar toScholar() {
+			Log.d("Parser", String.format("parsed Scholar server_id: %d", mServerId));
 			return new Scholar(mServerId, mName, mEmail, mPhone, mPageUrl,
 					mImageUrl, mImageFile, mViewCount, mPopularity);
 		}
