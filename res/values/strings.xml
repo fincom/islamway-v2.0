@@ -4,6 +4,11 @@
     <string name="app_name">Islamway</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="quran">القرآن</string>
+    <string name="lessons">الدروس</string>
+    <string name="playing_list">قائمة الاستماع</string>
+    <string name="settings">إعدادات</string>
+    <string name="settings_wifi_only">wifi only</string>
     <string name="err_network">Network Error</string>
     <string name="err_processing_data">Error processing data</string>
 

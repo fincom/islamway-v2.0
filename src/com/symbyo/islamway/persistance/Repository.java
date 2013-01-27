@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import junit.framework.Assert;
 import android.content.Context;
@@ -157,5 +158,11 @@ public class Repository extends SQLiteOpenHelper {
 			return new ScholarMapper(mContext);
 		}
 		return null;
+	}
+	
+	// Persistence public interface ////////////////////////////////////////////
+	public List<Scholar> getQuranScholars() {
+		ScholarMapper mapper = new ScholarMapper(mContext);
+		return mapper.findQuranScholars();
 	}
 }
