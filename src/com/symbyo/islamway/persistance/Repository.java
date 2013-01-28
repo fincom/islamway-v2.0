@@ -36,9 +36,7 @@ public class Repository extends SQLiteOpenHelper {
 	}
 	
 	public synchronized static Repository getInstance() {
-		if (mInstance == null) {
-			return null;
-		}
+		Assert.assertNotNull(mInstance);
 		return mInstance;
 	}
 	
@@ -162,6 +160,7 @@ public class Repository extends SQLiteOpenHelper {
 	
 	// Persistence public interface ////////////////////////////////////////////
 	public List<Scholar> getQuranScholars() {
+		@SuppressWarnings("null")
 		ScholarMapper mapper = new ScholarMapper(mContext);
 		return mapper.findQuranScholars();
 	}

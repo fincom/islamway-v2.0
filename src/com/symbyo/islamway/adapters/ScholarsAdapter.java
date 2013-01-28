@@ -1,8 +1,14 @@
 package com.symbyo.islamway.adapters;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +16,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.persistance.Repository;
 
 public class ScholarsAdapter extends BaseAdapter {
 	private final Context mContext;
 	private List<Scholar> mScholars;
-	private final int ITEM_LAYOUT = 0;
+	private final int ITEM_LAYOUT = R.layout.scholar_list_item;
 
 	public ScholarsAdapter(Context context) {
 		super();
@@ -61,12 +68,49 @@ public class ScholarsAdapter extends BaseAdapter {
 		if (convertView.getTag() == null 
 				|| !(convertView.getTag() instanceof ViewHolder)) {
 			holder = new ViewHolder();
-			// TODO populate the ViewHolder
+			holder.image = (ImageView) convertView
+					.findViewById(R.id.scholar_image);
+			holder.title = (TextView) convertView
+					.findViewById(R.id.scholar_name);
+			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		// TODO get the Scholar
-		return null;
+		Scholar scholar = (Scholar) getItem(position);
+		holder.title.setText(scholar.getName());
+		Bitmap bmp = getThumbnail(scholar.getImageFile());
+		if (bmp == null) {
+			Drawable placeHolder = mContext.getResources().getDrawable(
+					R.drawable.scholar_placeholder);
+			holder.image.setImageDrawable(placeHolder);
+		} else {
+			holder.image.setImageBitmap(bmp);
+		}
+		return convertView;
+	}
+
+	private Bitmap getThumbnail(String imageUrl) {
+		Bitmap bitmap = null;
+		if (imageUrl != null && !imageUrl.isEmpty()) {
+			InputStream inStream = null;
+			try {
+				inStream = mContext.getAssets().open("scholars/" + imageUrl);
+				bitmap = BitmapFactory.decodeStream(inStream);
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (inStream != null) {
+						inStream.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return bitmap;
 	}
 
 	@Override

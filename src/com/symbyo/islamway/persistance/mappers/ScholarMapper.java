@@ -89,7 +89,7 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		return bldr.toString();
 	}*/
 	
-	static class FindByFieldValue implements IStatementSource {
+	static class FindByFieldValue implements StatementSource {
 		 private Field mField;
 		 private String mValue;
 		 
@@ -111,6 +111,23 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		@Override
 		public String[] parameters() {
 			return new String[] {mValue};
+		}
+		
+	}
+	
+	static class FindQuranScholars implements StatementSource {
+
+		@Override
+		public String sql() {
+			StringBuilder bldr;
+			bldr = new StringBuilder("SELECT " + getFields() + "FROM " + TABLE_NAME);
+			bldr.append(" ORDER BY " + Field.NAME.toString());
+			return bldr.toString();
+		}
+
+		@Override
+		public String[] parameters() {
+			return null;
 		}
 		
 	}
@@ -150,9 +167,27 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Scholar> findQuranScholars() {
-		// TODO: return all scholars with quran material.
-		return null;
+		StatementSource stmt = new StatementSource() {
+
+			@Override
+			public String sql() {
+				// FIXME this query returns all scholars in the table!!
+				StringBuilder bldr;
+				bldr = new StringBuilder("SELECT " + getFields() + " FROM " + TABLE_NAME);
+				bldr.append(" ORDER BY " + Field.NAME.toString());
+				return bldr.toString();
+			}
+
+			@Override
+			public String[] parameters() {
+				return null;
+			}
+			
+		};
+		
+		return (List<Scholar>) findMany(stmt);
 		
 	}
 	
@@ -179,5 +214,4 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		
 		db.insertOrThrow(TABLE_NAME, null, values);
 	}
-
 }

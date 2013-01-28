@@ -8,6 +8,7 @@
     <string name="lessons">الدروس</string>
     <string name="playing_list">قائمة الاستماع</string>
     <string name="settings">إعدادات</string>
+    <string name="scholar_image">صورة الشيخ</string>
     <string name="settings_wifi_only">wifi only</string>
     <string name="err_network">Network Error</string>
     <string name="err_processing_data">Error processing data</string>

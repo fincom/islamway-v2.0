@@ -37,7 +37,7 @@ public abstract class AbstractMapper {
 	 * @param stmt
 	 * @return
 	 */
-	protected List<DomainObject> findMany(IStatementSource stmt) {
+	protected List<? extends DomainObject> findMany(StatementSource stmt) {
 		ArrayList<DomainObject> objects = null;
 		SQLiteDatabase db = null;
 		Cursor c = null;
