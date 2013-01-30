@@ -1,11 +1,18 @@
 package com.symbyo.islamway.domain;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import junit.framework.Assert;
 
-import com.symbyo.islamway.persistance.UnitOfWork;
+import org.eclipse.jdt.annotation.NonNull;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.symbyo.islamway.persistance.UnitOfWork;
+import com.symbyo.islamway.service.IWService.Section;
 
 public class Scholar extends DomainObject {
 	
@@ -18,6 +25,23 @@ public class Scholar extends DomainObject {
 	private final String mImageFile;
 	private final int mViewCount;
 	private final int mPopularity;
+	private Set<Section> mSections = new HashSet<Section>(2);
+	
+	/*public enum Section {
+		QURAN ("recitations"),
+		LESSONS ("lessons");
+		
+		private String mValue;
+		
+		Section(String value) {
+			mValue= value;
+		}
+		
+		@Override
+		public String toString() {
+			return mValue;
+		}
+	}*/
 
 	public Scholar(int id, int server_id, String name, String email, 
 			String phone, String page_url, String image_url, String image_file, int view_count, int popularity) {
@@ -142,6 +166,29 @@ public class Scholar extends DomainObject {
 
 	public String getImageFile() {
 		return mImageFile;
+	}
+	
+	public void addSection(@NonNull Section section) {
+		mSections.add(section);
+	}
+	
+	public void removeSection(@NonNull String section) {
+		mSections.remove(section);
+	}
+	
+	public void clearSections() {
+		mSections.clear();
+	}
+	
+	public Set<Section> getSections() {
+		if (getId() == INVALID_ID) {
+			hydrateSections();
+		}
+		return Collections.unmodifiableSet(mSections);
+	}
+
+	private void hydrateSections() {
+		// TODO fetch the scholar sections from the database.
 	}
 
 	@Override

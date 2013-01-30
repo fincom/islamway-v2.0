@@ -26,7 +26,7 @@ public class ServiceHelper {
 	private HashSet<Integer> mRequests = new HashSet<Integer>();
 	private int mLastRequestId = 0;
 	
-	private enum RequestState {
+	public enum RequestState {
 		NOT_REGISTERED,
 		PENDING,
 		FINISHED
@@ -46,7 +46,7 @@ public class ServiceHelper {
 	private int getQuranScholars(int request_id) {
 		Assert.assertTrue(request_id >= REQUEST_ID_NONE);
 		int result = request_id;
-		RequestState state = getRequestRegistered(request_id);
+		RequestState state = getRequestState(request_id);
 		switch (state) {
 		case FINISHED:
 			Intent intent = new Intent(ACTION_INVALIDATE_SCHOLAR_LIST);
@@ -94,14 +94,15 @@ public class ServiceHelper {
 		intent.putExtra(IWService.EXTRA_CALLBACK_INTENT, pIntent);
 		mContext.startService(intent);
 	}
-
+	
+	// Public Interface ///////////////////////////////////////////////////////
 	/**
 	 * checks if the request id passed to it is registered or not. if not, but 
 	 * was registered before, it resends the invalidate intent.
 	 * @param request_id
 	 * @return
 	 */
-	private RequestState getRequestRegistered(int request_id) {
+	public RequestState getRequestState(int request_id) {
 		Assert.assertTrue(request_id >= REQUEST_ID_NONE);
 		RequestState state;
 		if (request_id == REQUEST_ID_NONE) {
@@ -116,7 +117,6 @@ public class ServiceHelper {
 		return state;
 	}
 	
-	// Public Interface ///////////////////////////////////////////////////////
 	/**
 	 * Gets all scholars that have quran content.
 	 * @return request id.

@@ -4,6 +4,11 @@ import java.util.Locale;
 
 import org.eclipse.jdt.annotation.NonNull;
 
+/**
+ * 
+ * @author kdehairy
+ *
+ */
 public class ScholarRestClient extends RestClient {
 
 	public ScholarRestClient(@NonNull String url_format, RestClient.HTTPMethod http_method) {

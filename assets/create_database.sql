@@ -27,6 +27,16 @@ CREATE TABLE scholar (
 );
 CREATE INDEX index__scholar__name ON scholar (name ASC);
 
+CREATE TABLE scholar_sections (
+    _id INTEGER PRIMARY KEY,
+    section TEXT,
+    scholar_id INTEGER,
+    CONSTRAINT fk__scholar_sections__scholar FOREIGN KEY (scholar_id) 
+        REFERENCES scholar (_id) ON DELETE CASCADE
+);
+CREATE INDEX ndx__scholar_sections__scholar_id ON scholar_sections (scholar_id ASC);
+CREATE UNIQUE INDEX ndx__scholar_sections ON scholar_sections (section, scholar_id);
+
 CREATE TABLE quran_collection (
     _id INTEGER PRIMARY KEY,
     server_id INTEGER UNIQUE NOT NULL,

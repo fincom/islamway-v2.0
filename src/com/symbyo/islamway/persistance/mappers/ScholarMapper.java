@@ -1,6 +1,7 @@
 package com.symbyo.islamway.persistance.mappers;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -15,6 +16,7 @@ import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.IScholarFinder;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.persistance.Repository;
+import com.symbyo.islamway.service.IWService.Section;
 
 public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 	
@@ -23,7 +25,7 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		LESSON
 	}
 	
-	public enum Field {
+	private enum ScholarField {
 		ID ("_id"),
 		SERVER_ID ("server_id"),
 		NAME ("name"),
@@ -36,7 +38,29 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		POPULARITY ("popularity");
 		
 		private final String mName;
-		Field(String name) {
+		
+		ScholarField(String name) {
+			mName = name;
+		}
+		
+		@Override
+		public String toString() {
+			return mName;
+		}
+		
+		public String toFullName() {
+			return SCHOLAR_TABLE_NAME + "." + mName;
+		}
+	}
+	
+	private enum ScholarSectionsField {
+		ID ("_id"),
+		SECTION ("section"),
+		SCHOLAR_ID ("scholar_id");
+		
+		private final String mName;
+		
+		ScholarSectionsField(String name) {
 			mName = name;
 		}
 		
@@ -46,13 +70,20 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		}
 	}
 	
-	public static final String TABLE_NAME = "scholar";
+	private static final String SCHOLAR_TABLE_NAME = "scholar";
+	private static final String SECTION_TABLE_NAME = "scholar_sections";
+	
 
-	private static String getFields() {
+	private static String getScholarFields(String tableAliase) {
+		if (tableAliase == null) {
+			tableAliase = "";
+		} else {
+			tableAliase = tableAliase + ".";
+		}
 		StringBuilder bldr = new StringBuilder();
-		Field[] fields = Field.values();
+		ScholarField[] fields = ScholarField.values();
 		for (int i = 0, len = fields.length; i< len; i++) {
-			bldr.append(fields[i].toString());
+			bldr.append(tableAliase + fields[i].toString());
 			if (i == len - 1) {
 				break;
 			}
@@ -90,10 +121,10 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 	}*/
 	
 	static class FindByFieldValue implements StatementSource {
-		 private Field mField;
+		 private ScholarField mField;
 		 private String mValue;
 		 
-		 public FindByFieldValue(@NonNull Field field, @NonNull String value) {
+		 public FindByFieldValue(@NonNull ScholarField field, @NonNull String value) {
 			 mField = field;
 			 mValue = value;
 		 }
@@ -101,9 +132,9 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		@Override
 		public String sql() {
 			StringBuilder bldr;
-			bldr = new StringBuilder("SELECT " + getFields() + "FROM " + TABLE_NAME);
+			bldr = new StringBuilder("SELECT " + getScholarFields(null) + "FROM " + SCHOLAR_TABLE_NAME);
 			bldr.append(" WHERE " + mField.toString() + " = ?");
-			bldr.append(" ORDER BY " + Field.NAME.toString());
+			bldr.append(" ORDER BY " + ScholarField.NAME.toString());
 			
 			return bldr.toString();
 		}
@@ -115,13 +146,13 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		
 	}
 	
-	static class FindQuranScholars implements StatementSource {
+	/*static class FindQuranScholars implements StatementSource {
 
 		@Override
 		public String sql() {
 			StringBuilder bldr;
-			bldr = new StringBuilder("SELECT " + getFields() + "FROM " + TABLE_NAME);
-			bldr.append(" ORDER BY " + Field.NAME.toString());
+			bldr = new StringBuilder("SELECT " + getScholarFields(false) + "FROM " + SCHOLAR_TABLE_NAME);
+			bldr.append(" ORDER BY " + ScholarField.NAME.toString());
 			return bldr.toString();
 		}
 
@@ -130,28 +161,28 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 			return null;
 		}
 		
-	}
+	}*/
 
 	@Override
 	protected Scholar doLoad(@NonNull Cursor c) {
 		Scholar scholar = null;
 		try {
-			int id = c.getInt(c.getColumnIndexOrThrow(Field.ID.toString()));
-			int server_id = c.getInt(c.getColumnIndexOrThrow(Field.SERVER_ID.toString()));
-			String name = c.isNull(c.getColumnIndexOrThrow(Field.NAME.toString())) ?
-					null : c.getString(c.getColumnIndexOrThrow(Field.NAME.toString()));
-			String email = c.isNull(c.getColumnIndexOrThrow(Field.EMAIL.toString())) ?
-					null : c.getString(c.getColumnIndexOrThrow(Field.EMAIL.toString()));
-			String phone = c.isNull(c.getColumnIndexOrThrow(Field.PHONE.toString())) ?
-					null : c.getString(c.getColumnIndexOrThrow(Field.PHONE.toString()));
-			String page_url = c.isNull(c.getColumnIndexOrThrow(Field.PAGE_URL.toString())) ?
-					null : c.getString(c.getColumnIndexOrThrow(Field.PAGE_URL.toString()));
-			String image_url = c.isNull(c.getColumnIndexOrThrow(Field.IMAGE_URL.toString())) ?
-					null : c.getString(c.getColumnIndexOrThrow(Field.IMAGE_URL.toString()));
-			String image_file = c.isNull(c.getColumnIndexOrThrow(Field.IMAGE_FILE.toString())) ?
-					null : c.getString(c.getColumnIndexOrThrow(Field.IMAGE_FILE.toString()));
-			int view_count = c.getInt(c.getColumnIndexOrThrow(Field.VIEW_COUNT.toString()));
-			int popularity = c.getInt(c.getColumnIndexOrThrow(Field.POPULARITY.toString()));
+			int id = c.getInt(c.getColumnIndexOrThrow(ScholarField.ID.toString()));
+			int server_id = c.getInt(c.getColumnIndexOrThrow(ScholarField.SERVER_ID.toString()));
+			String name = c.isNull(c.getColumnIndexOrThrow(ScholarField.NAME.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(ScholarField.NAME.toString()));
+			String email = c.isNull(c.getColumnIndexOrThrow(ScholarField.EMAIL.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(ScholarField.EMAIL.toString()));
+			String phone = c.isNull(c.getColumnIndexOrThrow(ScholarField.PHONE.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(ScholarField.PHONE.toString()));
+			String page_url = c.isNull(c.getColumnIndexOrThrow(ScholarField.PAGE_URL.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(ScholarField.PAGE_URL.toString()));
+			String image_url = c.isNull(c.getColumnIndexOrThrow(ScholarField.IMAGE_URL.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(ScholarField.IMAGE_URL.toString()));
+			String image_file = c.isNull(c.getColumnIndexOrThrow(ScholarField.IMAGE_FILE.toString())) ?
+					null : c.getString(c.getColumnIndexOrThrow(ScholarField.IMAGE_FILE.toString()));
+			int view_count = c.getInt(c.getColumnIndexOrThrow(ScholarField.VIEW_COUNT.toString()));
+			int popularity = c.getInt(c.getColumnIndexOrThrow(ScholarField.POPULARITY.toString()));
 			scholar = new Scholar(id, server_id, name, email, phone, page_url, 
 					image_url, image_file, view_count, popularity);
 		} catch (IllegalArgumentException e) {
@@ -175,8 +206,14 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 			public String sql() {
 				// FIXME this query returns all scholars in the table!!
 				StringBuilder bldr;
-				bldr = new StringBuilder("SELECT " + getFields() + " FROM " + TABLE_NAME);
-				bldr.append(" ORDER BY " + Field.NAME.toString());
+				bldr = new StringBuilder("SELECT " + getScholarFields("sch")
+						+ " FROM " + SCHOLAR_TABLE_NAME + " AS sch");
+				bldr.append(" INNER JOIN " + SECTION_TABLE_NAME + " AS sec");
+				bldr.append(" ON sch." + ScholarField.ID + " = sec."
+						+ ScholarSectionsField.SCHOLAR_ID);
+				bldr.append(" WHERE " + ScholarSectionsField.SECTION + " = '"
+						+ Section.QURAN.toString() + "'");
+				bldr.append(" ORDER BY " + ScholarField.NAME.toString());
 				return bldr.toString();
 			}
 
@@ -194,24 +231,52 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 	@Override
 	public void insert(@NonNull DomainObject obj, SQLiteDatabase db)
 			throws SQLiteException {
+		boolean isInTrans = false;
 		if (!(obj instanceof Scholar)) {
 			throw new Error("DomainObject not instance of Scholar");
 		}
 		Scholar scholar = (Scholar) obj;
 		Log.d("ScholarMapper", String.format("Scholar server_id: %d", scholar.getServerId()));
-		if (db == null || !db.isOpen()) {
-			db = Repository.getInstance(mContext).getWritableDatabase();
+		try {
+			if (db == null || !db.isOpen()) {
+				db = Repository.getInstance(mContext).getWritableDatabase();
+				db.beginTransaction();
+				isInTrans = true;
+			}
+			ContentValues values = new ContentValues();
+			values.put(ScholarField.SERVER_ID.toString(), scholar.getServerId());
+			values.put(ScholarField.NAME.toString(), scholar.getName());
+			values.put(ScholarField.EMAIL.toString(), scholar.getEmail());
+			values.put(ScholarField.PHONE.toString(), scholar.getPhone());
+			values.put(ScholarField.PAGE_URL.toString(), scholar.getPageUrl());
+			values.put(ScholarField.IMAGE_URL.toString(), scholar.getImageUrl());
+			values.put(ScholarField.VIEW_COUNT.toString(), scholar.getViewCount());
+			values.put(ScholarField.POPULARITY.toString(), scholar.getPopularity());
+			
+			// FIXME this causes the caller to exit premature during the syncing
+			// due to a 'duplicate key constraint' exception.
+			long scholar_id = db.insertWithOnConflict(SCHOLAR_TABLE_NAME, null,
+					values, SQLiteDatabase.CONFLICT_REPLACE);
+			
+			Set<Section> sections = scholar.getSections();
+			if (sections.size() > 0) {
+				values.clear();
+				for (Section section: sections) {
+					values.put(ScholarSectionsField.SECTION.toString(), section.toString());
+					values.put(ScholarSectionsField.SCHOLAR_ID.toString(),
+							scholar_id);
+					db.insertWithOnConflict(SECTION_TABLE_NAME, null, values,
+							SQLiteDatabase.CONFLICT_REPLACE);
+				}
+			}
+			if (isInTrans) {
+				db.setTransactionSuccessful();
+			}
+		} finally {
+			if (isInTrans) {
+				db.endTransaction();
+			}
 		}
-		ContentValues values = new ContentValues();
-		values.put(Field.SERVER_ID.toString(), scholar.getServerId());
-		values.put(Field.NAME.toString(), scholar.getName());
-		values.put(Field.EMAIL.toString(), scholar.getEmail());
-		values.put(Field.PHONE.toString(), scholar.getPhone());
-		values.put(Field.PAGE_URL.toString(), scholar.getPageUrl());
-		values.put(Field.IMAGE_URL.toString(), scholar.getImageUrl());
-		values.put(Field.VIEW_COUNT.toString(), scholar.getViewCount());
-		values.put(Field.POPULARITY.toString(), scholar.getPopularity());
 		
-		db.insertOrThrow(TABLE_NAME, null, values);
 	}
 }

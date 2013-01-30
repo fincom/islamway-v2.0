@@ -139,9 +139,10 @@ public class IWService extends IntentService {
 		ResourceFactory result = null;
 		String url_format = BASE_URL;
 		if (action.equals(ACTION_GET_QURAN_SCHOLARS)) {
-			/** < /recitations/scholars */
+			/** /recitations/scholars */
 			url_format += Section.QURAN.toString() + "/scholars";
-			result = new ScholarResourceFactory(url_format, RestClient.HTTPMethod.GET);
+			result = new ScholarResourceFactory(url_format,
+					RestClient.HTTPMethod.GET, Section.QURAN);
 		}
 		if (result == null) {
 			throw new NullPointerException("ResourceFactory is null");
@@ -150,7 +151,7 @@ public class IWService extends IntentService {
 	}
 	
 	/**
-	 * Displayes a Toast message on the main UI thread.
+	 * Displays a Toast message on the main UI thread.
 	 * @param msg
 	 */
 	private void showToast(final String msg) {

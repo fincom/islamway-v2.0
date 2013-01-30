@@ -8,32 +8,34 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.symbyo.islamway.ServiceHelper.RequestState;
 
 public class QuranActivity extends SlidingFragmentActivity {
+	
+	private final int REQUEST_INVALID = 0;
+	private final String REQUEST_KEY = "request";
 	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		/*if (mContent == null) {
-			mContent = getSupportFragmentManager()
-					.getFragment(savedInstanceState, CONTENT_TOKEN);
-        }*/
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		//getSupportFragmentManager().putFragment(outState, CONTENT_TOKEN, mContent);
+		outState.putInt(REQUEST_KEY, mRequestId);
 		super.onSaveInstanceState(outState);
 	}
 
-	private int mRequestId = 0;
+	private int mRequestId = REQUEST_INVALID;
 	private Fragment mContent;
-	
-	//private final String CONTENT_TOKEN = "content";
 
     @Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        if (savedInstanceState != null && (savedInstanceState.getInt(REQUEST_KEY) != 0)) {
+        	mRequestId = savedInstanceState.getInt(REQUEST_KEY);
+        }
         
         setTitle(R.string.quran);
         
@@ -84,9 +86,12 @@ public class QuranActivity extends SlidingFragmentActivity {
         // TODO: remove test code
         //TEST BEGIN
         //if (isNetworkAvailable()) {
-        	@SuppressWarnings("null")
+        	//@SuppressWarnings("null")
 			ServiceHelper helper = ServiceHelper.getInstance(getApplicationContext());
-            //mRequestId = helper.getQuranScholars();
+			if (helper.getRequestState(mRequestId) == RequestState.NOT_REGISTERED) {
+				mRequestId = helper.getQuranScholars();
+			}
+            
         //}
         //TEST END
     }
