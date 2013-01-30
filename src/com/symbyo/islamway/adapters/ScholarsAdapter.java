@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,20 +21,29 @@ import android.widget.TextView;
 import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.persistance.Repository;
+import com.symbyo.islamway.service.IWService.Section;
 
 public class ScholarsAdapter extends BaseAdapter {
 	private final Context mContext;
 	private List<Scholar> mScholars;
 	private final int ITEM_LAYOUT = R.layout.scholar_list_item;
 
-	public ScholarsAdapter(Context context) {
+	public ScholarsAdapter(@NonNull Context context, @NonNull Section section) {
 		super();
 		mContext = context;
-		mScholars = getScholars();
+		mScholars = getScholars(section);
 	}
 
-	private List<Scholar> getScholars() {
-		return Repository.getInstance(mContext).getQuranScholars();
+	private List<Scholar> getScholars(@NonNull Section section) {
+		List<Scholar> scholars = null;
+		switch (section) {
+		case QURAN:
+			scholars = Repository.getInstance(mContext).getQuranScholars();
+			break;
+		case LESSONS:
+			scholars = Repository.getInstance(mContext).getLessonsScholars();
+		}
+		return scholars;
 	}
 
 	@Override

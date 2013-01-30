@@ -164,4 +164,10 @@ public class Repository extends SQLiteOpenHelper {
 		ScholarMapper mapper = new ScholarMapper(mContext);
 		return mapper.findQuranScholars();
 	}
+
+	public List<Scholar> getLessonsScholars() {
+		@SuppressWarnings("null")
+		ScholarMapper mapper = new ScholarMapper(mContext);
+		return mapper.findLessonsScholars();
+	}
 }

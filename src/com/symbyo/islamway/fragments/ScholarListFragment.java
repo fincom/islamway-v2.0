@@ -1,4 +1,4 @@
-package com.symbyo.islamway;
+package com.symbyo.islamway.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -7,13 +7,25 @@ import android.widget.ListAdapter;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.symbyo.islamway.adapters.ScholarsAdapter;
+import com.symbyo.islamway.service.IWService.Section;
 
 public class ScholarListFragment extends SherlockListFragment {
+
+	public final static String SECTION_KEY = "section";
+	
+	private Section mSection;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		Log.d("Islamway", "onCreate called");
 		super.onActivityCreated(savedInstanceState);
+		// get the section
+		int section_index = getArguments().getInt(SECTION_KEY, -1);
+		if (section_index < 0) {
+			mSection = Section.QURAN;
+		} else {
+			mSection = Section.values()[section_index];
+		}
 		// get the quran scholars list from the database.
 		new AsyncTask<Void, Void, ListAdapter>() {
 
@@ -24,8 +36,12 @@ public class ScholarListFragment extends SherlockListFragment {
 
 			@Override
 			protected ListAdapter doInBackground(Void... params) {
-				
-				return new ScholarsAdapter(getActivity());
+				if (getActivity() == null) {
+					return null;
+				}
+				@SuppressWarnings("null")
+				ListAdapter adapter = new ScholarsAdapter(getActivity(), mSection);
+				return adapter;
 			}
 		}.execute();
 	}

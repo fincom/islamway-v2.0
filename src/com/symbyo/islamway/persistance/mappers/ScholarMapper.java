@@ -47,10 +47,6 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		public String toString() {
 			return mName;
 		}
-		
-		public String toFullName() {
-			return SCHOLAR_TABLE_NAME + "." + mName;
-		}
 	}
 	
 	private enum ScholarSectionsField {
@@ -226,6 +222,35 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder{
 		
 		return (List<Scholar>) findMany(stmt);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Scholar> findLessonsScholars() {
+		StatementSource stmt = new StatementSource() {
+
+			@Override
+			public String sql() {
+				// FIXME this query returns all scholars in the table!!
+				StringBuilder bldr;
+				bldr = new StringBuilder("SELECT " + getScholarFields("sch")
+						+ " FROM " + SCHOLAR_TABLE_NAME + " AS sch");
+				bldr.append(" INNER JOIN " + SECTION_TABLE_NAME + " AS sec");
+				bldr.append(" ON sch." + ScholarField.ID + " = sec."
+						+ ScholarSectionsField.SCHOLAR_ID);
+				bldr.append(" WHERE " + ScholarSectionsField.SECTION + " = '"
+						+ Section.LESSONS.toString() + "'");
+				bldr.append(" ORDER BY " + ScholarField.NAME.toString());
+				return bldr.toString();
+			}
+
+			@Override
+			public String[] parameters() {
+				return null;
+			}
+			
+		};
+		
+		return (List<Scholar>) findMany(stmt);
 	}
 	
 	@Override

@@ -1,5 +1,6 @@
-package com.symbyo.islamway;
+package com.symbyo.islamway.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,33 +12,66 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.symbyo.islamway.OnSlideMenuItemClick;
+import com.symbyo.islamway.R;
 
 public class SlideMenuFragment extends SherlockFragment {
-	private ListView mMenuList;
+	
+	private final String ITEM_TYPE_KEY = "item_type";
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putInt(ITEM_TYPE_KEY, mCurrentMenuItemType.ordinal());
+		super.onSaveInstanceState(outState);
+	}
+
+	public enum MenuItemType {
+		QURAN,
+		LESSONS,
+		PLAYING_LIST
+	}
+	
+	private OnSlideMenuItemClick mListener;
+	private MenuItemType mCurrentMenuItemType;
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mListener = (OnSlideMenuItemClick) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " must implement OnSlideMenuItemClick");
+		}
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		
+		if (savedInstanceState != null) {
+			mCurrentMenuItemType = MenuItemType.values()[savedInstanceState.getInt(ITEM_TYPE_KEY)];
+		}
+		
 		SlideMenuItems adapter = new SlideMenuItems(getActivity());
-		adapter.add(new SlideMenuItem(R.string.quran, 0));
-		adapter.add(new SlideMenuItem(R.string.lessons, 0));
-		adapter.add(new SlideMenuItem(R.string.playing_list, 0));
+		adapter.add(new SlideMenuItem(R.string.quran, 0, MenuItemType.QURAN));
+		adapter.add(new SlideMenuItem(R.string.lessons, 0, MenuItemType.LESSONS));
+		adapter.add(new SlideMenuItem(R.string.playing_list, 0, MenuItemType.PLAYING_LIST));
 		
-		ListView mMenuList = (ListView) getActivity().findViewById(R.id.slidemenu_list);
-		mMenuList.setAdapter(adapter);
+		ListView list = (ListView) getActivity().findViewById(R.id.slidemenu_list);
+		//list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		list.setAdapter(adapter);
 		
-		mMenuList.setOnItemClickListener(new OnItemClickListener() {
+		list.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				SlideMenuItem item = (SlideMenuItem) parent.getAdapter()
 						.getItem(position);
-				String msg = String.format("selected item: %s", item.text);
-				Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+				mListener.onSlideMenuItemClick(item);
+				mCurrentMenuItemType = item.type;
 			}
 		});
 	}
@@ -48,15 +82,17 @@ public class SlideMenuFragment extends SherlockFragment {
 		return inflater.inflate(R.layout.slidemenu, null);
 	}
 	
-	private class SlideMenuItem {
+	public class SlideMenuItem {
+		public final MenuItemType type;
 		public String text = null;
 		public Drawable icon = null;
 		
-		public SlideMenuItem(int textResource, int icon_resource) {
+		public SlideMenuItem(int textResource, int icon_resource, MenuItemType type) {
 			this.text = getResources().getString(textResource);
 			if (icon_resource != 0) {
 				this.icon = getResources().getDrawable(icon_resource);
 			}
+			this.type = type;
 		}
 	}
 	

@@ -1,19 +1,46 @@
 package com.symbyo.islamway;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
-import com.symbyo.islamway.ServiceHelper.RequestState;
+import com.symbyo.islamway.fragments.ScholarListFragment;
+import com.symbyo.islamway.fragments.SlideMenuFragment;
+import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
+import com.symbyo.islamway.service.IWService.Section;
 
-public class QuranActivity extends SlidingFragmentActivity {
+public class QuranActivity extends SlidingFragmentActivity implements OnSlideMenuItemClick {
 	
 	private final int REQUEST_INVALID = 0;
 	private final String REQUEST_KEY = "request";
+	private final String ACTIVITY_TITLE_KEY = "title";
+	private final String LOADED_SECTION = "loaded_section";
+	
+	/**
+	 * This is the id of the latest request sent to the ServiceHelper.
+	 */
+	private int mRequestId = REQUEST_INVALID;
+	
+	/**
+	 * The fragment that holds the ScholarListFragment.
+	 */
+	private Fragment mContent;
+	
+	/**
+	 * The Activity title.
+	 */
+	private String mActivityTitle;
+	
+	/**
+	 * The currently loaded section in the scholars list fragment.
+	 */
+	private Section mLoadedSection;
 	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -23,33 +50,41 @@ public class QuranActivity extends SlidingFragmentActivity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putInt(REQUEST_KEY, mRequestId);
+		outState.putString(ACTIVITY_TITLE_KEY, mActivityTitle);
+		outState.putInt(LOADED_SECTION, mLoadedSection.ordinal());
 		super.onSaveInstanceState(outState);
 	}
-
-	private int mRequestId = REQUEST_INVALID;
-	private Fragment mContent;
 
     @Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        if (savedInstanceState != null && (savedInstanceState.getInt(REQUEST_KEY) != 0)) {
+        
+        if (savedInstanceState != null) {
+        	// load back the latest request id, if any
         	mRequestId = savedInstanceState.getInt(REQUEST_KEY);
+        	// load the activity title
+        	mActivityTitle = savedInstanceState.getString(ACTIVITY_TITLE_KEY);
+        	if (mActivityTitle == null) {
+        		mActivityTitle = getString(R.string.quran);
+        	}
+        	mLoadedSection = Section.values()[savedInstanceState.getInt(LOADED_SECTION)];
+        } else  {
+        	mActivityTitle = getString(R.string.quran);
+        	mLoadedSection = Section.QURAN;
         }
         
-        setTitle(R.string.quran);
+        setTitle(mActivityTitle);
         
         setContentView(R.layout.quran_activity_frame);
         
-        // check if content frame is already loaded.
-        /*if (savedInstanceState != null) {
-			mContent = getSupportFragmentManager()
-					.getFragment(savedInstanceState, CONTENT_TOKEN);
-        }*/
 		if (mContent == null) {
 			mContent = new ScholarListFragment();
 		}
 		// load the content fragment into the frame.
+		Bundle bndl = new Bundle();
+		bndl.putInt(ScholarListFragment.SECTION_KEY, mLoadedSection.ordinal());
+		mContent.setArguments(bndl);
 		getSupportFragmentManager()
 		.beginTransaction()
 		.replace(R.id.content_frame, mContent)
@@ -87,10 +122,10 @@ public class QuranActivity extends SlidingFragmentActivity {
         //TEST BEGIN
         //if (isNetworkAvailable()) {
         	//@SuppressWarnings("null")
-			ServiceHelper helper = ServiceHelper.getInstance(getApplicationContext());
+			/*ServiceHelper helper = ServiceHelper.getInstance(getApplicationContext());
 			if (helper.getRequestState(mRequestId) == RequestState.NOT_REGISTERED) {
 				mRequestId = helper.getQuranScholars();
-			}
+			}*/
             
         //}
         //TEST END
@@ -124,4 +159,34 @@ public class QuranActivity extends SlidingFragmentActivity {
         return false;
     }
     */
+
+	@Override
+	public void onSlideMenuItemClick(SlideMenuItem item) {
+		// TODO display lessons scholars.
+		String msg = String.format("selected item: %s", item.text);
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+		
+		if (item.type == SlideMenuFragment.MenuItemType.QURAN) {
+			mLoadedSection = Section.QURAN;
+		} else if (item.type == SlideMenuFragment.MenuItemType.LESSONS) {
+			mLoadedSection = Section.LESSONS;
+		} else if (item.type == SlideMenuFragment.MenuItemType.PLAYING_LIST) {
+			// FIXME what section to load here?!!!
+		}
+		
+		// change the title
+		mActivityTitle = item.text;
+		setTitle(mActivityTitle);
+		
+		// load the content fragment into the frame.
+		mContent = new ScholarListFragment();
+		Bundle bndl = new Bundle();
+		bndl.putInt(ScholarListFragment.SECTION_KEY, mLoadedSection.ordinal());
+		mContent.setArguments(bndl);
+		getSupportFragmentManager()
+		.beginTransaction()
+		.replace(R.id.content_frame, mContent)
+		.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+		.commit();
+	}
 }
