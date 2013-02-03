@@ -27,6 +27,7 @@ public class SlideMenuFragment extends SherlockFragment {
 		super.onSaveInstanceState(outState);
 	}
 
+	// same order as in the array adapter.
 	public enum MenuItemType {
 		QURAN,
 		LESSONS,
@@ -64,6 +65,7 @@ public class SlideMenuFragment extends SherlockFragment {
 		ListView list = (ListView) getActivity().findViewById(R.id.slidemenu_list);
 		list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		list.setAdapter(adapter);
+		list.setItemChecked(mCurrentMenuItemType.ordinal(), true);
 		
 		list.setOnItemClickListener(new OnItemClickListener() {
 

@@ -85,29 +85,32 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
 		
 		// check if the slidingmenu_frame frame exists. if it does, then the 
 		// the slidemenu is always visible.
+        
 		SlidingMenu sm = getSlidingMenu();
 		if (findViewById(R.id.slidemenu_frame) == null) {
 			setBehindContentView(R.layout.slidemenu_frame);
 			sm.setSlidingEnabled(true);
 			sm.setBehindWidthRes(R.dimen.slidingmenu_width);
-	        sm.setShadowWidthRes(R.dimen.slidemenu_shadow_width);
+			sm.setShadowWidthRes(R.dimen.slidemenu_shadow_width);
 			sm.setShadowDrawable(R.drawable.shadow);
-	        sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-	        
-	        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-	        
-	        setSlidingActionBarEnabled(true);
+			sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+			setSlidingActionBarEnabled(true);
 		} else {
 			// setting the behind view with a dummy view.
 			setBehindContentView(new View(this));
 			sm.setSlidingEnabled(false);
 			sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
 		}
-        
-		getSupportFragmentManager()
-		.beginTransaction()
-		.replace(R.id.slidemenu_frame, new SlideMenuFragment())
-		.commit();
+		if (savedInstanceState == null) {
+    		getSupportFragmentManager()
+    		.beginTransaction()
+    		.replace(R.id.slidemenu_frame, new SlideMenuFragment())
+    		.commit();
+        }
+		
         
         
         
