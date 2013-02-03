@@ -8,7 +8,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.symbyo.islamway.domain.Scholar;
-import com.symbyo.islamway.service.IWService.Section;
 
 
 public class ScholarParser extends Parser {
