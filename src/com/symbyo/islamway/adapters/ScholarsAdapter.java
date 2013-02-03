@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ import com.symbyo.islamway.service.IWService.Section;
 public class ScholarsAdapter extends BaseAdapter {
 	private final Context mContext;
 	private List<Scholar> mScholars;
-	private final int ITEM_LAYOUT = R.layout.scholar_list_item;
+	private final int ITEM_LAYOUT =  R.layout.scholar_list_item;
 
 	public ScholarsAdapter(@NonNull Context context, @NonNull Section section) {
 		super();

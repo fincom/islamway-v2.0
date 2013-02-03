@@ -20,7 +20,6 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
 	private final int REQUEST_INVALID = 0;
 	private final String REQUEST_KEY = "request";
 	private final String ACTIVITY_TITLE_KEY = "title";
-	private final String LOADED_SECTION = "loaded_section";
 	
 	/**
 	 * This is the id of the latest request sent to the ServiceHelper.
@@ -30,7 +29,7 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
 	/**
 	 * The fragment that holds the ScholarListFragment.
 	 */
-	private Fragment mContent;
+	//private Fragment mContent;
 	
 	/**
 	 * The Activity title.
@@ -40,7 +39,7 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
 	/**
 	 * The currently loaded section in the scholars list fragment.
 	 */
-	private Section mLoadedSection;
+	//private Section mLoadedSection;
 	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -51,7 +50,6 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putInt(REQUEST_KEY, mRequestId);
 		outState.putString(ACTIVITY_TITLE_KEY, mActivityTitle);
-		outState.putInt(LOADED_SECTION, mLoadedSection.ordinal());
 		super.onSaveInstanceState(outState);
 	}
 
@@ -68,27 +66,22 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
         	if (mActivityTitle == null) {
         		mActivityTitle = getString(R.string.quran);
         	}
-        	mLoadedSection = Section.values()[savedInstanceState.getInt(LOADED_SECTION)];
         } else  {
         	mActivityTitle = getString(R.string.quran);
-        	mLoadedSection = Section.QURAN;
+        	// load the content fragment into the frame.
+    		Bundle bndl = new Bundle();
+    		bndl.putInt(ScholarListFragment.SECTION_KEY, Section.QURAN.ordinal());
+    		Fragment content = new ScholarListFragment();
+    		content.setArguments(bndl);
+    		getSupportFragmentManager()
+    		.beginTransaction()
+    		.replace(R.id.content_frame, content)
+    		.commit();
         }
         
         setTitle(mActivityTitle);
         
         setContentView(R.layout.quran_activity_frame);
-        
-		if (mContent == null) {
-			mContent = new ScholarListFragment();
-		}
-		// load the content fragment into the frame.
-		Bundle bndl = new Bundle();
-		bndl.putInt(ScholarListFragment.SECTION_KEY, mLoadedSection.ordinal());
-		mContent.setArguments(bndl);
-		getSupportFragmentManager()
-		.beginTransaction()
-		.replace(R.id.content_frame, mContent)
-		.commit();
 		
 		// check if the slidingmenu_frame frame exists. if it does, then the 
 		// the slidemenu is always visible.
@@ -105,7 +98,7 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
 	        
 	        setSlidingActionBarEnabled(true);
 		} else {
-			// setting the behinde view with a dummy view.
+			// setting the behind view with a dummy view.
 			setBehindContentView(new View(this));
 			sm.setSlidingEnabled(false);
 			sm.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
@@ -162,31 +155,40 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
 
 	@Override
 	public void onSlideMenuItemClick(SlideMenuItem item) {
-		// TODO display lessons scholars.
-		String msg = String.format("selected item: %s", item.text);
-		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-		
 		if (item.type == SlideMenuFragment.MenuItemType.QURAN) {
-			mLoadedSection = Section.QURAN;
+			Fragment content = new ScholarListFragment();
+			Bundle bndl = new Bundle();
+			bndl.putInt(ScholarListFragment.SECTION_KEY, Section.QURAN.ordinal());
+			content.setArguments(bndl);
+			getSupportFragmentManager()
+			.beginTransaction()
+			.replace(R.id.content_frame, content)
+			.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+			.commit();
 		} else if (item.type == SlideMenuFragment.MenuItemType.LESSONS) {
-			mLoadedSection = Section.LESSONS;
+			Fragment content = new ScholarListFragment();
+			Bundle bndl = new Bundle();
+			bndl.putInt(ScholarListFragment.SECTION_KEY, Section.LESSONS.ordinal());
+			content.setArguments(bndl);
+			getSupportFragmentManager()
+			.beginTransaction()
+			.replace(R.id.content_frame, content)
+			.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+			.commit();
 		} else if (item.type == SlideMenuFragment.MenuItemType.PLAYING_LIST) {
-			// FIXME what section to load here?!!!
+			// TODO remove the following lines and start the playing list
+			// activity
+			Fragment frgmnt = getSupportFragmentManager()
+					.findFragmentById(R.id.content_frame);
+			getSupportFragmentManager()
+					.beginTransaction()
+					.remove(frgmnt)
+					.commit();
 		}
 		
 		// change the title
 		mActivityTitle = item.text;
 		setTitle(mActivityTitle);
-		
-		// load the content fragment into the frame.
-		mContent = new ScholarListFragment();
-		Bundle bndl = new Bundle();
-		bndl.putInt(ScholarListFragment.SECTION_KEY, mLoadedSection.ordinal());
-		mContent.setArguments(bndl);
-		getSupportFragmentManager()
-		.beginTransaction()
-		.replace(R.id.content_frame, mContent)
-		.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-		.commit();
+
 	}
 }

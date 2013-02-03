@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckedTextView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.symbyo.islamway.OnSlideMenuItemClick;
@@ -52,6 +52,8 @@ public class SlideMenuFragment extends SherlockFragment {
 		
 		if (savedInstanceState != null) {
 			mCurrentMenuItemType = MenuItemType.values()[savedInstanceState.getInt(ITEM_TYPE_KEY)];
+		} else {
+			mCurrentMenuItemType = MenuItemType.QURAN;
 		}
 		
 		SlideMenuItems adapter = new SlideMenuItems(getActivity());
@@ -60,7 +62,7 @@ public class SlideMenuFragment extends SherlockFragment {
 		adapter.add(new SlideMenuItem(R.string.playing_list, 0, MenuItemType.PLAYING_LIST));
 		
 		ListView list = (ListView) getActivity().findViewById(R.id.slidemenu_list);
-		//list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		list.setAdapter(adapter);
 		
 		list.setOnItemClickListener(new OnItemClickListener() {
@@ -103,7 +105,7 @@ public class SlideMenuFragment extends SherlockFragment {
 				convertView = LayoutInflater.from(getContext())
 						.inflate(R.layout.slidemenu_row, null);
 			}
-			TextView title = (TextView) convertView.findViewById(R.id.title);
+			CheckedTextView title = (CheckedTextView) convertView.findViewById(R.id.title);
 			title.setText(getItem(position).text);
 			Drawable icon = getItem(position).icon;
 			if (icon != null) {
