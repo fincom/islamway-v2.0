@@ -14,11 +14,16 @@ public class ScholarListFragment extends SherlockListFragment {
 	public final static String SECTION_KEY = "section";
 	
 	private Section mSection;
+	//private ListAdapter mAdapter;
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
+		// we set the retain instance to true so as not to populate the list
+		// from the database everytime the configuration changes.
+		setRetainInstance(true);
 		Log.d("Islamway", "onCreate called");
-		super.onActivityCreated(savedInstanceState);
+		super.onCreate(savedInstanceState);
+		
 		// get the section
 		int section_index = getArguments().getInt(SECTION_KEY, -1);
 		if (section_index < 0) {
@@ -26,11 +31,13 @@ public class ScholarListFragment extends SherlockListFragment {
 		} else {
 			mSection = Section.values()[section_index];
 		}
+
 		// get the quran scholars list from the database.
 		new AsyncTask<Void, Void, ListAdapter>() {
 
 			@Override
 			protected void onPostExecute(ListAdapter result) {
+				//ScholarListFragment.this.mAdapter = result;
 				ScholarListFragment.this.setListAdapter(result);
 			}
 
@@ -40,10 +47,10 @@ public class ScholarListFragment extends SherlockListFragment {
 					return null;
 				}
 				@SuppressWarnings("null")
-				ListAdapter adapter = new ScholarsAdapter(getActivity(), mSection);
+				ListAdapter adapter = new ScholarsAdapter(getActivity(),
+						mSection);
 				return adapter;
 			}
 		}.execute();
 	}
-	
 }
