@@ -3,6 +3,7 @@ package com.symbyo.islamway.adapters;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,9 +26,23 @@ import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.persistance.Repository;
 import com.symbyo.islamway.service.IWService.Section;
 
-public class ScholarsAdapter extends BaseAdapter {
+public class ScholarsAdapter extends BaseAdapter implements Filterable {
 	private final Context mContext;
+	
+	/**
+	 * List of scholars returned by this adapter.
+	 */
 	private List<Scholar> mScholars;
+	
+	/**
+	 * when filtered, this holds the original list while mScholars will hold 
+	 * only the filtered list.
+	 */
+	private List<Scholar> mOriginalValues;
+	private ArrayFilter mFilter;
+	
+	private final Object mLock = new Object();
+	
 	private final int ITEM_LAYOUT =  R.layout.scholar_list_item;
 
 	public ScholarsAdapter(@NonNull Context context, @NonNull Section section) {
@@ -133,4 +150,81 @@ public class ScholarsAdapter extends BaseAdapter {
 		public TextView title;
 		public ImageView image;
 	}
+	
+    private class ArrayFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence prefix) {
+            FilterResults results = new FilterResults();
+
+            if (mOriginalValues == null) {
+                synchronized (mLock) {
+                    mOriginalValues = new ArrayList<Scholar>(mScholars);
+                }
+            }
+
+            if (prefix == null || prefix.length() == 0) {
+                ArrayList<Scholar> list;
+                synchronized (mLock) {
+                    list = new ArrayList<Scholar>(mOriginalValues);
+                }
+                results.values = list;
+                results.count = list.size();
+            } else {
+                String prefixString = prefix.toString();
+
+                ArrayList<Scholar> values;
+                synchronized (mLock) {
+                    values = new ArrayList<Scholar>(mOriginalValues);
+                }
+
+                final int count = values.size();
+                final ArrayList<Scholar> newValues = new ArrayList<Scholar>();
+
+                for (int i = 0; i < count; i++) {
+                    final Scholar scholar = values.get(i);
+                    final String valueText = scholar.getName();
+
+                    // First match against the whole, non-splitted value
+                    if (valueText.startsWith(prefixString)) {
+                        newValues.add(scholar);
+                    } else {
+                        final String[] words = valueText.split(" ");
+                        final int wordCount = words.length;
+
+                        // Start at index 0, in case valueText starts with space(s)
+                        for (int k = 0; k < wordCount; k++) {
+                            if (words[k].startsWith(prefixString)) {
+                                newValues.add(scholar);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                results.values = newValues;
+                results.count = newValues.size();
+            }
+
+            return results;
+        }
+        
+		@Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            //type unchecked warning. it's safe in this case!
+            mScholars = (List<Scholar>) results.values;
+            if (results.count > 0) {
+                notifyDataSetChanged();
+            } else {
+                notifyDataSetInvalidated();
+            }
+        }
+    }
+
+	@Override
+	public Filter getFilter() {
+        if (mFilter == null) {
+            mFilter = new ArrayFilter();
+        }
+        return mFilter;
+    }
 }
