@@ -14,8 +14,20 @@ import com.symbyo.islamway.fragments.SlideMenuFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.service.IWService.Section;
 
-public class QuranActivity extends SlidingFragmentActivity implements OnSlideMenuItemClick {
+public class ScholarsActivity extends SlidingFragmentActivity implements OnSlideMenuItemClick {
 	
+	@Override
+	public boolean onSearchRequested() {
+		try {
+			Searchable fragment = (Searchable) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+			if (fragment != null) {
+				fragment.expandSearchView();
+			}
+		} catch (ClassCastException e) {}
+		
+		return super.onSearchRequested();
+	}
+
 	private final int REQUEST_INVALID = 0;
 	private final String REQUEST_KEY = "request";
 	private final String ACTIVITY_TITLE_KEY = "title";
@@ -116,8 +128,8 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
         // TODO: remove test code
         //TEST BEGIN
         //if (isNetworkAvailable()) {
-        	//@SuppressWarnings("null")
-			/*ServiceHelper helper = ServiceHelper.getInstance(getApplicationContext());
+        	/*@SuppressWarnings("null")
+			ServiceHelper helper = ServiceHelper.getInstance(getApplicationContext());
 			if (helper.getRequestState(mRequestId) == RequestState.NOT_REGISTERED) {
 				mRequestId = helper.getQuranScholars();
 			}*/
@@ -128,7 +140,6 @@ public class QuranActivity extends SlidingFragmentActivity implements OnSlideMen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
     	getSupportMenuInflater().inflate(R.menu.activity_quran, menu);
         return true;
     }

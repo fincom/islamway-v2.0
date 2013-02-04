@@ -3,7 +3,8 @@
 
     <string name="app_name">Islamway</string>
     <string name="hello_world">Hello world!</string>
-    <string name="menu_settings">Settings</string>
+    <string name="menu_settings">إعدادات</string>
+    <string name="menu_search">بحث</string>
     <string name="quran">القرآن</string>
     <string name="lessons">الدروس</string>
     <string name="playing_list">قائمة الاستماع</string>
