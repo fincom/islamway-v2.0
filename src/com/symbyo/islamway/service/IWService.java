@@ -15,6 +15,9 @@ import android.widget.Toast;
 
 import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.DomainObject;
+import com.symbyo.islamway.domain.Section;
+import com.symbyo.islamway.domain.Section.SectionType;
+import com.symbyo.islamway.persistance.Repository;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
 import com.symbyo.islamway.service.parsers.Parser;
@@ -39,23 +42,6 @@ public class IWService extends IntentService {
 	public static final String	EXTRA_RESOURCE_ID			= "resource_id";
 	public static final String	EXTRA_PARAMS				= "params";
 	public static final String	EXTRA_CALLBACK_INTENT		= "callback_intent";
-
-	public enum Section {
-		QURAN("recitations"),
-		LESSONS("lessons");
-
-		private final String	mValue;
-
-		private Section(final String value) {
-			mValue = value;
-		}
-
-		@Override
-		public String toString()
-		{
-			return mValue;
-		}
-	}
 
 	public enum Params {
 		SECTION("param_section"),
@@ -148,9 +134,11 @@ public class IWService extends IntentService {
 		String url_format = BASE_URL;
 		if ( action.equals( ACTION_GET_QURAN_SCHOLARS ) ) {
 			/** /recitations/scholars */
-			url_format += Section.QURAN.toString() + "/scholars";
+			Section section = Repository.getInstance( getApplicationContext() )
+					.getSection( SectionType.QURAN );
+			url_format += section.toString() + "/scholars";
 			result = new ScholarResourceFactory( url_format,
-					RestClient.HTTPMethod.GET, Section.QURAN );
+					RestClient.HTTPMethod.GET, section );
 		}
 		if ( result == null ) {
 			throw new NullPointerException( "ResourceFactory is null" );

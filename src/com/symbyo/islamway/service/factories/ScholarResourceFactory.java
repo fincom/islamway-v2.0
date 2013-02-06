@@ -4,7 +4,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import android.content.Context;
 
-import com.symbyo.islamway.service.IWService;
+import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.service.parsers.Parser;
 import com.symbyo.islamway.service.parsers.ScholarParser;
 import com.symbyo.islamway.service.processors.Processor;
@@ -13,7 +13,7 @@ import com.symbyo.islamway.service.restclients.RestClient;
 import com.symbyo.islamway.service.restclients.ScholarRestClient;
 
 public class ScholarResourceFactory extends ResourceFactory {
-	IWService.Section	mSection;
+	Section	mSection;
 
 	/**
 	 * Initializes a ScholarResourceFactory. The default_section parameter is
@@ -24,7 +24,7 @@ public class ScholarResourceFactory extends ResourceFactory {
 	 * @param default_section
 	 */
 	public ScholarResourceFactory(@NonNull String url_format,
-			RestClient.HTTPMethod http_method, IWService.Section default_section) {
+			RestClient.HTTPMethod http_method, Section default_section) {
 
 		super( url_format, http_method );
 		mSection = default_section;

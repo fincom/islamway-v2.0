@@ -16,8 +16,8 @@ import android.util.Log;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.IScholarFinder;
 import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.persistance.Repository;
-import com.symbyo.islamway.service.IWService.Section;
 
 public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 
@@ -214,71 +214,6 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<Scholar> findQuranScholars()
-	{
-		StatementSource stmt = new StatementSource() {
-
-			@Override
-			public String sql()
-			{
-				// FIXME this query returns all scholars in the table!!
-				StringBuilder bldr;
-				bldr = new StringBuilder( "SELECT " + getScholarFields( "sch" )
-						+ " FROM " + SCHOLAR_TABLE_NAME + " AS sch" );
-				bldr.append( " INNER JOIN " + SECTION_TABLE_NAME + " AS sec" );
-				bldr.append( " ON sch." + ScholarField.ID + " = sec."
-						+ ScholarSectionsField.SCHOLAR_ID );
-				bldr.append( " WHERE " + ScholarSectionsField.SECTION + " = '"
-						+ Section.QURAN.toString() + "'" );
-				bldr.append( " ORDER BY " + ScholarField.NAME.toString() );
-				return bldr.toString();
-			}
-
-			@Override
-			public String[] parameters()
-			{
-				return null;
-			}
-
-		};
-
-		return (List<Scholar>) findMany( stmt );
-
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Scholar> findLessonsScholars()
-	{
-		StatementSource stmt = new StatementSource() {
-
-			@Override
-			public String sql()
-			{
-				// FIXME this query returns all scholars in the table!!
-				StringBuilder bldr;
-				bldr = new StringBuilder( "SELECT " + getScholarFields( "sch" )
-						+ " FROM " + SCHOLAR_TABLE_NAME + " AS sch" );
-				bldr.append( " INNER JOIN " + SECTION_TABLE_NAME + " AS sec" );
-				bldr.append( " ON sch." + ScholarField.ID + " = sec."
-						+ ScholarSectionsField.SCHOLAR_ID );
-				bldr.append( " WHERE " + ScholarSectionsField.SECTION + " = '"
-						+ Section.LESSONS.toString() + "'" );
-				bldr.append( " ORDER BY " + ScholarField.NAME.toString() );
-				return bldr.toString();
-			}
-
-			@Override
-			public String[] parameters()
-			{
-				return null;
-			}
-
-		};
-
-		return (List<Scholar>) findMany( stmt );
-	}
-
 	@Override
 	public void insert( @NonNull DomainObject obj, SQLiteDatabase db )
 			throws SQLiteException
@@ -336,5 +271,45 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 			}
 		}
 
+	}
+
+	@Override
+	public List<Scholar> findScholarsBySection( final Section section )
+	{
+		StatementSource stmt = new StatementSource() {
+
+			@Override
+			public String sql()
+			{
+				// FIXME this query returns all scholars in the table!!
+				StringBuilder bldr;
+				bldr = new StringBuilder( "SELECT " + getScholarFields( "sch" )
+						+ " FROM " + SCHOLAR_TABLE_NAME + " AS sch" );
+				bldr.append( " INNER JOIN " + SECTION_TABLE_NAME + " AS sec" );
+				bldr.append( " ON sch." + ScholarField.ID + " = sec."
+						+ ScholarSectionsField.SCHOLAR_ID );
+				bldr.append( " WHERE " + ScholarSectionsField.SECTION + " = '"
+						+ section.toString() + "'" );
+				bldr.append( " ORDER BY " + ScholarField.NAME.toString() );
+				return bldr.toString();
+			}
+
+			@Override
+			public String[] parameters()
+			{
+				return null;
+			}
+
+		};
+		
+		List<Scholar> result = null;
+		try {
+			// unchecked but safe enough.
+			result = (List<Scholar>) findMany( stmt );
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 }

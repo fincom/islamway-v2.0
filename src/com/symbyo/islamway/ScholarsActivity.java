@@ -9,10 +9,12 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.symbyo.islamway.domain.Section;
+import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.fragments.ScholarListFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
-import com.symbyo.islamway.service.IWService.Section;
+import com.symbyo.islamway.persistance.Repository;
 
 public class ScholarsActivity extends SlidingFragmentActivity implements
 		OnSlideMenuItemClick {
@@ -67,8 +69,9 @@ public class ScholarsActivity extends SlidingFragmentActivity implements
 			mActivityTitle = getString( R.string.quran );
 			// load the content fragment into the frame.
 			Bundle bndl = new Bundle();
-			bndl.putInt( ScholarListFragment.SECTION_KEY,
-					Section.QURAN.ordinal() );
+			Section section = Repository.getInstance( getApplicationContext() )
+					.getSection( SectionType.QURAN );
+			bndl.putParcelable( ScholarListFragment.SECTION_KEY, section );
 			Fragment content = new ScholarListFragment();
 			content.setArguments( bndl );
 			getSupportFragmentManager().beginTransaction()
@@ -151,8 +154,9 @@ public class ScholarsActivity extends SlidingFragmentActivity implements
 		if ( item.type == SlideMenuFragment.MenuItemType.QURAN ) {
 			Fragment content = new ScholarListFragment();
 			Bundle bndl = new Bundle();
-			bndl.putInt( ScholarListFragment.SECTION_KEY,
-					Section.QURAN.ordinal() );
+			Section section = Repository.getInstance( getApplicationContext() )
+					.getSection( SectionType.QURAN );
+			bndl.putParcelable( ScholarListFragment.SECTION_KEY, section );
 			content.setArguments( bndl );
 			getSupportFragmentManager().beginTransaction()
 					.replace( R.id.content_frame, content )
@@ -161,8 +165,9 @@ public class ScholarsActivity extends SlidingFragmentActivity implements
 		} else if ( item.type == SlideMenuFragment.MenuItemType.LESSONS ) {
 			Fragment content = new ScholarListFragment();
 			Bundle bndl = new Bundle();
-			bndl.putInt( ScholarListFragment.SECTION_KEY,
-					Section.LESSONS.ordinal() );
+			Section section = Repository.getInstance( getApplicationContext() )
+					.getSection( SectionType.LESSONS );
+			bndl.putParcelable( ScholarListFragment.SECTION_KEY, section );
 			content.setArguments( bndl );
 			getSupportFragmentManager().beginTransaction()
 					.replace( R.id.content_frame, content )

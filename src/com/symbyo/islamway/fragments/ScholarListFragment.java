@@ -13,7 +13,7 @@ import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.symbyo.islamway.R;
 import com.symbyo.islamway.Searchable;
 import com.symbyo.islamway.adapters.ScholarsAdapter;
-import com.symbyo.islamway.service.IWService.Section;
+import com.symbyo.islamway.domain.Section;
 
 public class ScholarListFragment extends SherlockListFragment implements
 		Searchable {
@@ -36,12 +36,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 		super.onCreate( savedInstanceState );
 
 		// get the section
-		int section_index = getArguments().getInt( SECTION_KEY, -1 );
-		if ( section_index < 0 ) {
-			mSection = Section.QURAN;
-		} else {
-			mSection = Section.values()[section_index];
-		}
+		mSection = getArguments().getParcelable( SECTION_KEY );
 
 		// get the quran scholars list from the database.
 		new AsyncTask<Void, Void, ScholarsAdapter>() {
@@ -88,8 +83,9 @@ public class ScholarListFragment extends SherlockListFragment implements
 			@Override
 			public boolean onQueryTextChange( String newText )
 			{
-				// TODO filter the list here.
-				mAdapter.getFilter().filter( newText );
+				if (mAdapter != null) {
+					mAdapter.getFilter().filter( newText );
+				}
 				return false;
 			}
 		} );

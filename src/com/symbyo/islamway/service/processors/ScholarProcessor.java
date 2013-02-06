@@ -9,8 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.persistance.UnitOfWork;
-import com.symbyo.islamway.service.IWService.Section;
 
 public class ScholarProcessor extends Processor {
 

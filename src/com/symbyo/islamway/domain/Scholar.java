@@ -12,7 +12,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.symbyo.islamway.persistance.UnitOfWork;
-import com.symbyo.islamway.service.IWService.Section;
 
 public class Scholar extends DomainObject {
 
@@ -71,7 +70,7 @@ public class Scholar extends DomainObject {
 		UnitOfWork.getCurrent().registerNew( this );
 	}
 
-	protected Scholar(Parcel source) {
+	protected Scholar( Parcel source ) {
 		super( source );
 		mServerId = source.readInt();
 		mName = source.readString();

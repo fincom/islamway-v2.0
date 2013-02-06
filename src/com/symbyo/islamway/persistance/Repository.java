@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 
 import junit.framework.Assert;
 import android.content.Context;
@@ -12,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.persistance.mappers.AbstractMapper;
 import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 
@@ -164,17 +164,8 @@ public class Repository extends SQLiteOpenHelper {
 	}
 
 	// Persistence public interface ////////////////////////////////////////////
-	public List<Scholar> getQuranScholars()
-	{
-		@SuppressWarnings("null")
-		ScholarMapper mapper = new ScholarMapper( mContext );
-		return mapper.findQuranScholars();
-	}
-
-	public List<Scholar> getLessonsScholars()
-	{
-		@SuppressWarnings("null")
-		ScholarMapper mapper = new ScholarMapper( mContext );
-		return mapper.findLessonsScholars();
+	
+	public Section getSection(Section.SectionType type) {
+		return new Section(type);
 	}
 }
