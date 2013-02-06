@@ -17,32 +17,33 @@ import android.content.ContentValues;
 
 public abstract class RestClient {
 
-	protected final int RESOURCE_ID_NONE = -1;
-	protected int mResourceId = RESOURCE_ID_NONE;
-	protected ContentValues mParams;
-	protected final String mUrlFormat;
-	protected String mUrl;
-	protected HTTPMethod mHTTPMethod;
-	
+	protected final int		RESOURCE_ID_NONE	= -1;
+	protected int			mResourceId			= RESOURCE_ID_NONE;
+	protected ContentValues	mParams;
+	protected final String	mUrlFormat;
+	protected String		mUrl;
+	protected HTTPMethod	mHTTPMethod;
+
 	public enum HTTPMethod {
-		GET ("GET"),
-		POST ("POST");
-		
-		private final String mValue;
-		
+		GET("GET"),
+		POST("POST");
+
+		private final String	mValue;
+
 		private HTTPMethod(String value) {
 			mValue = value;
 		}
-		
+
 		@Override
-		public String toString() {
+		public String toString()
+		{
 			return mValue;
 		}
 	}
 
 	public RestClient(@NonNull final String url_format, HTTPMethod http_method) {
 		mUrlFormat = url_format;
-		if ( http_method == null) {
+		if ( http_method == null ) {
 			http_method = HTTPMethod.GET;
 		}
 		mHTTPMethod = http_method;
@@ -54,104 +55,109 @@ public abstract class RestClient {
 	 *            are inserted into the url-format in order of insertion of keys
 	 * @return
 	 */
-	public RestClient setParameters(@NonNull ContentValues params) {
+	public RestClient setParameters( @NonNull ContentValues params )
+	{
 		mParams = params;
 		return this;
 	}
 
-	public Response getResponse() throws NetworkException {
+	public Response getResponse() throws NetworkException
+	{
 		HttpURLConnection conn = null;
 		Response result = null;
 		try {
-			URL url = new URL(prepareUrl());
-			/**< connect */
+			URL url = new URL( prepareUrl() );
+			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
-			/**< set the connection method */
-			setHTTPMethod(conn);
-			/**< read the stream into mResponse */
-			result = new Response(this, readResponse(conn.getInputStream()));
-		
-		} catch (MalformedURLException e) {
+			/** < set the connection method */
+			setHTTPMethod( conn );
+			/** < read the stream into mResponse */
+			result = new Response( this, readResponse( conn.getInputStream() ) );
+
+		} catch ( MalformedURLException e ) {
 			e.printStackTrace();
-			throw new Error(e.getLocalizedMessage());
-		} catch (IOException e) {
+			throw new Error( e.getLocalizedMessage() );
+		} catch ( IOException e ) {
 			e.printStackTrace();
 			NetworkException exp = new NetworkException();
-			exp.setStackTrace(e.getStackTrace());
+			exp.setStackTrace( e.getStackTrace() );
 			throw exp;
 		} finally {
-			if (conn != null) {
+			if ( conn != null ) {
 				conn.disconnect();
 			}
 		}
 		return result;
 	}
 
-	/* package */ String getPage(int page_number) throws NetworkException {
+	/* package */String getPage( int page_number ) throws NetworkException
+	{
 		HttpURLConnection conn = null;
 		String result = null;
 		try {
-			URL url = new URL(prepareUrl() + "?page=" + page_number);
-			/**< connect */
+			URL url = new URL( prepareUrl() + "?page=" + page_number );
+			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
-			/**< set the connection method */
-			setHTTPMethod(conn);
-			result = readResponse(conn.getInputStream());
-			
-		} catch (MalformedURLException e) {
+			/** < set the connection method */
+			setHTTPMethod( conn );
+			result = readResponse( conn.getInputStream() );
+
+		} catch ( MalformedURLException e ) {
 			e.printStackTrace();
-			throw new Error(e.getLocalizedMessage());
-		} catch (IOException e) {
+			throw new Error( e.getLocalizedMessage() );
+		} catch ( IOException e ) {
 			e.printStackTrace();
 			NetworkException exp = new NetworkException();
-			exp.setStackTrace(e.getStackTrace());
+			exp.setStackTrace( e.getStackTrace() );
 			throw exp;
 		} finally {
-			if (conn != null) {
+			if ( conn != null ) {
 				conn.disconnect();
 			}
 		}
 		return result;
 	}
-	
+
 	/**
 	 * configures the HttpURLConnection with the HTTPMethod.
+	 * 
 	 * @param connection
 	 */
-	private void setHTTPMethod(HttpURLConnection connection) {
-		switch (mHTTPMethod) {
+	private void setHTTPMethod( HttpURLConnection connection )
+	{
+		switch ( mHTTPMethod ) {
 		case GET:
 			break;
 		case POST:
-			connection.setDoOutput(true);
+			connection.setDoOutput( true );
 		}
 		try {
-			connection.setRequestMethod(mHTTPMethod.toString());
-		} catch (ProtocolException e) {
+			connection.setRequestMethod( mHTTPMethod.toString() );
+		} catch ( ProtocolException e ) {
 			e.printStackTrace();
-			throw new Error(
-					"method is not supported " +
-					"or set after the connection is established");
+			throw new Error( "method is not supported "
+					+ "or set after the connection is established" );
 		}
 		return;
 	}
-	
-	private String readResponse(InputStream in) throws IOException {
+
+	private String readResponse( InputStream in ) throws IOException
+	{
 		BufferedReader reader = null;
 		String response = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(in));
+			reader = new BufferedReader( new InputStreamReader( in ) );
 			String line = "";
 			StringBuilder bldr = new StringBuilder();
-			while ((line = reader.readLine()) != null) {
-				bldr.append(line);
+			while ( (line = reader.readLine()) != null ) {
+				bldr.append( line );
 			}
 			response = bldr.toString();
 		} finally {
-			if (reader != null) {
+			if ( reader != null ) {
 				try {
 					reader.close();
-				} catch (IOException e) {
+				} catch ( IOException e ) {
 					e.printStackTrace();
 				}
 			}
@@ -161,8 +167,9 @@ public abstract class RestClient {
 
 	protected abstract String prepareUrl();
 
-	public void setResourceId(int resource_id) {
-		Assert.assertTrue(resource_id > RESOURCE_ID_NONE);
+	public void setResourceId( int resource_id )
+	{
+		Assert.assertTrue( resource_id > RESOURCE_ID_NONE );
 		mResourceId = resource_id;
 	}
 }

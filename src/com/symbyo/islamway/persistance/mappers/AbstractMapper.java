@@ -25,7 +25,7 @@ import com.symbyo.islamway.persistance.Repository;
  */
 public abstract class AbstractMapper {
 
-	protected Context mContext;
+	protected Context	mContext;
 
 	public AbstractMapper(@NonNull Context context) {
 		mContext = context;
@@ -38,28 +38,29 @@ public abstract class AbstractMapper {
 	 * @param stmt
 	 * @return
 	 */
-	protected List<? extends DomainObject> findMany(StatementSource stmt) {
+	protected List<? extends DomainObject> findMany( StatementSource stmt )
+	{
 		ArrayList<DomainObject> objects = null;
 		SQLiteDatabase db = null;
 		Cursor c = null;
 		try {
-			db = Repository.getInstance(mContext).getReadableDatabase();
-			Log.d("Islamway", stmt.sql());
-			c = db.rawQuery(stmt.sql(), stmt.parameters());
-			if (c != null) {
-				objects = loadAll(c);
+			db = Repository.getInstance( mContext ).getReadableDatabase();
+			Log.d( "Islamway", stmt.sql() );
+			c = db.rawQuery( stmt.sql(), stmt.parameters() );
+			if ( c != null ) {
+				objects = loadAll( c );
 			}
-		} catch (SQLiteException e) {
+		} catch ( SQLiteException e ) {
 			e.printStackTrace();
 		} finally {
-			if (c != null) {
+			if ( c != null ) {
 				c.close();
 			}
 		}
 
 		List<DomainObject> result = null;
-		if (objects != null) {
-			result = Collections.unmodifiableList(objects);
+		if ( objects != null ) {
+			result = Collections.unmodifiableList( objects );
 		}
 		return result;
 	}
@@ -70,14 +71,15 @@ public abstract class AbstractMapper {
 	 * @param c
 	 * @return
 	 */
-	private ArrayList<DomainObject> loadAll(@NonNull Cursor c) {
+	private ArrayList<DomainObject> loadAll( @NonNull Cursor c )
+	{
 		ArrayList<DomainObject> objects = null;
 		int count = 0;
-		if ((count = c.getCount()) > 0) {
-			objects = new ArrayList<DomainObject>(count);
-			while (c.moveToNext()) {
-				DomainObject obj = load(c);
-				objects.add(obj);
+		if ( (count = c.getCount()) > 0 ) {
+			objects = new ArrayList<DomainObject>( count );
+			while ( c.moveToNext() ) {
+				DomainObject obj = load( c );
+				objects.add( obj );
 			}
 		}
 		return objects;
@@ -89,16 +91,18 @@ public abstract class AbstractMapper {
 	 * @param c
 	 * @return
 	 */
-	private DomainObject load(@NonNull Cursor c) {
-		return doLoad(c);
-	}
-	
-	public void insert(@NonNull DomainObject obj) throws SQLiteException {
-			insert(obj, null);
+	private DomainObject load( @NonNull Cursor c )
+	{
+		return doLoad( c );
 	}
 
-	public abstract void insert(@NonNull DomainObject obj, SQLiteDatabase db)
+	public void insert( @NonNull DomainObject obj ) throws SQLiteException
+	{
+		insert( obj, null );
+	}
+
+	public abstract void insert( @NonNull DomainObject obj, SQLiteDatabase db )
 			throws SQLiteException;
 
-	protected abstract DomainObject doLoad(@NonNull Cursor c);
+	protected abstract DomainObject doLoad( @NonNull Cursor c );
 }

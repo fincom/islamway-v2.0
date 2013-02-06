@@ -12,26 +12,26 @@ import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.persistance.UnitOfWork;
 import com.symbyo.islamway.service.IWService.Section;
 
-
 public class ScholarProcessor extends Processor {
 
-	private final Section mSection;
-	
+	private final Section	mSection;
+
 	public ScholarProcessor(@NonNull Context context, Section section) {
-		super(context);
+		super( context );
 		mSection = section;
 	}
 
 	@SuppressWarnings("null")
 	@Override
-	protected void doProcess(List<? extends DomainObject> collection,
-			@NonNull SQLiteDatabase db) {
-		if (mSection != null) {
-			for (DomainObject obj : collection) {
+	protected void doProcess( List<? extends DomainObject> collection,
+			@NonNull SQLiteDatabase db )
+	{
+		if ( mSection != null ) {
+			for ( DomainObject obj : collection ) {
 				Scholar scholar = (Scholar) obj;
-				scholar.addSection(mSection);
+				scholar.addSection( mSection );
 			}
 		}
-		UnitOfWork.getCurrent().commit(db);
+		UnitOfWork.getCurrent().commit( db );
 	}
 }

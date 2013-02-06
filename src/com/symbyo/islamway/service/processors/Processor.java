@@ -14,38 +14,44 @@ import com.symbyo.islamway.persistance.Repository;
 
 public abstract class Processor {
 
-	protected Context mContext;
+	protected Context	mContext;
 
 	public Processor(@NonNull Context context) {
 		mContext = context;
 	}
 
-	public void process(@NonNull List<? extends DomainObject> domain_collection) throws ProcessingException {
+	public void
+			process( @NonNull List<? extends DomainObject> domain_collection )
+					throws ProcessingException
+	{
 		try {
-			SQLiteDatabase db = Repository.getInstance(mContext)
+			SQLiteDatabase db = Repository.getInstance( mContext )
 					.getWritableDatabase();
-			if (db == null) {
+			if ( db == null ) {
 				throw new SQLiteException();
 			}
-			Log.d("IWService", String.format("processing %d objects", domain_collection.size()));
-			doProcess(domain_collection, db);
-		} catch (SQLiteException e) {
+			Log.d( "IWService",
+					String.format( "processing %d objects",
+							domain_collection.size() ) );
+			doProcess( domain_collection, db );
+		} catch ( SQLiteException e ) {
 			try {
-				wait(1000);
-				SQLiteDatabase db = Repository.getInstance(mContext)
+				wait( 1000 );
+				SQLiteDatabase db = Repository.getInstance( mContext )
 						.getWritableDatabase();
-				if (db == null) {
+				if ( db == null ) {
 					throw new ProcessingException();
 				}
-				doProcess(domain_collection, db);
-			} catch (SQLiteException ex) {
+				doProcess( domain_collection, db );
+			} catch ( SQLiteException ex ) {
 				throw new ProcessingException();
-			} catch (InterruptedException e1) {
+			} catch ( InterruptedException e1 ) {
 				throw new ProcessingException();
 			}
 		}
-		
+
 	}
-	
-	protected abstract void doProcess(List<? extends DomainObject> collection, @NonNull SQLiteDatabase db);
+
+	protected abstract void doProcess( List<? extends DomainObject> collection,
+			@NonNull SQLiteDatabase db );
 }
