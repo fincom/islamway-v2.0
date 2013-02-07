@@ -1,8 +1,14 @@
+/**
+ * This table is pre-populated.
+ */
 CREATE TABLE classification (
     _id INTEGER PRIMARY KEY,
     title TEXT NOT NULL
 );
 
+/**
+ * This table is pre-populated.
+ */
 CREATE TABLE narration (
     _id INTEGER PRIMARY KEY,
     title TEXT NOT NULL
@@ -27,15 +33,34 @@ CREATE TABLE scholar (
 );
 CREATE INDEX index__scholar__name ON scholar (name ASC);
 
-CREATE TABLE scholar_sections (
+/**
+ * This table is pre-populated.
+ */
+CREATE TABLE section (
     _id INTEGER PRIMARY KEY,
-    section TEXT,
+    title TEXT NOT NULL UNIQUE,
+    /**
+     * values are:
+     * - 1: SYNC_BASIC
+     * - 2: SYNC_FULL
+     */
+    sync_state INTEGER NOT NULL DEFAULT 0
+);
+INSERT INTO section VALUES (1, 'quran', 1);
+INSERT INTO section VALUES (2, 'lessons', 1);
+
+CREATE TABLE scholar_section (
+    _id INTEGER PRIMARY KEY,
+    section_id TEXT,
     scholar_id INTEGER,
     CONSTRAINT fk__scholar_sections__scholar FOREIGN KEY (scholar_id) 
-        REFERENCES scholar (_id) ON DELETE CASCADE
+        REFERENCES scholar (_id) ON DELETE CASCADE,
+    CONSTRAINT fk__scholar_sections__section FOREIGN KEY (section_id) 
+        REFERENCES section (_id) ON DELETE CASCADE
 );
-CREATE INDEX ndx__scholar_sections__scholar_id ON scholar_sections (scholar_id ASC);
-CREATE UNIQUE INDEX ndx__scholar_sections ON scholar_sections (section, scholar_id);
+CREATE INDEX ndx__scholar_sections__scholar_id ON scholar_section (scholar_id ASC);
+CREATE INDEX ndx__scholar_sections__section_id ON scholar_section (section_id ASC);
+CREATE UNIQUE INDEX ndx__scholar_section ON scholar_section (section_id, scholar_id);
 
 CREATE TABLE quran_collection (
     _id INTEGER PRIMARY KEY,
