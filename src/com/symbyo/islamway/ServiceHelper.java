@@ -6,20 +6,23 @@ import junit.framework.Assert;
 
 import org.eclipse.jdt.annotation.NonNull;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.symbyo.islamway.service.IWService;
 
 public class ServiceHelper {
 
-	private final int				REQUEST_ID_NONE					= 0;
+	public static final int			REQUEST_ID_NONE					= 0;
 	public static final String		ACTION_INVALIDATE_SCHOLAR_LIST	= "iw.scholar_list_invalidate";
 	private static final String		ACTION_SERVICE_RESPONSE			= "iw.helper.service_response";
-	private static final String		EXTRA_REQUEST_ID				= "request_id";
+	public static final String		EXTRA_REQUEST_ID				= "request_id";
 	private static final String		EXTRA_CALLBACK_ACTION			= "callback_action";
+	public static final String		EXTRA_RESPONSE_ERROR			= "response_error";
 
 	private static ServiceHelper	mInstance;
 	private Context					mContext;
@@ -71,6 +74,33 @@ public class ServiceHelper {
 
 		return result;
 	}
+	
+	private int getLessonsScholars( int request_id )
+	{
+		Assert.assertTrue( request_id >= REQUEST_ID_NONE );
+		int result = request_id;
+		RequestState state = getRequestState( request_id );
+		switch ( state ) {
+		case FINISHED:
+			Intent intent = new Intent( ACTION_INVALIDATE_SCHOLAR_LIST );
+			LocalBroadcastManager.getInstance( mContext )
+					.sendBroadcast( intent );
+		case PENDING:
+			result = request_id;
+			break;
+		case NOT_REGISTERED:
+			synchronized ( this ) {
+				request_id = ++mLastRequestId;
+			}
+			mRequests.add( Integer.valueOf( request_id ) );
+
+			sendRequestToService( IWService.ACTION_GET_LESSONS_SCHOLARS,
+					request_id, null, null );
+			result = request_id;
+		}
+
+		return result;
+	}
 
 	/**
 	 * 
@@ -81,6 +111,9 @@ public class ServiceHelper {
 	private void sendRequestToService( String action, int request_id,
 			Integer resource_id, ContentValues params )
 	{
+		LocalBroadcastManager.getInstance( mContext ).registerReceiver(
+				mServiceResponseReceiver,
+				new IntentFilter( ACTION_SERVICE_RESPONSE ) );
 		// build the pending intent.
 		Intent pIntent = new Intent( ACTION_SERVICE_RESPONSE );
 		pIntent.putExtra( EXTRA_REQUEST_ID, request_id );
@@ -124,6 +157,29 @@ public class ServiceHelper {
 		}
 		return state;
 	}
+	
+	// @formatter:off
+	private BroadcastReceiver mServiceResponseReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive( Context context, Intent intent )
+		{
+			String action = intent.getStringExtra( EXTRA_CALLBACK_ACTION );
+			int request_id = intent.getIntExtra( EXTRA_REQUEST_ID, -1 );
+			boolean error = intent.getBooleanExtra( IWService.EXTRA_RESPONSE_ERROR, false );
+			
+			Intent i = new Intent(action);
+			i.putExtra( EXTRA_REQUEST_ID, request_id );
+			if (error) {
+				i.putExtra( EXTRA_RESPONSE_ERROR, true );
+			}
+			LocalBroadcastManager.getInstance( mContext ).sendBroadcast( i );
+			
+			mRequests.remove( Integer.valueOf( request_id ) );
+		}
+
+	};
+	// @formatter:on
 
 	/**
 	 * Gets all scholars that have quran content.
@@ -134,4 +190,10 @@ public class ServiceHelper {
 	{
 		return getQuranScholars( REQUEST_ID_NONE );
 	}
+
+	public int getLessonsScholars()
+	{
+		return getLessonsScholars( REQUEST_ID_NONE );
+	}
+	
 }

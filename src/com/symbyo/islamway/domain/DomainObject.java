@@ -12,6 +12,11 @@ public abstract class DomainObject implements Parcelable {
 	protected DomainObject(int id) {
 		mId = id;
 	}
+	
+	public enum SyncState {
+		SYNC_STATE_BASIC,
+		SYNC_STATE_FULL
+	}
 
 	protected DomainObject(Parcel source) {
 		mId = source.readInt();

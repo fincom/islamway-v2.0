@@ -7,13 +7,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
@@ -39,9 +35,11 @@ public class IWService extends IntentService {
 
 	private final String		BASE_URL					= "http://ar.islamway.net/api/";
 	public static final String	ACTION_GET_QURAN_SCHOLARS	= "iw.service.get_quran_scholars";
+	public static final String	ACTION_GET_LESSONS_SCHOLARS	= "iw.service.get_lessons_scholars";
 	public static final String	EXTRA_RESOURCE_ID			= "resource_id";
 	public static final String	EXTRA_PARAMS				= "params";
 	public static final String	EXTRA_CALLBACK_INTENT		= "callback_intent";
+	public static final String	EXTRA_RESPONSE_ERROR		= "response_error";
 
 	public enum Params {
 		SECTION("param_section"),
@@ -89,6 +87,7 @@ public class IWService extends IntentService {
 			rest_client.setParameters( params );
 		}
 		Response response;
+		
 		try {
 			Log.d( "IWService", "start" );
 			response = rest_client.getResponse();
@@ -110,21 +109,26 @@ public class IWService extends IntentService {
 			 * a network error has occurred during getting the next page, and
 			 * the page is null.
 			 */
-			showToast( getString( R.string.err_network ) );
+			//showToast( getString( R.string.err_network ) );
+			pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
 			e.printStackTrace();
 			return;
 		} catch ( NetworkException e ) {
-			showToast( getString( R.string.err_network ) );
+			//showToast( getString( R.string.err_network ) );
+			pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
 			e.printStackTrace();
 			return;
 		} catch ( ProcessingException e ) {
-			showToast( getString( R.string.err_processing_data ) );
+			//showToast( getString( R.string.err_processing_data ) );
+			pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
 			e.printStackTrace();
 			return;
+		} finally {
+			LocalBroadcastManager mngr = LocalBroadcastManager.getInstance( this );
+			mngr.sendBroadcast( pIntent );
 		}
+		
 
-		LocalBroadcastManager mngr = LocalBroadcastManager.getInstance( this );
-		mngr.sendBroadcast( pIntent );
 	}
 
 	private @NonNull
@@ -136,6 +140,12 @@ public class IWService extends IntentService {
 			/** /recitations/scholars */
 			Section section = Repository.getInstance( getApplicationContext() )
 					.getSection( SectionType.QURAN );
+			url_format += section.toString() + "/scholars";
+			result = new ScholarResourceFactory( url_format,
+					RestClient.HTTPMethod.GET, section );
+		} else if (action.equals( ACTION_GET_LESSONS_SCHOLARS )) {
+			Section section = Repository.getInstance( getApplicationContext() )
+					.getSection( SectionType.LESSONS );
 			url_format += section.toString() + "/scholars";
 			result = new ScholarResourceFactory( url_format,
 					RestClient.HTTPMethod.GET, section );
@@ -151,7 +161,7 @@ public class IWService extends IntentService {
 	 * 
 	 * @param msg
 	 */
-	private void showToast( final String msg )
+	/*private void showToast( final String msg )
 	{
 		Handler handler = new Handler( Looper.getMainLooper() );
 		handler.post( new Runnable() {
@@ -164,6 +174,6 @@ public class IWService extends IntentService {
 			}
 
 		} );
-	}
+	}*/
 
 }

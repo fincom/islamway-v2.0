@@ -2,6 +2,8 @@ package com.symbyo.islamway.service.restclients;
 
 import java.util.Iterator;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -16,6 +18,8 @@ public class Response implements Iterable<Page> {
 	public Response(RestClient client, String response) {
 		mClient = client;
 		mPagesNumber = getPagesNumber( response );
+		Log.d( "Islamway",
+				String.format( "pages count: %d", mPagesNumber ) );
 		mCurrentPage = new Page( 1, response );
 	}
 

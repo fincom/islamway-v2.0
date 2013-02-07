@@ -11,6 +11,11 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class ScholarRestClient extends RestClient {
 
+	/**
+	 * 70 is the max value accepted by the server
+	 */
+	private final int	ENTRIES_PER_PAGE	= 70;
+
 	public ScholarRestClient(@NonNull String url_format,
 			RestClient.HTTPMethod http_method) {
 
@@ -33,11 +38,8 @@ public class ScholarRestClient extends RestClient {
 		} else {
 			mUrl = String.format( Locale.US, mUrlFormat, mResourceId );
 		}
-		/*
-		 * URL result = null; try { result = new URL(mUrl); } catch
-		 * (MalformedURLException e) { e.printStackTrace(); throw new
-		 * Error(e.getLocalizedMessage()); }
-		 */
+		mUrl += "?count=" + ENTRIES_PER_PAGE;
+
 		return mUrl;
 	}
 

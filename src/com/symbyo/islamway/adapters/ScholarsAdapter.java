@@ -52,6 +52,7 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
 		super();
 		mContext = context;
 		mScholars = section.getSectionScholars();
+
 	}
 
 	@Override
@@ -126,7 +127,6 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
 				inStream = mContext.openFileInput( file_name );
 				bitmap = BitmapFactory.decodeStream( inStream );
 			} catch ( FileNotFoundException e ) {
-				// TODO
 			} finally {
 				try {
 					if ( inStream != null ) {

@@ -14,8 +14,11 @@ import junit.framework.Assert;
 import org.eclipse.jdt.annotation.NonNull;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 public abstract class RestClient {
+	
+	private final int TIME_OUT = 10000;
 
 	protected final int		RESOURCE_ID_NONE	= -1;
 	protected int			mResourceId			= RESOURCE_ID_NONE;
@@ -66,13 +69,18 @@ public abstract class RestClient {
 		HttpURLConnection conn = null;
 		Response result = null;
 		try {
+			Log.d( "Islamway", prepareUrl() );
 			URL url = new URL( prepareUrl() );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
 			/** < set the connection method */
 			setHTTPMethod( conn );
+			conn.setReadTimeout( TIME_OUT );
 			/** < read the stream into mResponse */
-			result = new Response( this, readResponse( conn.getInputStream() ) );
+			if ( conn.getResponseCode() == HttpURLConnection.HTTP_OK ) {
+				result = new Response( this,
+						readResponse( conn.getInputStream() ) );
+			}
 
 		} catch ( MalformedURLException e ) {
 			e.printStackTrace();
@@ -95,12 +103,16 @@ public abstract class RestClient {
 		HttpURLConnection conn = null;
 		String result = null;
 		try {
+			Log.d( "Islamway", prepareUrl() + "?page=" + page_number );
 			URL url = new URL( prepareUrl() + "?page=" + page_number );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
+			conn.setReadTimeout( TIME_OUT );
 			/** < set the connection method */
 			setHTTPMethod( conn );
-			result = readResponse( conn.getInputStream() );
+			if ( conn.getResponseCode() == HttpURLConnection.HTTP_OK ) {
+				result = readResponse( conn.getInputStream() );
+			}
 
 		} catch ( MalformedURLException e ) {
 			e.printStackTrace();
