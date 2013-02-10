@@ -1,8 +1,11 @@
 package com.symbyo.islamway.service.restclients;
 
 import java.util.Locale;
+import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNull;
+
+import android.content.ContentValues;
 
 /**
  * 
@@ -31,16 +34,25 @@ public class ScholarRestClient extends RestClient {
 	}
 
 	@Override
-	protected String prepareUrl()
+	protected String prepareUrl(ContentValues params)
 	{
-		if ( mResourceId == RESOURCE_ID_NONE ) {
-			mUrl = mUrlFormat;
-		} else {
-			mUrl = String.format( Locale.US, mUrlFormat, mResourceId );
+		String url;
+		if (params == null) {
+			params = new ContentValues();
 		}
-		mUrl += "?count=" + ENTRIES_PER_PAGE;
+		if ( mResourceId == RESOURCE_ID_NONE ) {
+			url = mUrlFormat;
+		} else {
+			url = String.format( Locale.US, mUrlFormat, mResourceId );
+		}
+		params.put( "count", ENTRIES_PER_PAGE );
+		url += "?";
+		for (Map.Entry<String, Object> entry : params.valueSet()) {
+			url += entry.getKey() + "=" + entry.getValue() + "&";
+		}
+		url = url.substring( 0, url.length() - 1  );
 
-		return mUrl;
+		return url;
 	}
 
 }

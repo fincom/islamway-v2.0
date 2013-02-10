@@ -6,6 +6,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Scholar;
@@ -27,6 +28,9 @@ public class ScholarProcessor extends Processor {
 			@NonNull SQLiteDatabase db )
 	{
 		if ( mSection != null ) {
+			Log.d( "IWService",
+					String.format( "processing %d scholars",
+							collection.size() ) );
 			for ( DomainObject obj : collection ) {
 				Scholar scholar = (Scholar) obj;
 				scholar.addSection( mSection );

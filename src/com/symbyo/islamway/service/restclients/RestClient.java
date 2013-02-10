@@ -18,13 +18,12 @@ import android.util.Log;
 
 public abstract class RestClient {
 	
-	private final int TIME_OUT = 10000;
+	private final int TIME_OUT = 20000;
 
 	protected final int		RESOURCE_ID_NONE	= -1;
 	protected int			mResourceId			= RESOURCE_ID_NONE;
 	protected ContentValues	mParams;
 	protected final String	mUrlFormat;
-	protected String		mUrl;
 	protected HTTPMethod	mHTTPMethod;
 
 	public enum HTTPMethod {
@@ -69,8 +68,8 @@ public abstract class RestClient {
 		HttpURLConnection conn = null;
 		Response result = null;
 		try {
-			Log.d( "Islamway", prepareUrl() );
-			URL url = new URL( prepareUrl() );
+			Log.d( "Islamway", prepareUrl(null) );
+			URL url = new URL( prepareUrl(null) );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
 			/** < set the connection method */
@@ -103,8 +102,10 @@ public abstract class RestClient {
 		HttpURLConnection conn = null;
 		String result = null;
 		try {
-			Log.d( "Islamway", prepareUrl() + "?page=" + page_number );
-			URL url = new URL( prepareUrl() + "?page=" + page_number );
+			ContentValues params = new ContentValues();
+			params.put( "page", page_number );
+			Log.d( "Islamway", prepareUrl(params) );
+			URL url = new URL( prepareUrl(params) );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout( TIME_OUT );
@@ -177,7 +178,7 @@ public abstract class RestClient {
 		return response;
 	}
 
-	protected abstract String prepareUrl();
+	protected abstract String prepareUrl(ContentValues params);
 
 	public void setResourceId( int resource_id )
 	{

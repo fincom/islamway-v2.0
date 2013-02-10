@@ -7,23 +7,25 @@ import junit.framework.Assert;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Log;
 
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.persistance.mappers.AbstractMapper;
 
 public class UnitOfWork {
 
+
 	private List<DomainObject>				newObjects	= new ArrayList<DomainObject>();
 
+	// @formatter:off
 	private static ThreadLocal<UnitOfWork>	current		= new ThreadLocal<UnitOfWork>() {
-															@Override
-															protected
-																	UnitOfWork
-																	initialValue()
-															{
-																return new UnitOfWork();
-															}
-														};
+			@Override
+			protected UnitOfWork initialValue()
+			{
+				return new UnitOfWork();
+			}
+		};
+	// @formatter:on
 
 	public static UnitOfWork getCurrent()
 	{
@@ -38,6 +40,7 @@ public class UnitOfWork {
 			return;
 		}
 		newObjects.add( object );
+		Log.d( "Islamway", String.format( "New Object registered: %s", object.toString() ) );
 	}
 
 	/**
@@ -54,6 +57,8 @@ public class UnitOfWork {
 	{
 		boolean result = true;
 		try {
+			Log.d( "Islamway",
+					String.format( "inserting %d objects", newObjects.size() ) );
 			db.beginTransaction();
 			for ( DomainObject obj : newObjects ) {
 				AbstractMapper mapper = Repository.getInstance().getMapper(

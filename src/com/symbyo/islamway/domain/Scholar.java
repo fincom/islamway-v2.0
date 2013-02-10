@@ -2,6 +2,7 @@ package com.symbyo.islamway.domain;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -70,7 +71,7 @@ public class Scholar extends DomainObject {
 		UnitOfWork.getCurrent().registerNew( this );
 	}
 
-	protected Scholar( Parcel source ) {
+	protected Scholar(Parcel source) {
 		super( source );
 		mServerId = source.readInt();
 		mName = source.readString();
@@ -214,5 +215,11 @@ public class Scholar extends DomainObject {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public String toString()
+	{
+		return String.format(Locale.US, "id: %d, name: %s", this.getId(), this.getName() );
 	}
 }

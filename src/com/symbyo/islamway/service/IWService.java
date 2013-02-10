@@ -1,6 +1,6 @@
 package com.symbyo.islamway.service;
 
-import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -96,18 +96,17 @@ public class IWService extends IntentService {
 		try {
 			Log.d( "IWService", "start" );
 			response = rest_client.getResponse();
-			List<? extends DomainObject> domain_collection = null;
+			List<DomainObject> domain_collection = new LinkedList<DomainObject>();
 			for ( Page page : response ) {
 				Log.d( "IWService",
 						String.format( "page number: %d", page.getNumber() ) );
 				String json = page.getResponseText();
-				
-				domain_collection = parser
-						.parse( json, response.isCollection() );
-				if ( domain_collection != null ) {
-					processor.process( domain_collection );
-				}
+				domain_collection.addAll( parser.parse( json,
+						response.isCollection() ) );
 				Log.d( "IWService", "fetching next page" );
+			}
+			if ( domain_collection != null ) {
+				processor.process( domain_collection );
 			}
 			Log.d( "IWService", "finished" );
 		} catch ( NullPointerException e ) {
@@ -166,11 +165,27 @@ public class IWService extends IntentService {
 				}
 			} );
 		} else if ( action.equals( ACTION_GET_LESSONS_SCHOLARS ) ) {
-			Section section = Repository.getInstance( getApplicationContext() )
+			final Section section = Repository.getInstance( getApplicationContext() )
 					.getSection( SectionType.LESSONS );
 			url_format += section.toString() + "/scholars";
 			result = new ScholarResourceFactory( url_format,
 					RestClient.HTTPMethod.GET, section );
+			// set the post processing listener, to update the section sync
+			// state after processing.
+			result.setPostProccessingListener( new OnPostProccessingListener() {
+
+				@Override
+				public void onPostProccessing( boolean result )
+				{
+					if ( result ) {
+						ScholarMapper mapper = (ScholarMapper) Repository
+								.getInstance( IWService.this ).getMapper(
+										Scholar.class );
+						mapper.updateSectionSyncState( section,
+								SyncState.SYNC_STATE_FULL );
+					}
+				}
+			} );
 		}
 		if ( result == null ) {
 			throw new NullPointerException( "ResourceFactory is null" );
