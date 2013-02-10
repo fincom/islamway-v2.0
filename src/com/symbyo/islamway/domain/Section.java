@@ -18,6 +18,10 @@ public class Section extends DomainObject {
 		private SectionType(final String value) {
 			mValue = value;
 		}
+		
+		public int getId() {
+			return ordinal() + 1;
+		}
 
 		@Override
 		public String toString()
@@ -29,7 +33,7 @@ public class Section extends DomainObject {
 	private final SectionType	mType;
 
 	public Section(SectionType type) {
-		super( INVALID_ID );
+		super( type.getId() );
 		mType = type;
 	}
 
@@ -101,8 +105,9 @@ public class Section extends DomainObject {
 	}
 	
 	public SyncState getSyncState() {
-		// TODO get sync state from the database.
-		return SyncState.SYNC_STATE_BASIC;
+		IScholarFinder mapper = (IScholarFinder) Repository.getInstance()
+				.getMapper( Scholar.class );
+		return mapper.getSectionSyncState( this );
 	}
 
 }

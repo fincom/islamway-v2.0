@@ -2,6 +2,7 @@ package com.symbyo.islamway.service.restclients;
 
 import java.util.Iterator;
 
+import android.R.raw;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -10,16 +11,23 @@ import com.google.gson.annotations.SerializedName;
 public class Response implements Iterable<Page> {
 
 	private final RestClient	mClient;
-	private final int			mPagesNumber;
+	private final int			mPagesCount;
+	private final int			mTotalCount;
 	private Page				mCurrentPage;
 	private int					returned_pages	= 0;
 	private boolean				mIsCollection	= false;
 
 	public Response(RestClient client, String response) {
 		mClient = client;
-		mPagesNumber = getPagesNumber( response );
+		
+		Gson gson = new Gson();
+		ResponseRaw raw_response = gson.fromJson( response, ResponseRaw.class );
+		
+		mIsCollection = raw_response.isCollection();
+		mPagesCount = raw_response.getPagesNumber();
+		mTotalCount = raw_response.getTotalCount();
 		Log.d( "Islamway",
-				String.format( "pages count: %d", mPagesNumber ) );
+				String.format( "pages count: %d", mPagesCount ) );
 		mCurrentPage = new Page( 1, response );
 	}
 
@@ -31,7 +39,7 @@ public class Response implements Iterable<Page> {
 			@Override
 			public boolean hasNext()
 			{
-				return (returned_pages < mPagesNumber);
+				return (returned_pages < mPagesCount);
 			}
 
 			@Override
@@ -63,17 +71,21 @@ public class Response implements Iterable<Page> {
 		};
 	}
 
-	private int getPagesNumber( String str )
+	/*private int getPagesNumber( String str )
 	{
 		Gson gson = new Gson();
 		ResponseRaw response = gson.fromJson( str, ResponseRaw.class );
 		mIsCollection = response.isCollection();
 		return response.getPagesNumber();
-	}
+	}*/
 
 	public boolean isCollection()
 	{
 		return mIsCollection;
+	}
+	
+	public int getSize() {
+		return mTotalCount;
 	}
 
 	private static class ResponseRaw {
@@ -92,6 +104,11 @@ public class Response implements Iterable<Page> {
 				return 1;
 			}
 			return (int) Math.ceil( (float) mTotalCount / (float) mCount );
+		}
+		
+		public int getTotalCount()
+		{
+			return mTotalCount;
 		}
 
 		public boolean isCollection()

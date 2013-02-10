@@ -1,5 +1,6 @@
 package com.symbyo.islamway.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -11,12 +12,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.symbyo.islamway.domain.DomainObject;
+import com.symbyo.islamway.domain.DomainObject.SyncState;
+import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.persistance.Repository;
+import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
 import com.symbyo.islamway.service.parsers.Parser;
+import com.symbyo.islamway.service.processors.OnPostProccessingListener;
 import com.symbyo.islamway.service.processors.ProcessingException;
 import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.NetworkException;
@@ -87,7 +92,7 @@ public class IWService extends IntentService {
 			rest_client.setParameters( params );
 		}
 		Response response;
-		
+
 		try {
 			Log.d( "IWService", "start" );
 			response = rest_client.getResponse();
@@ -96,6 +101,7 @@ public class IWService extends IntentService {
 				Log.d( "IWService",
 						String.format( "page number: %d", page.getNumber() ) );
 				String json = page.getResponseText();
+				
 				domain_collection = parser
 						.parse( json, response.isCollection() );
 				if ( domain_collection != null ) {
@@ -109,25 +115,25 @@ public class IWService extends IntentService {
 			 * a network error has occurred during getting the next page, and
 			 * the page is null.
 			 */
-			//showToast( getString( R.string.err_network ) );
+			// showToast( getString( R.string.err_network ) );
 			pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
 			e.printStackTrace();
 			return;
 		} catch ( NetworkException e ) {
-			//showToast( getString( R.string.err_network ) );
+			// showToast( getString( R.string.err_network ) );
 			pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
 			e.printStackTrace();
 			return;
 		} catch ( ProcessingException e ) {
-			//showToast( getString( R.string.err_processing_data ) );
+			// showToast( getString( R.string.err_processing_data ) );
 			pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
 			e.printStackTrace();
 			return;
 		} finally {
-			LocalBroadcastManager mngr = LocalBroadcastManager.getInstance( this );
+			LocalBroadcastManager mngr = LocalBroadcastManager
+					.getInstance( this );
 			mngr.sendBroadcast( pIntent );
 		}
-		
 
 	}
 
@@ -138,12 +144,28 @@ public class IWService extends IntentService {
 		String url_format = BASE_URL;
 		if ( action.equals( ACTION_GET_QURAN_SCHOLARS ) ) {
 			/** /recitations/scholars */
-			Section section = Repository.getInstance( getApplicationContext() )
-					.getSection( SectionType.QURAN );
+			final Section section = Repository.getInstance(
+					getApplicationContext() ).getSection( SectionType.QURAN );
 			url_format += section.toString() + "/scholars";
 			result = new ScholarResourceFactory( url_format,
 					RestClient.HTTPMethod.GET, section );
-		} else if (action.equals( ACTION_GET_LESSONS_SCHOLARS )) {
+			// set the post processing listener, to update the section sync
+			// state after processing.
+			result.setPostProccessingListener( new OnPostProccessingListener() {
+
+				@Override
+				public void onPostProccessing( boolean result )
+				{
+					if ( result ) {
+						ScholarMapper mapper = (ScholarMapper) Repository
+								.getInstance( IWService.this ).getMapper(
+										Scholar.class );
+						mapper.updateSectionSyncState( section,
+								SyncState.SYNC_STATE_FULL );
+					}
+				}
+			} );
+		} else if ( action.equals( ACTION_GET_LESSONS_SCHOLARS ) ) {
 			Section section = Repository.getInstance( getApplicationContext() )
 					.getSection( SectionType.LESSONS );
 			url_format += section.toString() + "/scholars";
@@ -161,19 +183,14 @@ public class IWService extends IntentService {
 	 * 
 	 * @param msg
 	 */
-	/*private void showToast( final String msg )
-	{
-		Handler handler = new Handler( Looper.getMainLooper() );
-		handler.post( new Runnable() {
-
-			@Override
-			public void run()
-			{
-				Toast.makeText( getApplicationContext(), msg,
-						Toast.LENGTH_SHORT ).show();
-			}
-
-		} );
-	}*/
+	/*
+	 * private void showToast( final String msg ) { Handler handler = new
+	 * Handler( Looper.getMainLooper() ); handler.post( new Runnable() {
+	 * 
+	 * @Override public void run() { Toast.makeText( getApplicationContext(),
+	 * msg, Toast.LENGTH_SHORT ).show(); }
+	 * 
+	 * } ); }
+	 */
 
 }

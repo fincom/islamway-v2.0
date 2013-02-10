@@ -40,13 +40,19 @@ public class UnitOfWork {
 		newObjects.add( object );
 	}
 
-	public void commit( SQLiteDatabase db )
+	/**
+	 * 
+	 * @param db
+	 * @return true if successful, false otherwise
+	 */
+	public boolean commit( SQLiteDatabase db )
 	{
-		insertNew( db );
+		return insertNew( db );
 	}
 
-	public void insertNew( SQLiteDatabase db )
+	public boolean insertNew( SQLiteDatabase db )
 	{
+		boolean result = true;
 		try {
 			db.beginTransaction();
 			for ( DomainObject obj : newObjects ) {
@@ -57,9 +63,11 @@ public class UnitOfWork {
 			db.setTransactionSuccessful();
 		} catch ( SQLiteException e ) {
 			e.printStackTrace();
+			result = false;
 		} finally {
 			db.endTransaction();
 			newObjects.clear();
 		}
+		return result;
 	}
 }

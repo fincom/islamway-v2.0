@@ -14,7 +14,8 @@ import com.symbyo.islamway.persistance.Repository;
 
 public abstract class Processor {
 
-	protected Context	mContext;
+	protected Context					mContext;
+	protected OnPostProccessingListener	mPostProcessingListener;
 
 	public Processor(@NonNull Context context) {
 		mContext = context;
@@ -50,6 +51,12 @@ public abstract class Processor {
 			}
 		}
 
+	}
+
+	public void
+			setOnPostProcessingListener( OnPostProccessingListener listener )
+	{
+		mPostProcessingListener = listener;
 	}
 
 	protected abstract void doProcess( List<? extends DomainObject> collection,

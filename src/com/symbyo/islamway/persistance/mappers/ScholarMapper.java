@@ -14,6 +14,7 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import com.symbyo.islamway.domain.DomainObject;
+import com.symbyo.islamway.domain.DomainObject.SyncState;
 import com.symbyo.islamway.domain.IScholarFinder;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
@@ -51,14 +52,14 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 		}
 	}
 
-	private enum ScholarSectionsField {
+	private enum ScholarSectionField {
 		ID("_id"),
-		SECTION("section"),
+		SECTION_ID("section_id"),
 		SCHOLAR_ID("scholar_id");
 
 		private final String	mName;
 
-		ScholarSectionsField(String name) {
+		ScholarSectionField(String name) {
 			mName = name;
 		}
 
@@ -69,8 +70,27 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 		}
 	}
 
-	private static final String	SCHOLAR_TABLE_NAME	= "scholar";
-	private static final String	SECTION_TABLE_NAME	= "scholar_sections";
+	private enum SectionField {
+		ID("_id"),
+		TITLE("title"),
+		SYNC_STATE("sync_state");
+
+		private final String	mValue;
+
+		SectionField(String value) {
+			mValue = value;
+		}
+
+		@Override
+		public String toString()
+		{
+			return mValue;
+		}
+	}
+
+	private static final String	SCHOLAR_TABLE_NAME			= "scholar";
+	private static final String	SECTION_TABLE_NAME			= "section";
+	private static final String	SCHOLAR_SECTION_TABLE_NAME	= "scholar_section";
 
 	private static String getScholarFields( String tableAliase )
 	{
@@ -254,12 +274,12 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 			if ( sections.size() > 0 ) {
 				values.clear();
 				for ( Section section : sections ) {
-					values.put( ScholarSectionsField.SECTION.toString(),
-							section.toString() );
-					values.put( ScholarSectionsField.SCHOLAR_ID.toString(),
+					values.put( ScholarSectionField.SECTION_ID.toString(),
+							section.getId() );
+					values.put( ScholarSectionField.SCHOLAR_ID.toString(),
 							scholar_id );
-					db.insertWithOnConflict( SECTION_TABLE_NAME, null, values,
-							SQLiteDatabase.CONFLICT_REPLACE );
+					db.insertWithOnConflict( SCHOLAR_SECTION_TABLE_NAME, null,
+							values, SQLiteDatabase.CONFLICT_REPLACE );
 				}
 			}
 			if ( is_in_transaction ) {
@@ -285,11 +305,12 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 				StringBuilder bldr;
 				bldr = new StringBuilder( "SELECT " + getScholarFields( "sch" )
 						+ " FROM " + SCHOLAR_TABLE_NAME + " AS sch" );
-				bldr.append( " INNER JOIN " + SECTION_TABLE_NAME + " AS sec" );
+				bldr.append( " INNER JOIN " + SCHOLAR_SECTION_TABLE_NAME
+						+ " AS sec" );
 				bldr.append( " ON sch." + ScholarField.ID + " = sec."
-						+ ScholarSectionsField.SCHOLAR_ID );
-				bldr.append( " WHERE " + ScholarSectionsField.SECTION + " = '"
-						+ section.toString() + "'" );
+						+ ScholarSectionField.SCHOLAR_ID );
+				bldr.append( " WHERE " + ScholarSectionField.SECTION_ID + " = "
+						+ section.getId() );
 				bldr.append( " ORDER BY " + ScholarField.NAME.toString() );
 				return bldr.toString();
 			}
@@ -301,15 +322,60 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 			}
 
 		};
-		
+
 		List<Scholar> result = null;
 		try {
 			// unchecked but safe enough.
 			result = (List<Scholar>) findMany( stmt );
-		} catch (ClassCastException e) {
+		} catch ( ClassCastException e ) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
+	}
+
+	@Override
+	public SyncState getSectionSyncState( Section section )
+	{
+		SyncState sync_state = null;
+		SQLiteDatabase db = null;
+		Cursor c = null;
+		try {
+			String[] columns = new String[] { SectionField.SYNC_STATE
+					.toString() };
+			String selection = SectionField.ID + " = ?";
+			String[] args = new String[] { Integer.toString( section.getId() ) };
+			db = Repository.getInstance( mContext ).getReadableDatabase();
+			c = db.query( SECTION_TABLE_NAME, columns, selection, args, null,
+					null, null );
+			if ( c != null && c.getCount() > 0 ) {
+				c.moveToFirst();
+				sync_state = SyncState.values()[c.getInt( 0 )];
+			}
+		} catch ( SQLiteException e ) {
+			e.printStackTrace();
+		} finally {
+			if ( c != null ) {
+				c.close();
+			}
+		}
+		return sync_state;
+	}
+
+	public void updateSectionSyncState( Section section, SyncState state )
+	{
+		SQLiteDatabase db = null;
+		try {
+			ContentValues values = new ContentValues();
+			values.put( SectionField.SYNC_STATE.toString(),
+					Integer.toString( state.ordinal() ) );
+			String whereClause = SectionField.ID + " = ?";
+			String[] whereArgs = new String[] { Integer.toString( section
+					.getId() ) };
+			db = Repository.getInstance( mContext ).getReadableDatabase();
+			db.update( SECTION_TABLE_NAME, values, whereClause, whereArgs );
+		} catch ( SQLiteException e ) {
+			e.printStackTrace();
+		}
 	}
 }

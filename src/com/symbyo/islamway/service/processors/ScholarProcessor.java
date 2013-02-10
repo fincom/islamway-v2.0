@@ -32,6 +32,7 @@ public class ScholarProcessor extends Processor {
 				scholar.addSection( mSection );
 			}
 		}
-		UnitOfWork.getCurrent().commit( db );
+		boolean result = UnitOfWork.getCurrent().commit( db );
+		mPostProcessingListener.onPostProccessing( result );
 	}
 }

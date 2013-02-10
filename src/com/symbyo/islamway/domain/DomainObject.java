@@ -14,6 +14,7 @@ public abstract class DomainObject implements Parcelable {
 	}
 	
 	public enum SyncState {
+		SYNC_STATE_NONE,
 		SYNC_STATE_BASIC,
 		SYNC_STATE_FULL
 	}
