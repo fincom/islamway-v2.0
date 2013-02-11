@@ -16,6 +16,8 @@ import com.symbyo.islamway.fragments.SlideMenuFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.persistance.Repository;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+
 public class ScholarsActivity extends SlidingFragmentActivity implements
 		OnSlideMenuItemClick {
 
@@ -57,6 +59,8 @@ public class ScholarsActivity extends SlidingFragmentActivity implements
 	{
 		super.onCreate( savedInstanceState );
 
+		// create the repository singleton object.
+		Repository.getInstance( getApplicationContext() );
 		if ( savedInstanceState != null ) {
 			// load back the latest request id, if any
 			mRequestId = savedInstanceState.getInt( REQUEST_KEY );
@@ -201,5 +205,12 @@ public class ScholarsActivity extends SlidingFragmentActivity implements
 		}
 
 		return super.onSearchRequested();
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		Crouton.cancelAllCroutons();
+		super.onDestroy();
 	}
 }

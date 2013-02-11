@@ -1,15 +1,21 @@
 package com.symbyo.islamway.fragments;
 
+import junit.framework.Assert;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
@@ -23,6 +29,9 @@ import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.ServiceHelper.RequestState;
 import com.symbyo.islamway.adapters.ScholarsAdapter;
 import com.symbyo.islamway.domain.Section;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class ScholarListFragment extends SherlockListFragment implements
 		Searchable {
@@ -47,6 +56,10 @@ public class ScholarListFragment extends SherlockListFragment implements
 	 */
 	private int					mRequestId			= ServiceHelper.REQUEST_ID_NONE;
 
+	private Crouton				mCrouton;
+
+	private boolean					mWifiOnly = true;
+
 	@Override
 	public void onCreate( Bundle savedInstanceState )
 	{
@@ -62,54 +75,83 @@ public class ScholarListFragment extends SherlockListFragment implements
 		}
 		// get the section
 		mSection = getArguments().getParcelable( SECTION_KEY );
+		Assert.assertNotNull( mSection );
+		// TODO get wifi_only setting
+	}
+
+	@Override
+	public View onCreateView( LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState )
+	{
 		if ( mSection != null
 				&& mSection.getSyncState() == Section.SyncState.SYNC_STATE_FULL ) {
 			// get the quran scholars list from the database.
+			Log.d( "Islamway", "loading scholars form database" );
 			retrieveScholars();
-		} else {
+		} else if ( isNetworkAvailable() ) {
 			setListAdapter( mAdapter );
 			requestScholars();
+			Log.d( "Islamway", "fetching scholars from server." );
+			Style style = new Style.Builder()
+					.setDuration( Style.DURATION_INFINITE )
+					.setBackgroundColorValue( Style.holoBlueLight )
+					.setHeight( LayoutParams.WRAP_CONTENT ).build();
+			mCrouton = Crouton.makeText( getSherlockActivity(),
+					R.string.info_syncing, style );
+			mCrouton.show();
+		} else {
+			Crouton.makeText( getSherlockActivity(),
+					R.string.err_connect_network, Style.ALERT ).show();
+			mAdapter = new ScholarsAdapter( getSherlockActivity(), mSection );
+			setListAdapter( mAdapter );
 		}
+
+		return super.onCreateView( inflater, container, savedInstanceState );
 	}
 
 	@Override
 	public void onAttach( Activity activity )
 	{
+		if ( mCrouton != null ) {
+			Crouton.hide( mCrouton );
+		}
+		Crouton.cancelAllCroutons();
 		super.onAttach( activity );
-		
 	}
 
 	private void requestScholars()
 	{
-		// TODO register for the response intent.
 		final LocalBroadcastManager mngr = LocalBroadcastManager
-				.getInstance( getActivity() );
+				.getInstance( getSherlockActivity() );
 		mngr.registerReceiver( new BroadcastReceiver() {
 
 			@Override
 			public void onReceive( Context context, Intent intent )
 			{
 				mngr.unregisterReceiver( this );
-				// TODO invalidate data.
 				int request_id = intent.getIntExtra(
 						ServiceHelper.EXTRA_REQUEST_ID,
 						ServiceHelper.REQUEST_ID_NONE );
 				boolean error = intent.getBooleanExtra(
 						ServiceHelper.EXTRA_RESPONSE_ERROR, false );
 				if ( error ) {
-					Toast.makeText( getActivity(),
-							getString( R.string.err_network ),
-							Toast.LENGTH_LONG ).show();
+					if ( getSherlockActivity() != null ) {
+						Crouton.hide( mCrouton );
+						Crouton.makeText( getSherlockActivity(),
+								R.string.err_network, Style.ALERT ).show();
+					}
 				}
 				if ( request_id == mRequestId ) {
-					retrieveScholars();
+
+					Crouton.hide( mCrouton );
 				}
+				retrieveScholars();
 			}
 
 		}, new IntentFilter( ServiceHelper.ACTION_INVALIDATE_SCHOLAR_LIST ) );
 
 		@SuppressWarnings("null")
-		ServiceHelper helper = ServiceHelper.getInstance( getActivity()
+		ServiceHelper helper = ServiceHelper.getInstance( getSherlockActivity()
 				.getApplicationContext() );
 		if ( helper.getRequestState( mRequestId ) == RequestState.NOT_REGISTERED ) {
 			if ( mSection.getType() == Section.SectionType.QURAN ) {
@@ -208,7 +250,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 				} catch ( InterruptedException e ) {
 					return null;
 				}
-				if ( getActivity() == null ) {
+				if ( getSherlockActivity() == null ) {
 					return null;
 				}
 				if ( mSection == null ) {
@@ -216,13 +258,31 @@ public class ScholarListFragment extends SherlockListFragment implements
 				}
 
 				@SuppressWarnings("null")
-				ScholarsAdapter adapter = new ScholarsAdapter( getActivity(),
-						mSection );
+				ScholarsAdapter adapter = new ScholarsAdapter(
+						getSherlockActivity(), mSection );
 				synchronized ( mLock ) {
 					mIsReadingDatabase = false;
 				}
 				return adapter;
 			}
 		}.execute();
+	}
+
+	private boolean isNetworkAvailable()
+	{
+		ConnectivityManager cm = (ConnectivityManager) getSherlockActivity()
+				.getSystemService( Context.CONNECTIVITY_SERVICE );
+		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+		// if no network is available networkInfo will be null
+		// otherwise check if we are connected
+		if ( networkInfo != null && networkInfo.isConnected() ) {
+			int network_type = networkInfo.getType();
+			if ( network_type != ConnectivityManager.TYPE_WIFI
+					&& mWifiOnly ) {
+				return false;
+			}
+			return true;
+		}
+		return false;
 	}
 }

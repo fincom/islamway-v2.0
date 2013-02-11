@@ -12,7 +12,9 @@
     <string name="settings">إعدادات</string>
     <string name="scholar_image">صورة الشيخ</string>
     <string name="settings_wifi_only">wifi only</string>
-    <string name="err_network">Network Error</string>
+    <string name="err_network">خطأ فى الاتصال</string>
+    <string name="err_connect_network">تأكد من اتصالك بالانترنت</string>
     <string name="err_processing_data">Error processing data</string>
+    <string name="info_syncing">جاري تحميل البيانات&#8230;</string>
 
 </resources>
