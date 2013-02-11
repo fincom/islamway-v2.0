@@ -1,7 +1,5 @@
 package com.symbyo.islamway;
 
-import java.util.HashSet;
-
 import junit.framework.Assert;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -12,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.util.SparseArray;
 
 import com.symbyo.islamway.service.IWService;
 
@@ -26,13 +26,19 @@ public class ServiceHelper {
 
 	private static ServiceHelper	mInstance;
 	private Context					mContext;
-	private HashSet<Integer>		mRequests						= new HashSet<Integer>();
+	private Object					mLock							= new Object();
 	private int						mLastRequestId					= 0;
+	private SparseArray<Resource>	mRequests						= new SparseArray<Resource>();
 
 	public enum RequestState {
 		NOT_REGISTERED,
 		PENDING,
 		FINISHED
+	}
+
+	private enum Resource {
+		QURAN_SCHOLAR,
+		LESSONS_SCHOLAR
 	}
 
 	public static synchronized ServiceHelper getInstance(
@@ -51,54 +57,74 @@ public class ServiceHelper {
 	private int getQuranScholars( int request_id )
 	{
 		Assert.assertTrue( request_id >= REQUEST_ID_NONE );
-		int result = request_id;
-		RequestState state = getRequestState( request_id );
+
+		int result;
+		int index = -1;
+		RequestState state = null;
+		if ( (index = mRequests.indexOfValue( Resource.QURAN_SCHOLAR )) >= 0 ) {
+			result = mRequests.keyAt( index );
+			state = RequestState.PENDING;
+		} else if ( request_id == REQUEST_ID_NONE ) {
+			synchronized ( mLock ) {
+				result = ++mLastRequestId;
+			}
+			state = RequestState.NOT_REGISTERED;
+		} else {
+			result = request_id;
+			state = getRequestState( request_id );
+		}
+
 		switch ( state ) {
 		case FINISHED:
 			Intent intent = new Intent( ACTION_INVALIDATE_SCHOLAR_LIST );
 			LocalBroadcastManager.getInstance( mContext )
 					.sendBroadcast( intent );
 		case PENDING:
-			result = request_id;
 			break;
 		case NOT_REGISTERED:
-			synchronized ( this ) {
-				request_id = ++mLastRequestId;
-			}
-			mRequests.add( Integer.valueOf( request_id ) );
+			Log.d( "Islamway", "request queued" );
+			mRequests.put( result, Resource.QURAN_SCHOLAR );
 
-			sendRequestToService( IWService.ACTION_GET_QURAN_SCHOLARS,
-					request_id, null, null );
-			result = request_id;
+			sendRequestToService( IWService.ACTION_GET_QURAN_SCHOLARS, result,
+					null, null );
 		}
-
 		return result;
 	}
-	
+
 	private int getLessonsScholars( int request_id )
 	{
 		Assert.assertTrue( request_id >= REQUEST_ID_NONE );
-		int result = request_id;
-		RequestState state = getRequestState( request_id );
+
+		int result;
+		int index = -1;
+		RequestState state = null;
+		if ( (index = mRequests.indexOfValue( Resource.LESSONS_SCHOLAR )) >= 0 ) {
+			result = mRequests.keyAt( index );
+			state = RequestState.PENDING;
+		} else if ( request_id == REQUEST_ID_NONE ) {
+			synchronized ( mLock ) {
+				result = ++mLastRequestId;
+			}
+			state = RequestState.NOT_REGISTERED;
+		} else {
+			result = request_id;
+			state = getRequestState( request_id );
+		}
+
 		switch ( state ) {
 		case FINISHED:
 			Intent intent = new Intent( ACTION_INVALIDATE_SCHOLAR_LIST );
 			LocalBroadcastManager.getInstance( mContext )
 					.sendBroadcast( intent );
 		case PENDING:
-			result = request_id;
 			break;
 		case NOT_REGISTERED:
-			synchronized ( this ) {
-				request_id = ++mLastRequestId;
-			}
-			mRequests.add( Integer.valueOf( request_id ) );
+			Log.d( "Islamway", "request queued" );
+			mRequests.put( result, Resource.LESSONS_SCHOLAR );
 
 			sendRequestToService( IWService.ACTION_GET_LESSONS_SCHOLARS,
-					request_id, null, null );
-			result = request_id;
+					result, null, null );
 		}
-
 		return result;
 	}
 
@@ -146,18 +172,23 @@ public class ServiceHelper {
 	{
 		Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 		RequestState state;
-		if ( request_id == REQUEST_ID_NONE ) {
-			state = RequestState.NOT_REGISTERED;
-		} else if ( mRequests.contains( Integer.valueOf( request_id ) ) ) {
+		int index = mRequests.indexOfKey( request_id );
+		if ( index >= 0 ) {
 			state = RequestState.PENDING;
+			Log.d( "Islamway", "request pending" );
+		} else if ( request_id == REQUEST_ID_NONE ) {
+			state = RequestState.NOT_REGISTERED;
+			Log.d( "Islamway", "request is not registered" );
 		} else if ( request_id < mLastRequestId ) {
 			state = RequestState.FINISHED;
+			Log.d( "Islamway", "request has finished" );
 		} else {
 			state = RequestState.NOT_REGISTERED;
+			Log.d( "Islamway", "request is not registered" );
 		}
 		return state;
 	}
-	
+
 	// @formatter:off
 	private BroadcastReceiver mServiceResponseReceiver = new BroadcastReceiver() {
 
@@ -174,8 +205,10 @@ public class ServiceHelper {
 				i.putExtra( EXTRA_RESPONSE_ERROR, true );
 			}
 			LocalBroadcastManager.getInstance( mContext ).sendBroadcast( i );
-			
-			mRequests.remove( Integer.valueOf( request_id ) );
+			synchronized ( mLock ) {
+				mRequests.remove( request_id );
+			}
+			LocalBroadcastManager.getInstance( mContext ).unregisterReceiver( this );
 		}
 
 	};
@@ -195,5 +228,5 @@ public class ServiceHelper {
 	{
 		return getLessonsScholars( REQUEST_ID_NONE );
 	}
-	
+
 }

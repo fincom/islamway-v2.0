@@ -25,9 +25,11 @@
             android:id="@+id/wifi_only"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings_wifi_only"
             android:layout_below="@id/settings_title"
-            android:padding="@dimen/slidemenu_item_padding" />
+            android:checked="true"
+            android:padding="@dimen/slidemenu_item_padding"
+            android:text="@string/settings_wifi_only" />
+
     </RelativeLayout>
 
 </RelativeLayout>

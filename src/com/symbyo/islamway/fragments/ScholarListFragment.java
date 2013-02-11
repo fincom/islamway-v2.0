@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -39,6 +40,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 	public final static String	SECTION_KEY			= "section";
 	private final int			SEARCH_MENU_ITEM_ID	= 1;
 	private final String		REQUEST_KEY			= "request";
+	private final String		PREFS_WIFIONLY		= "wifi_only";
 
 	private Section				mSection;
 	private MenuItem			mSearchMenuItem;
@@ -58,7 +60,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 
 	private Crouton				mCrouton;
 
-	private boolean					mWifiOnly = true;
+	private boolean				mWifiOnly			= true;
 
 	@Override
 	public void onCreate( Bundle savedInstanceState )
@@ -76,7 +78,8 @@ public class ScholarListFragment extends SherlockListFragment implements
 		// get the section
 		mSection = getArguments().getParcelable( SECTION_KEY );
 		Assert.assertNotNull( mSection );
-		// TODO get wifi_only setting
+		SharedPreferences prefs = getActivity().getPreferences( 0 );
+		mWifiOnly = prefs.getBoolean( PREFS_WIFIONLY, true );
 	}
 
 	@Override
@@ -92,13 +95,13 @@ public class ScholarListFragment extends SherlockListFragment implements
 			setListAdapter( mAdapter );
 			requestScholars();
 			Log.d( "Islamway", "fetching scholars from server." );
-			Style style = new Style.Builder()
+			/*Style style = new Style.Builder()
 					.setDuration( Style.DURATION_INFINITE )
 					.setBackgroundColorValue( Style.holoBlueLight )
 					.setHeight( LayoutParams.WRAP_CONTENT ).build();
 			mCrouton = Crouton.makeText( getSherlockActivity(),
 					R.string.info_syncing, style );
-			mCrouton.show();
+			mCrouton.show();*/
 		} else {
 			Crouton.makeText( getSherlockActivity(),
 					R.string.err_connect_network, Style.ALERT ).show();
@@ -128,6 +131,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 			@Override
 			public void onReceive( Context context, Intent intent )
 			{
+				Log.d( "Islamway", "response received" );
 				mngr.unregisterReceiver( this );
 				int request_id = intent.getIntExtra(
 						ServiceHelper.EXTRA_REQUEST_ID,
@@ -159,13 +163,19 @@ public class ScholarListFragment extends SherlockListFragment implements
 			} else {
 				mRequestId = helper.getLessonsScholars();
 			}
+			Style style = new Style.Builder()
+					.setDuration( Style.DURATION_INFINITE )
+					.setBackgroundColorValue( Style.holoBlueLight )
+					.setHeight( LayoutParams.WRAP_CONTENT ).build();
+			mCrouton = Crouton.makeText( getSherlockActivity(),
+					R.string.info_syncing, style );
+			mCrouton.show();
 		}
 	}
 
 	@Override
 	public void onCreateOptionsMenu( Menu menu, MenuInflater inflater )
 	{
-
 		SearchView searchView = new SearchView( getSherlockActivity()
 				.getSupportActionBar().getThemedContext() );
 		searchView.setQueryHint( getString( R.string.menu_search_hint ) );
@@ -277,8 +287,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 		// otherwise check if we are connected
 		if ( networkInfo != null && networkInfo.isConnected() ) {
 			int network_type = networkInfo.getType();
-			if ( network_type != ConnectivityManager.TYPE_WIFI
-					&& mWifiOnly ) {
+			if ( network_type != ConnectivityManager.TYPE_WIFI && mWifiOnly ) {
 				return false;
 			}
 			return true;

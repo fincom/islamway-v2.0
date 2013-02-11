@@ -19,14 +19,9 @@ import com.symbyo.islamway.R;
 
 public class SlideMenuFragment extends SherlockFragment {
 
-	private final String	ITEM_TYPE_KEY	= "item_type";
-
-	@Override
-	public void onSaveInstanceState( Bundle outState )
-	{
-		outState.putInt( ITEM_TYPE_KEY, mCurrentMenuItemType.ordinal() );
-		super.onSaveInstanceState( outState );
-	}
+	private final String			ITEM_TYPE_KEY	= "item_type";
+	private OnSlideMenuItemClick	mListener;
+	private MenuItemType			mCurrentMenuItemType;
 
 	// same order as in the array adapter.
 	public enum MenuItemType {
@@ -35,8 +30,12 @@ public class SlideMenuFragment extends SherlockFragment {
 		PLAYING_LIST
 	}
 
-	private OnSlideMenuItemClick	mListener;
-	private MenuItemType			mCurrentMenuItemType;
+	@Override
+	public void onSaveInstanceState( Bundle outState )
+	{
+		outState.putInt( ITEM_TYPE_KEY, mCurrentMenuItemType.ordinal() );
+		super.onSaveInstanceState( outState );
+	}
 
 	@Override
 	public void onAttach( Activity activity )
