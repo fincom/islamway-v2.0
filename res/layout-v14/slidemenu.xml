@@ -27,7 +27,8 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_wifi_only"
             android:layout_below="@id/settings_title"
-            android:padding="@dimen/slidemenu_item_padding" />
+            android:padding="@dimen/slidemenu_item_padding"
+            android:checked="true" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -2,15 +2,18 @@ package com.symbyo.islamway.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -22,6 +25,8 @@ public class SlideMenuFragment extends SherlockFragment {
 	private final String			ITEM_TYPE_KEY	= "item_type";
 	private OnSlideMenuItemClick	mListener;
 	private MenuItemType			mCurrentMenuItemType;
+	public final static String		PREFS_WIFIONLY	= "wifi_only";
+	public final static String		PREFS_FILE		= "prefs_file";
 
 	// same order as in the array adapter.
 	public enum MenuItemType {
@@ -85,6 +90,27 @@ public class SlideMenuFragment extends SherlockFragment {
 				mListener.onSlideMenuItemClick( item );
 				mCurrentMenuItemType = item.type;
 			}
+		} );
+
+		final CompoundButton btn_wifi_only = (CompoundButton) getSherlockActivity()
+				.findViewById( R.id.wifi_only );
+		SharedPreferences prefs = getActivity().getSharedPreferences(
+				PREFS_FILE, 0 );
+		boolean wifi_only = prefs.getBoolean( PREFS_WIFIONLY, true );
+		btn_wifi_only.setChecked( wifi_only );
+		btn_wifi_only.setOnClickListener( new OnClickListener() {
+
+			@Override
+			public void onClick( View v )
+			{
+				SharedPreferences prefs = getActivity().getSharedPreferences(
+						PREFS_FILE, 0 );
+				CompoundButton btn = (CompoundButton) v;
+				boolean is_checked = btn.isChecked();
+				prefs.edit().putBoolean( PREFS_WIFIONLY,
+						btn.isChecked() ).commit();
+			}
+
 		} );
 	}
 
