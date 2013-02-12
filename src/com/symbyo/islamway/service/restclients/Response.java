@@ -2,7 +2,6 @@ package com.symbyo.islamway.service.restclients;
 
 import java.util.Iterator;
 
-import android.R.raw;
 import android.util.Log;
 
 import com.google.gson.Gson;

@@ -40,7 +40,6 @@ public class ScholarListFragment extends SherlockListFragment implements
 	public final static String	SECTION_KEY			= "section";
 	private final int			SEARCH_MENU_ITEM_ID	= 1;
 	private final String		REQUEST_KEY			= "request";
-	private final String		PREFS_WIFIONLY		= "wifi_only";
 
 	private Section				mSection;
 	private MenuItem			mSearchMenuItem;
@@ -78,8 +77,9 @@ public class ScholarListFragment extends SherlockListFragment implements
 		// get the section
 		mSection = getArguments().getParcelable( SECTION_KEY );
 		Assert.assertNotNull( mSection );
-		SharedPreferences prefs = getActivity().getPreferences( 0 );
-		mWifiOnly = prefs.getBoolean( PREFS_WIFIONLY, true );
+		SharedPreferences prefs = getActivity().getSharedPreferences(
+				SlideMenuFragment.PREFS_FILE, 0 );
+		mWifiOnly = prefs.getBoolean( SlideMenuFragment.PREFS_WIFIONLY, true );
 	}
 
 	@Override
@@ -95,13 +95,13 @@ public class ScholarListFragment extends SherlockListFragment implements
 			setListAdapter( mAdapter );
 			requestScholars();
 			Log.d( "Islamway", "fetching scholars from server." );
-			/*Style style = new Style.Builder()
-					.setDuration( Style.DURATION_INFINITE )
-					.setBackgroundColorValue( Style.holoBlueLight )
-					.setHeight( LayoutParams.WRAP_CONTENT ).build();
-			mCrouton = Crouton.makeText( getSherlockActivity(),
-					R.string.info_syncing, style );
-			mCrouton.show();*/
+			/*
+			 * Style style = new Style.Builder() .setDuration(
+			 * Style.DURATION_INFINITE ) .setBackgroundColorValue(
+			 * Style.holoBlueLight ) .setHeight( LayoutParams.WRAP_CONTENT
+			 * ).build(); mCrouton = Crouton.makeText( getSherlockActivity(),
+			 * R.string.info_syncing, style ); mCrouton.show();
+			 */
 		} else {
 			Crouton.makeText( getSherlockActivity(),
 					R.string.err_connect_network, Style.ALERT ).show();

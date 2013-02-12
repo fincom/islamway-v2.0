@@ -35,17 +35,6 @@ public class ScholarsActivity extends SlidingFragmentActivity implements
 	 */
 	private String			mActivityTitle;
 
-	/**
-	 * The currently loaded section in the scholars list fragment.
-	 */
-	// private Section mLoadedSection;
-
-	@Override
-	protected void onRestoreInstanceState( Bundle savedInstanceState )
-	{
-		super.onRestoreInstanceState( savedInstanceState );
-	}
-
 	@Override
 	protected void onSaveInstanceState( Bundle outState )
 	{
