@@ -86,22 +86,18 @@ public class ScholarListFragment extends SherlockListFragment implements
 	public View onCreateView( LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState )
 	{
-		if ( mSection != null
-				&& mSection.getSyncState() == Section.SyncState.SYNC_STATE_FULL ) {
+		if ( mSection.getSyncState() == Section.SyncState.SYNC_STATE_FULL ) {
 			// get the quran scholars list from the database.
 			Log.d( "Islamway", "loading scholars form database" );
 			retrieveScholars();
 		} else if ( isNetworkAvailable() ) {
+			if (mAdapter != null) {
+				mAdapter = null;
+			}
 			setListAdapter( mAdapter );
 			requestScholars();
 			Log.d( "Islamway", "fetching scholars from server." );
-			/*
-			 * Style style = new Style.Builder() .setDuration(
-			 * Style.DURATION_INFINITE ) .setBackgroundColorValue(
-			 * Style.holoBlueLight ) .setHeight( LayoutParams.WRAP_CONTENT
-			 * ).build(); mCrouton = Crouton.makeText( getSherlockActivity(),
-			 * R.string.info_syncing, style ); mCrouton.show();
-			 */
+
 		} else {
 			Crouton.makeText( getSherlockActivity(),
 					R.string.err_connect_network, Style.ALERT ).show();
@@ -126,47 +122,28 @@ public class ScholarListFragment extends SherlockListFragment implements
 	{
 		final LocalBroadcastManager mngr = LocalBroadcastManager
 				.getInstance( getSherlockActivity() );
-		mngr.registerReceiver( new BroadcastReceiver() {
-
-			@Override
-			public void onReceive( Context context, Intent intent )
-			{
-				Log.d( "Islamway", "response received" );
-				mngr.unregisterReceiver( this );
-				int request_id = intent.getIntExtra(
-						ServiceHelper.EXTRA_REQUEST_ID,
-						ServiceHelper.REQUEST_ID_NONE );
-				boolean error = intent.getBooleanExtra(
-						ServiceHelper.EXTRA_RESPONSE_ERROR, false );
-				if ( error ) {
-					if ( getSherlockActivity() != null ) {
-						Crouton.hide( mCrouton );
-						Crouton.makeText( getSherlockActivity(),
-								R.string.err_network, Style.ALERT ).show();
-					}
-				}
-				if ( request_id == mRequestId ) {
-
-					Crouton.hide( mCrouton );
-				}
-				retrieveScholars();
-			}
-
-		}, new IntentFilter( ServiceHelper.ACTION_INVALIDATE_SCHOLAR_LIST ) );
+		mngr.registerReceiver( mScholarsRequestReceiver, new IntentFilter(
+				ServiceHelper.ACTION_INVALIDATE_SCHOLAR_LIST ) );
 
 		@SuppressWarnings("null")
 		ServiceHelper helper = ServiceHelper.getInstance( getSherlockActivity()
 				.getApplicationContext() );
-		if ( helper.getRequestState( mRequestId ) == RequestState.NOT_REGISTERED ) {
+		RequestState state = helper.getRequestState( mRequestId );
+
+		Style style = new Style.Builder().setDuration( Style.DURATION_INFINITE )
+				.setBackgroundColorValue( Style.holoBlueLight )
+				.setHeight( LayoutParams.WRAP_CONTENT ).build();
+		if ( state == RequestState.NOT_REGISTERED ) {
 			if ( mSection.getType() == Section.SectionType.QURAN ) {
 				mRequestId = helper.getQuranScholars();
 			} else {
 				mRequestId = helper.getLessonsScholars();
 			}
-			Style style = new Style.Builder()
-					.setDuration( Style.DURATION_INFINITE )
-					.setBackgroundColorValue( Style.holoBlueLight )
-					.setHeight( LayoutParams.WRAP_CONTENT ).build();
+
+			mCrouton = Crouton.makeText( getSherlockActivity(),
+					R.string.info_syncing, style );
+			mCrouton.show();
+		} else if ( state == RequestState.PENDING ) {
 			mCrouton = Crouton.makeText( getSherlockActivity(),
 					R.string.info_syncing, style );
 			mCrouton.show();
@@ -293,5 +270,45 @@ public class ScholarListFragment extends SherlockListFragment implements
 			return true;
 		}
 		return false;
+	}
+
+	// @formatter:off
+	private BroadcastReceiver mScholarsRequestReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive( Context context, Intent intent )
+		{
+			Log.d( "Islamway", "response received" );
+			final LocalBroadcastManager mngr = LocalBroadcastManager
+					.getInstance( getSherlockActivity() );
+			mngr.unregisterReceiver( this );
+			int request_id = intent.getIntExtra(
+					ServiceHelper.EXTRA_REQUEST_ID,
+					ServiceHelper.REQUEST_ID_NONE );
+			boolean error = intent.getBooleanExtra(
+					ServiceHelper.EXTRA_RESPONSE_ERROR, false );
+			if ( error ) {
+				if ( getSherlockActivity() != null ) {
+					Crouton.hide( mCrouton );
+					Crouton.makeText( getSherlockActivity(),
+							R.string.err_network, Style.ALERT ).show();
+				}
+			}
+			if ( request_id == mRequestId ) {
+
+				Crouton.hide( mCrouton );
+			}
+			retrieveScholars();
+		}
+
+	};
+	// @formatter:on
+
+	@Override
+	public void onDetach()
+	{
+		LocalBroadcastManager.getInstance( getSherlockActivity() )
+				.unregisterReceiver( mScholarsRequestReceiver );
+		super.onDetach();
 	}
 }
