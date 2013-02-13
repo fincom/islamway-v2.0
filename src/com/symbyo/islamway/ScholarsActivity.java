@@ -1,9 +1,11 @@
 package com.symbyo.islamway;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.fragments.ScholarListFragment;
@@ -11,7 +13,8 @@ import com.symbyo.islamway.fragments.SlideMenuFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.persistance.Repository;
 
-public class ScholarsActivity extends BaseSlidingActivity {
+public class ScholarsActivity extends BaseSlidingActivity implements
+        ScholarListFragment.OnScholarItemClick {
 
 	private final int		REQUEST_INVALID		= 0;
 	private final String	REQUEST_KEY			= "request";
@@ -74,6 +77,7 @@ public class ScholarsActivity extends BaseSlidingActivity {
 				fragment.expandSearchView();
 			}
 		} catch ( ClassCastException e ) {
+            e.printStackTrace();
 		}
 
 		return super.onSearchRequested();
@@ -112,9 +116,16 @@ public class ScholarsActivity extends BaseSlidingActivity {
 			getSupportFragmentManager().beginTransaction().remove( frgmnt )
 					.commit();
 		}
-
-		// change the title
-		mActivityTitle = item.text;
-		setTitle( mActivityTitle );
+        // change the title
+        mActivityTitle = item.text;
+        setTitle( mActivityTitle );
 	}
+
+    @Override
+    public void onScholarItemClick( Scholar scholar )
+    {
+        Intent intent = new Intent(this,  QuranCollectionsActivity.class );
+        intent.putExtra( QuranCollectionsActivity.EXTRA_SCHOLAR, scholar );
+        startActivity( intent );
+    }
 }

@@ -26,6 +26,9 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".QuranCollectionsActivity" />
+
         <service
             android:name=".service.IWService"
             android:exported="false" >
