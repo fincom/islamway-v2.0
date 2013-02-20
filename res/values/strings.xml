@@ -5,7 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">إعدادات</string>
     <string name="menu_search">بحث</string>
-    <string name="menu_search_hint">ابحث باسم الشيخ</string>
+    <string name="menu_scholar_search_hint">ابحث باسم الشيخ</string>
     <string name="quran">القرآن</string>
     <string name="lessons">الدروس</string>
     <string name="playing_list">قائمة الاستماع</string>

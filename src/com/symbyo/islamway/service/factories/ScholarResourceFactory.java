@@ -13,7 +13,7 @@ import com.symbyo.islamway.service.restclients.RestClient;
 import com.symbyo.islamway.service.restclients.ScholarRestClient;
 
 public class ScholarResourceFactory extends ResourceFactory {
-	Section	mSection;
+	protected Section	mSection;
 
 	/**
 	 * Initializes a ScholarResourceFactory. The default_section parameter is
