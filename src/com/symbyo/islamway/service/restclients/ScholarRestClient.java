@@ -25,13 +25,13 @@ public class ScholarRestClient extends RestClient {
 		super( url_format, http_method );
 	}
 
-	protected void appendParameters()
+	/*protected void appendParameters()
 	{
 		if ( mParams == null ) {
 			return;
 		}
 		// TODO: append the url parameters as key-value pairs to the mUrl.
-	}
+	}*/
 
 	@Override
 	protected String prepareUrl(ContentValues params)

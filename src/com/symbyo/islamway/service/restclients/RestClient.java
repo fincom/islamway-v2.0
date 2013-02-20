@@ -22,7 +22,7 @@ public abstract class RestClient {
 
 	protected final int		RESOURCE_ID_NONE	= -1;
 	protected int			mResourceId			= RESOURCE_ID_NONE;
-	protected ContentValues	mParams;
+	//protected ContentValues	mParams;
 	protected final String	mUrlFormat;
 	protected HTTPMethod	mHTTPMethod;
 
@@ -51,17 +51,17 @@ public abstract class RestClient {
 		mHTTPMethod = http_method;
 	}
 
-	/**
+	/*/**
 	 * 
 	 * @param params
 	 *            are inserted into the url-format in order of insertion of keys
 	 * @return
 	 */
-	public RestClient setParameters( @NonNull ContentValues params )
+	/*public RestClient setParameters( @NonNull ContentValues params )
 	{
 		mParams = params;
 		return this;
-	}
+	}*/
 
 	public Response getResponse() throws NetworkException
 	{

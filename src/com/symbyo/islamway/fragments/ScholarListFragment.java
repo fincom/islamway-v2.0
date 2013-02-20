@@ -2,8 +2,6 @@ package com.symbyo.islamway.fragments;
 
 import android.app.Activity;
 import android.content.*;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -11,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
@@ -23,6 +20,7 @@ import com.symbyo.islamway.R;
 import com.symbyo.islamway.Searchable;
 import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.ServiceHelper.RequestState;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.adapters.ScholarsAdapter;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
@@ -56,8 +54,6 @@ public class ScholarListFragment extends SherlockListFragment implements
 
     private Crouton mCrouton;
 
-    private boolean mWifiOnly = true;
-
     public static interface OnScholarItemClick {
         public void onScholarItemClick( Scholar scholar );
     }
@@ -78,9 +74,6 @@ public class ScholarListFragment extends SherlockListFragment implements
         // get the section
         mSection = getArguments().getParcelable( SECTION_KEY );
         Assert.assertNotNull( mSection );
-        SharedPreferences prefs = getActivity().getSharedPreferences(
-                SlideMenuFragment.PREFS_FILE, 0 );
-        mWifiOnly = prefs.getBoolean( SlideMenuFragment.PREFS_WIFIONLY, true );
     }
 
     @Override
@@ -92,7 +85,7 @@ public class ScholarListFragment extends SherlockListFragment implements
             // get the quran scholars list from the database.
             Log.d( "Islamway", "loading scholars form database" );
             retrieveScholars();
-        } else if ( isNetworkAvailable() ) {
+        } else if ( Utils.isNetworkAvailable( getSherlockActivity() ) ) {
             if ( mAdapter != null ) {
                 mAdapter = null;
             }
@@ -152,16 +145,10 @@ public class ScholarListFragment extends SherlockListFragment implements
         mngr.registerReceiver( mScholarsRequestReceiver, new IntentFilter(
                 ServiceHelper.ACTION_INVALIDATE_SCHOLAR_LIST ) );
 
-        @SuppressWarnings("null")
         ServiceHelper helper = ServiceHelper.getInstance( getSherlockActivity()
                 .getApplicationContext() );
         RequestState state = helper.getRequestState( mRequestId );
 
-        Style style = new Style.Builder().setDuration( Style.DURATION_INFINITE )
-                                         .setBackgroundColorValue(
-                                                 Style.holoBlueLight )
-                                         .setHeight( LayoutParams.WRAP_CONTENT )
-                                         .build();
         if ( state == RequestState.NOT_REGISTERED ) {
             if ( mSection.getType() == Section.SectionType.QURAN ) {
                 mRequestId = helper.getQuranScholars();
@@ -170,11 +157,11 @@ public class ScholarListFragment extends SherlockListFragment implements
             }
 
             mCrouton = Crouton.makeText( getSherlockActivity(),
-                    R.string.info_syncing, style );
+                    R.string.info_syncing, Utils.CROUTON_PROGRESS_STYLE );
             mCrouton.show();
         } else if ( state == RequestState.PENDING ) {
             mCrouton = Crouton.makeText( getSherlockActivity(),
-                    R.string.info_syncing, style );
+                    R.string.info_syncing, Utils.CROUTON_PROGRESS_STYLE );
             mCrouton.show();
         }
     }
@@ -184,7 +171,7 @@ public class ScholarListFragment extends SherlockListFragment implements
     {
         SearchView searchView = new SearchView( getSherlockActivity()
                 .getSupportActionBar().getThemedContext() );
-        searchView.setQueryHint( getString( R.string.menu_search_hint ) );
+        searchView.setQueryHint( getString( R.string.menu_scholar_search_hint ) );
 
         // handle the query text change to live-filter the scholars list.
         searchView.setOnQueryTextListener( new OnQueryTextListener() {
@@ -282,23 +269,6 @@ public class ScholarListFragment extends SherlockListFragment implements
                 return adapter;
             }
         }.execute();
-    }
-
-    private boolean isNetworkAvailable()
-    {
-        ConnectivityManager cm = (ConnectivityManager) getSherlockActivity()
-                .getSystemService( Context.CONNECTIVITY_SERVICE );
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        // if no network is available networkInfo will be null
-        // otherwise check if we are connected
-        if ( networkInfo != null && networkInfo.isConnected() ) {
-            int network_type = networkInfo.getType();
-            if ( network_type != ConnectivityManager.TYPE_WIFI && mWifiOnly ) {
-                return false;
-            }
-            return true;
-        }
-        return false;
     }
 
     // @formatter:off
