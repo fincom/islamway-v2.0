@@ -1,5 +1,6 @@
 package com.symbyo.islamway.service.parsers;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,10 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.service.restclients.RestClient;
 
 public class ScholarParser extends Parser {
 
@@ -17,7 +21,7 @@ public class ScholarParser extends Parser {
 		Gson gson = new Gson();
 		JSONScholar scholar_raw = gson.fromJson( json, JSONScholar.class );
 		ArrayList<Scholar> result = new ArrayList<Scholar>();
-		result.add( scholar_raw.toScholar() );
+		result.add( scholar_raw.toDomainObject() );
 		return result;
 	}
 
@@ -25,34 +29,19 @@ public class ScholarParser extends Parser {
 	protected List<Scholar> doParseCollection( String json )
 	{
 		Gson gson = new Gson();
-		JSONResponse response = gson.fromJson( json, JSONResponse.class );
+        Type response_type = new TypeToken<JSONResponse<JSONScholar>>(){}.getType();
+		JSONResponse<JSONScholar> response = gson.fromJson( json, response_type );
 		ArrayList<Scholar> result = new ArrayList<Scholar>( response
-				.getScholars().size() );
-		for ( JSONScholar scholar_raw : response.getScholars() ) {
-			result.add( scholar_raw.toScholar() );
+				.getDomainObjects().size() );
+		for ( JSONScholar scholar_raw : response.getDomainObjects() ) {
+			result.add( scholar_raw.toDomainObject() );
 		}
 		return result;
 	}
 
-	private static class JSONResponse {
-		public final int				INVALID		= -1;
 
-		@SerializedName("count")
-		private int						mCount		= INVALID;
 
-		@SerializedName("total_count")
-		private int						mTotalCount	= INVALID;
-
-		@SerializedName("items")
-		private ArrayList<JSONScholar>	mItems;
-
-		public ArrayList<JSONScholar> getScholars()
-		{
-			return mItems;
-		}
-	}
-
-	private static class JSONScholar {
+	private class JSONScholar extends JSONDomainObject<Scholar>{
 
 		@SerializedName("id")
 		private int		mServerId;
@@ -78,12 +67,13 @@ public class ScholarParser extends Parser {
 		@SerializedName("popularity")
 		private int		mPopularity	= 0;
 
-		public Scholar toScholar()
-		{
-			Log.d( "Parser",
-					String.format( "parsed Scholar server_id: %d", mServerId ) );
-			return new Scholar( mServerId, mName, mEmail, mPhone, mPageUrl,
-					mImageUrl, mImageFile, mViewCount, mPopularity );
-		}
-	}
+        @Override
+        public Scholar toDomainObject()
+        {
+            Log.d( "Parser",
+                    String.format( "parsed Scholar server_id: %d", mServerId ) );
+            return new Scholar( mServerId, mName, mEmail, mPhone, mPageUrl,
+                    mImageUrl, mImageFile, mViewCount, mPopularity );
+        }
+    }
 }
