@@ -10,6 +10,8 @@ import com.symbyo.islamway.domain.DomainObject;
 
 public abstract class Parser {
 
+    protected final int INVALID_ID = -1;
+
 	public List<? extends DomainObject> parse( String json,
 			boolean is_collection )
 	{
