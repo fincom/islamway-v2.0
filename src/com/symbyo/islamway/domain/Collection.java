@@ -33,6 +33,7 @@ public class Collection extends DomainObject {
             int entries_count )
     {
         super( INVALID_ID );
+        Assert.assertTrue( server_id != INVALID_ID );
         mServerId = server_id;
         mTitle = title;
         mViewsCount = view_counts;
