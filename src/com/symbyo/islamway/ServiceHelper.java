@@ -20,17 +20,17 @@ public class ServiceHelper {
 
     public static final  int    REQUEST_ID_NONE                         = 0;
     public static final  String ACTION_INVALIDATE_SCHOLAR_LIST          = "iw.scholar_list_invalidate";
-    public static        String ACTION_INVALIDATE_QURAN_COLLECTION_LIST = "iw.quran_collection_list_invalidate";
+    public static final  String ACTION_INVALIDATE_QURAN_COLLECTION_LIST = "iw.quran_collection_list_invalidate";
     private static final String ACTION_SERVICE_RESPONSE                 = "iw.helper.service_response";
     public static final  String EXTRA_REQUEST_ID                        = "request_id";
     private static final String EXTRA_CALLBACK_ACTION                   = "callback_action";
     public static final  String EXTRA_RESPONSE_ERROR                    = "response_error";
 
     private static ServiceHelper mInstance;
-    private        Context       mContext;
-    private Object                mLock          = new Object();
-    private int                   mLastRequestId = 0;
-    private SparseArray<Resource> mRequests      = new SparseArray<Resource>();
+    private final  Context       mContext;
+    private final Object                mLock          = new Object();
+    private       int                   mLastRequestId = 0;
+    private final SparseArray<Resource> mRequests      = new SparseArray<Resource>();
 
     public enum RequestState {
         NOT_REGISTERED,
@@ -41,7 +41,7 @@ public class ServiceHelper {
     private enum Resource {
         QURAN_SCHOLAR,
         LESSONS_SCHOLAR,
-        SCHOLAR_QURAN_COLLECTION;
+        SCHOLAR_QURAN_COLLECTION
     }
 
     public static synchronized ServiceHelper getInstance(
@@ -63,8 +63,8 @@ public class ServiceHelper {
         Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
         int result;
-        int index = -1;
-        RequestState state = null;
+        int index;
+        RequestState state;
         if ( (index = mRequests.indexOfValue( Resource.QURAN_SCHOLAR )) >= 0 ) {
             result = mRequests.keyAt( index );
             state = RequestState.PENDING;
@@ -101,8 +101,8 @@ public class ServiceHelper {
         Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
         int result;
-        int index = -1;
-        RequestState state = null;
+        int index;
+        RequestState state;
         if ( (index = mRequests.indexOfValue(
                 Resource.LESSONS_SCHOLAR )) >= 0 ) {
             result = mRequests.keyAt( index );
@@ -139,8 +139,7 @@ public class ServiceHelper {
         Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
         int result;
-        int index = -1;
-        RequestState state = null;
+        RequestState state;
         if ( request_id == REQUEST_ID_NONE ) {
             synchronized ( mLock ) {
                 result = ++mLastRequestId;
@@ -232,7 +231,7 @@ public class ServiceHelper {
     }
 
     // @formatter:off
-    private BroadcastReceiver mServiceResponseReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mServiceResponseReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive( Context context, Intent intent )

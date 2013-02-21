@@ -5,6 +5,6 @@ package com.symbyo.islamway.service.processors;
  * @author kdehairy
  *
  */
-public interface OnPostProccessingListener {
+public interface OnPostProcessingListener {
 	void onPostProcessing( boolean result );
 }

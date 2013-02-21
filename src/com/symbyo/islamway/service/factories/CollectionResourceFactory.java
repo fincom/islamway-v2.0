@@ -14,11 +14,12 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class CollectionResourceFactory extends ResourceFactory {
 
-    protected Section mSection;
+    protected final Section mSection;
+
     public CollectionResourceFactory(
             String url_format, RestClient.HTTPMethod method, Section section )
     {
-        super(url_format, method );
+        super( url_format, method );
         mSection = section;
     }
 

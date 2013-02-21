@@ -102,7 +102,7 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 		StringBuilder bldr = new StringBuilder();
 		ScholarField[] fields = ScholarField.values();
 		for ( int i = 0, len = fields.length; i < len; i++ ) {
-			bldr.append( tableAliase + fields[i].toString() );
+			bldr.append( tableAliase ).append( fields[i].toString() );
 			if ( i == len - 1 ) {
 				break;
 			}
@@ -130,34 +130,37 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 	 */
 
 	static class FindByFieldValue implements StatementSource {
-		private ScholarField	mField;
-		private String			mValue;
+        private final ScholarField mField;
+        private final String       mValue;
 
-		public FindByFieldValue(@NonNull ScholarField field,
-				@NonNull String value) {
-			mField = field;
-			mValue = value;
-		}
+        public FindByFieldValue(
+                @NonNull ScholarField field,
+                @NonNull String value )
+        {
+            mField = field;
+            mValue = value;
+        }
 
-		@Override
-		public String sql()
-		{
-			StringBuilder bldr;
-			bldr = new StringBuilder( "SELECT " + getScholarFields( null )
-					+ "FROM " + SCHOLAR_TABLE_NAME );
-			bldr.append( " WHERE " + mField.toString() + " = ?" );
-			bldr.append( " ORDER BY " + ScholarField.NAME.toString() );
+        @Override
+        public String sql()
+        {
+            StringBuilder bldr;
+            bldr = new StringBuilder( "SELECT " + getScholarFields( null )
+                    + "FROM " + SCHOLAR_TABLE_NAME );
+            bldr.append( " WHERE " ).append( mField.toString() ).append(
+                    " = ?" );
+            bldr.append( " ORDER BY " ).append( ScholarField.NAME.toString() );
 
-			return bldr.toString();
-		}
+            return bldr.toString();
+        }
 
-		@Override
-		public String[] parameters()
-		{
-			return new String[] { mValue };
-		}
+        @Override
+        public String[] parameters()
+        {
+            return new String[]{mValue};
+        }
 
-	}
+    }
 
 	/*
 	 * static class FindQuranScholars implements StatementSource {
@@ -172,71 +175,73 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 	 * }
 	 */
 
-	@Override
-	protected Scholar doLoad( @NonNull Cursor c )
-	{
-		Scholar scholar = null;
-		try {
-			int id = c.getInt( c.getColumnIndexOrThrow( ScholarField.ID
-					.toString() ) );
-			int server_id = c
-					.getInt( c.getColumnIndexOrThrow( ScholarField.SERVER_ID
-							.toString() ) );
-			String name = c.isNull( c.getColumnIndexOrThrow( ScholarField.NAME
-					.toString() ) ) ? null : c.getString( c
-					.getColumnIndexOrThrow( ScholarField.NAME.toString() ) );
-			String email = c.isNull( c
-					.getColumnIndexOrThrow( ScholarField.EMAIL.toString() ) )
-					? null
-					: c.getString( c.getColumnIndexOrThrow( ScholarField.EMAIL
-							.toString() ) );
-			String phone = c.isNull( c
-					.getColumnIndexOrThrow( ScholarField.PHONE.toString() ) )
-					? null
-					: c.getString( c.getColumnIndexOrThrow( ScholarField.PHONE
-							.toString() ) );
-			String page_url = c.isNull( c
-					.getColumnIndexOrThrow( ScholarField.PAGE_URL.toString() ) )
-					? null
-					: c.getString( c
-							.getColumnIndexOrThrow( ScholarField.PAGE_URL
-									.toString() ) );
-			String image_url = c
-					.isNull( c.getColumnIndexOrThrow( ScholarField.IMAGE_URL
-							.toString() ) ) ? null : c
-					.getString( c.getColumnIndexOrThrow( ScholarField.IMAGE_URL
-							.toString() ) );
-			String image_file = c
-					.isNull( c.getColumnIndexOrThrow( ScholarField.IMAGE_FILE
-							.toString() ) ) ? null : c
-					.getString( c
-							.getColumnIndexOrThrow( ScholarField.IMAGE_FILE
-									.toString() ) );
-			int view_count = c
-					.getInt( c.getColumnIndexOrThrow( ScholarField.VIEW_COUNT
-							.toString() ) );
-			int popularity = c
-					.getInt( c.getColumnIndexOrThrow( ScholarField.POPULARITY
-							.toString() ) );
-			scholar = new Scholar( id, server_id, name, email, phone, page_url,
-					image_url, image_file, view_count, popularity );
-		} catch ( IllegalArgumentException e ) {
-			// TODO: remove error checking after testing
-			throw new Error( "column index does not exist." );
-		}
-		return scholar;
-	}
+    @Override
+    protected Scholar doLoad( @NonNull Cursor c )
+    {
+        Scholar scholar;
+        try {
+            int id = c.getInt( c.getColumnIndexOrThrow( ScholarField.ID
+                                                                    .toString() ) );
+            int server_id = c
+                    .getInt( c.getColumnIndexOrThrow( ScholarField.SERVER_ID
+                                                                  .toString() ) );
+            String name = c.isNull( c.getColumnIndexOrThrow( ScholarField.NAME
+                                                                         .toString() ) ) ? null : c
+                    .getString( c
+                            .getColumnIndexOrThrow(
+                                    ScholarField.NAME.toString() ) );
+            String email = c.isNull( c
+                    .getColumnIndexOrThrow( ScholarField.EMAIL.toString() ) )
+                    ? null
+                    : c.getString( c.getColumnIndexOrThrow( ScholarField.EMAIL
+                                                                        .toString() ) );
+            String phone = c.isNull( c
+                    .getColumnIndexOrThrow( ScholarField.PHONE.toString() ) )
+                    ? null
+                    : c.getString( c.getColumnIndexOrThrow( ScholarField.PHONE
+                                                                        .toString() ) );
+            String page_url = c.isNull( c
+                    .getColumnIndexOrThrow( ScholarField.PAGE_URL.toString() ) )
+                    ? null
+                    : c.getString( c
+                    .getColumnIndexOrThrow( ScholarField.PAGE_URL
+                                                        .toString() ) );
+            String image_url = c
+                    .isNull( c.getColumnIndexOrThrow( ScholarField.IMAGE_URL
+                                                                  .toString() ) ) ? null : c
+                    .getString( c.getColumnIndexOrThrow( ScholarField.IMAGE_URL
+                                                                     .toString() ) );
+            String image_file = c
+                    .isNull( c.getColumnIndexOrThrow( ScholarField.IMAGE_FILE
+                                                                  .toString() ) ) ? null : c
+                    .getString( c
+                            .getColumnIndexOrThrow( ScholarField.IMAGE_FILE
+                                                                .toString() ) );
+            int view_count = c
+                    .getInt( c.getColumnIndexOrThrow( ScholarField.VIEW_COUNT
+                                                                  .toString() ) );
+            int popularity = c
+                    .getInt( c.getColumnIndexOrThrow( ScholarField.POPULARITY
+                                                                  .toString() ) );
+            scholar = new Scholar( id, server_id, name, email, phone, page_url,
+                    image_url, image_file, view_count, popularity );
+        } catch ( IllegalArgumentException e ) {
+            // TODO: remove error checking after testing
+            throw new Error( "column index does not exist." );
+        }
+        return scholar;
+    }
 
-	@Override
-	public Scholar findByPk( int id )
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Scholar findByPk( int id )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void insert( @NonNull DomainObject obj, SQLiteDatabase db )
-			throws SQLiteException
+    @Override
+    public void insert( @NonNull DomainObject obj, SQLiteDatabase db )
+            throws SQLiteException
 	{
 		boolean is_in_transaction = false;
 		if ( !(obj instanceof Scholar) ) {
@@ -309,9 +314,11 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 						+ " AS sec" );
 				bldr.append( " ON sch." + ScholarField.ID + " = sec."
 						+ ScholarSectionField.SCHOLAR_ID );
-				bldr.append( " WHERE " + ScholarSectionField.SECTION_ID + " = "
-						+ section.getId() );
-				bldr.append( " ORDER BY " + ScholarField.NAME.toString() );
+				bldr.append(
+                        " WHERE " + ScholarSectionField.SECTION_ID + " = " )
+                    .append( section.getId() );
+				bldr.append( " ORDER BY " ).append(
+                        ScholarField.NAME.toString() );
 				return bldr.toString();
 			}
 
@@ -338,7 +345,7 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 	public SyncState getSectionSyncState( Section section )
 	{
 		SyncState sync_state = null;
-		SQLiteDatabase db = null;
+		SQLiteDatabase db;
 		Cursor c = null;
 		try {
 			String[] columns = new String[] { SectionField.SYNC_STATE
@@ -364,7 +371,7 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 
 	public void updateSectionSyncState( Section section, SyncState state )
 	{
-		SQLiteDatabase db = null;
+		SQLiteDatabase db;
 		try {
 			ContentValues values = new ContentValues();
 			values.put( SectionField.SYNC_STATE.toString(),

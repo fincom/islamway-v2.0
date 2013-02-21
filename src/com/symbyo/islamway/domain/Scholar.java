@@ -25,7 +25,7 @@ public class Scholar extends DomainObject {
     private final String mImageFileName;
     private final int    mViewCount;
     private final int    mPopularity;
-    private Set<Section> mSections = new HashSet<Section>( 2 );
+    private final Set<Section> mSections = new HashSet<Section>( 2 );
 
 	/*
      * public enum Section { QURAN ("recitations"), LESSONS ("lessons");

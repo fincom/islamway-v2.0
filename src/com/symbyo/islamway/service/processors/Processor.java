@@ -14,25 +14,26 @@ import com.symbyo.islamway.persistance.Repository;
 
 public abstract class Processor {
 
-	protected Context					mContext;
-	protected OnPostProccessingListener	mPostProcessingListener;
+    protected final Context                  mContext;
+    protected       OnPostProcessingListener mPostProcessingListener;
 
-	public Processor(@NonNull Context context) {
-		mContext = context;
-	}
+    public Processor( @NonNull Context context )
+    {
+        mContext = context;
+    }
 
-	public void
-			process( @NonNull List<? extends DomainObject> domain_collection )
-					throws ProcessingException
-	{
-		try {
-			SQLiteDatabase db = Repository.getInstance( mContext )
-					.getWritableDatabase();
-			if ( db == null ) {
-				throw new SQLiteException();
-			}
-			Log.d( "IWService",
-					String.format( "processing %d objects",
+    public void
+    process( @NonNull List<? extends DomainObject> domain_collection )
+            throws ProcessingException
+    {
+        try {
+            SQLiteDatabase db = Repository.getInstance( mContext )
+                                          .getWritableDatabase();
+            if ( db == null ) {
+                throw new SQLiteException();
+            }
+            Log.d( "IWService",
+                    String.format( "processing %d objects",
 							domain_collection.size() ) );
 			doProcess( domain_collection, db );
 		} catch ( SQLiteException e ) {
@@ -54,7 +55,7 @@ public abstract class Processor {
 	}
 
 	public void
-			setOnPostProcessingListener( OnPostProccessingListener listener )
+			setOnPostProcessingListener( OnPostProcessingListener listener )
 	{
 		mPostProcessingListener = listener;
 	}
