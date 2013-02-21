@@ -15,9 +15,8 @@ import com.symbyo.islamway.Searchable;
 import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.adapters.ScholarQuranAdapter;
-import com.symbyo.islamway.domain.QuranCollection;
+import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Scholar;
-import com.symbyo.islamway.domain.Section;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import junit.framework.Assert;
@@ -45,7 +44,7 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
     private BroadcastReceiver mQuranCollectionRequestReceiver;
 
     public static interface OnQuranItemClick {
-        public void onQuranItemClick( QuranCollection item );
+        public void onQuranItemClick( Collection item );
     }
 
     @Override
@@ -98,7 +97,7 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
                             AdapterView<?> parent, View view, int position,
                             long id )
                     {
-                        QuranCollection quran_collection = (QuranCollection) getListAdapter()
+                        Collection quran_collection = (Collection) getListAdapter()
                                 .getItem(
                                         position );
                         mListener.onQuranItemClick( quran_collection );
@@ -124,7 +123,7 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
 
     private void requestQuranCollections()
     {
-        // TODO request QuranCollection collections from the server.
+        // TODO request Collection collections from the server.
         final LocalBroadcastManager mngr = LocalBroadcastManager
                 .getInstance( getSherlockActivity() );
         mngr.registerReceiver( mQuranCollectionRequestReceiver,

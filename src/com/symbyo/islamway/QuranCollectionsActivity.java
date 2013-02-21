@@ -3,9 +3,8 @@ package com.symbyo.islamway;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import com.symbyo.islamway.domain.QuranCollection;
+import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Scholar;
-import com.symbyo.islamway.fragments.ScholarListFragment;
 import com.symbyo.islamway.fragments.ScholarQuranCollectionFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
 import junit.framework.Assert;
@@ -55,7 +54,7 @@ public class QuranCollectionsActivity extends BaseSlidingActivity
 
     @Override
     public void onQuranItemClick(
-            QuranCollection item )
+            Collection item )
     {
         // TODO implement the method body.
     }

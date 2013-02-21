@@ -8,9 +8,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
+import com.google.gson.annotations.SerializedName;
+import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.service.restclients.response.Response;
 import junit.framework.Assert;
 

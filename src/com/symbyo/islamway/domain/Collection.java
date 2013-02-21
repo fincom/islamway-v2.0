@@ -10,14 +10,14 @@ import java.util.Locale;
  * @author kdehairy
  * @since 2/20/13
  */
-public class QuranCollection extends DomainObject {
+public class Collection extends DomainObject {
 
     private final int    mServerId;
     private final String mTitle;
     private final int    mViewsCount;
     private final int    mEntriesCount;
 
-    public QuranCollection(
+    public Collection(
             int id, int server_id, String title, int view_counts,
             int entries_count )
     {
@@ -28,7 +28,7 @@ public class QuranCollection extends DomainObject {
         mEntriesCount = entries_count;
     }
 
-    public QuranCollection(
+    public Collection(
             int server_id, String title, int view_counts,
             int entries_count )
     {
@@ -41,7 +41,7 @@ public class QuranCollection extends DomainObject {
         UnitOfWork.getCurrent().registerNew( this );
     }
 
-    protected QuranCollection( Parcel source )
+    protected Collection( Parcel source )
     {
         super( source );
         mServerId = source.readInt();
@@ -62,27 +62,27 @@ public class QuranCollection extends DomainObject {
         dest.writeInt( getEntriesCount() );
     }
 
-    public static final Creator<QuranCollection> CREATOR =
-            new Creator<QuranCollection>() {
+    public static final Creator<Collection> CREATOR =
+            new Creator<Collection>() {
 
                 @Override
-                public QuranCollection createFromParcel( Parcel source )
+                public Collection createFromParcel( Parcel source )
                 {
-                    return new QuranCollection( source );
+                    return new Collection( source );
                 }
 
                 @Override
-                public QuranCollection[] newArray( int size )
+                public Collection[] newArray( int size )
                 {
-                    return new QuranCollection[size];
+                    return new Collection[size];
                 }
             };
 
     @Override
     protected boolean isEqual( DomainObject object )
     {
-        if ( object != null && object instanceof QuranCollection ) {
-            QuranCollection obj = (QuranCollection) object;
+        if ( object != null && object instanceof Collection ) {
+            Collection obj = (Collection) object;
             Assert.assertTrue( obj.getServerId() != INVALID_ID );
             Assert.assertTrue( this.getServerId() != INVALID_ID );
             if ( obj.getServerId() == this.mServerId ) {
