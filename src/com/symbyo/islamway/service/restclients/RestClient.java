@@ -8,7 +8,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.Locale;
+import java.util.Map;
 
+import com.symbyo.islamway.service.restclients.response.Response;
 import junit.framework.Assert;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -16,7 +19,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import android.content.ContentValues;
 import android.util.Log;
 
-public abstract class RestClient {
+public class RestClient {
+
+    /**
+     * 70 is the max value accepted by the server
+     */
+    private final int	ENTRIES_PER_PAGE	= 70;
 	
 	private final int TIME_OUT = 20000;
 
@@ -97,7 +105,7 @@ public abstract class RestClient {
 		return result;
 	}
 
-	/* package */String getPage( int page_number ) throws NetworkException
+	public String getPage( int page_number ) throws NetworkException
 	{
 		HttpURLConnection conn = null;
 		String result = null;
@@ -178,7 +186,26 @@ public abstract class RestClient {
 		return response;
 	}
 
-	protected abstract String prepareUrl(ContentValues params);
+	protected String prepareUrl(ContentValues params)
+    {
+        String url;
+        if (params == null) {
+            params = new ContentValues();
+        }
+        if ( mResourceId == RESOURCE_ID_NONE ) {
+            url = mUrlFormat;
+        } else {
+            url = String.format( Locale.US, mUrlFormat, mResourceId );
+        }
+        params.put( "count", ENTRIES_PER_PAGE );
+        url += "?";
+        for (Map.Entry<String, Object> entry : params.valueSet()) {
+            url += entry.getKey() + "=" + entry.getValue() + "&";
+        }
+        url = url.substring( 0, url.length() - 1  );
+
+        return url;
+    }
 
 	public void setResourceId( int resource_id )
 	{

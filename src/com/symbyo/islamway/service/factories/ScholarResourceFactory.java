@@ -10,7 +10,6 @@ import com.symbyo.islamway.service.parsers.ScholarParser;
 import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.processors.ScholarProcessor;
 import com.symbyo.islamway.service.restclients.RestClient;
-import com.symbyo.islamway.service.restclients.ScholarRestClient;
 
 public class ScholarResourceFactory extends ResourceFactory {
 	protected Section	mSection;
@@ -35,7 +34,7 @@ public class ScholarResourceFactory extends ResourceFactory {
 	public RestClient createRestClient()
 	{
 
-		return new ScholarRestClient( mUrlFormat, mHTTPMethod );
+		return new RestClient( mUrlFormat, mHTTPMethod );
 	}
 
 	@Override
