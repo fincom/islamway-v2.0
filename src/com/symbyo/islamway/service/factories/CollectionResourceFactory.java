@@ -24,8 +24,7 @@ public class CollectionResourceFactory extends ResourceFactory {
     @Override
     public RestClient createRestClient()
     {
-        // TODO implement the method body.
-        return null;
+        return new RestClient( mUrlFormat, mHTTPMethod );
     }
 
     @Override

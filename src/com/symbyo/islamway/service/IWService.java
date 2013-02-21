@@ -1,19 +1,9 @@
 package com.symbyo.islamway.service;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-
-import com.symbyo.islamway.service.factories.CollectionResourceFactory;
-import junit.framework.Assert;
-import org.eclipse.jdt.annotation.NonNull;
-
 import android.app.IntentService;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.DomainObject.SyncState;
 import com.symbyo.islamway.domain.Scholar;
@@ -21,6 +11,7 @@ import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.persistance.Repository;
 import com.symbyo.islamway.persistance.mappers.ScholarMapper;
+import com.symbyo.islamway.service.factories.CollectionResourceFactory;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
 import com.symbyo.islamway.service.parsers.Parser;
@@ -28,28 +19,33 @@ import com.symbyo.islamway.service.processors.OnPostProccessingListener;
 import com.symbyo.islamway.service.processors.ProcessingException;
 import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.NetworkException;
-import com.symbyo.islamway.service.restclients.Page;
-import com.symbyo.islamway.service.restclients.Response;
+import com.symbyo.islamway.service.restclients.response.Page;
+import com.symbyo.islamway.service.restclients.response.Response;
 import com.symbyo.islamway.service.restclients.RestClient;
+import junit.framework.Assert;
+import org.eclipse.jdt.annotation.NonNull;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 /**
- * 'params' sent to this service through an intent EXTRA_PARAMS are of type
- * ParamContainer.
  *
  * @author kdehairy
  */
 public class IWService extends IntentService {
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final       String BASE_URL                            = "http://ar.islamway.net/api/";
     public static final String ACTION_GET_QURAN_SCHOLARS           = "iw.service.get_quran_scholars";
     public static final String ACTION_GET_LESSONS_SCHOLARS         = "iw.service.get_lessons_scholars";
     public static final String EXTRA_RESOURCE_ID                   = "resource_id";
-    public static final String EXTRA_PARAMS                        = "params";
+    //public static final String EXTRA_PARAMS                        = "params";
     public static final String EXTRA_CALLBACK_INTENT               = "callback_intent";
     public static final String EXTRA_RESPONSE_ERROR                = "response_error";
-    public static       String ACTION_GET_SCHOLAR_QURAN_COLLECTION = "iw.service.get_scholar_quran_collection";
+    public static final String ACTION_GET_SCHOLAR_QURAN_COLLECTION = "iw.service.get_scholar_quran_collection";
 
-    public enum Params {
+    /*public enum Params {
         SECTION( "param_section" ),
         SCHOLAR_ID( "param_scholar_id" ),
         IS_COLLECTIONS_ONLY( "param_is_collections_only" );
@@ -66,7 +62,7 @@ public class IWService extends IntentService {
         {
             return mValue;
         }
-    }
+    }*/
 
     public IWService()
     {
@@ -93,8 +89,6 @@ public class IWService extends IntentService {
         Parser parser = factory.createParser();
         Processor processor = factory.createProcessor( this );
         Assert.assertNotNull( rest_client );
-        Assert.assertNotNull( parser );
-        Assert.assertNotNull( processor );
         if ( resource_id >= 0 ) {
             rest_client.setResourceId( resource_id );
         }
@@ -107,6 +101,7 @@ public class IWService extends IntentService {
             Log.d( "IWService", "start" );
             response = rest_client.getResponse();
             List<DomainObject> domain_collection = new LinkedList<DomainObject>();
+            Assert.assertNotNull( parser );
             for ( Page page : response ) {
                 Log.d( "IWService",
                         String.format( "page number: %d", page.getNumber() ) );
@@ -115,6 +110,7 @@ public class IWService extends IntentService {
                         response.isCollection() ) );
                 Log.d( "IWService", "fetching next page" );
             }
+            Assert.assertNotNull( processor );
             processor.process( domain_collection );
             Log.d( "IWService", "finished" );
         } catch ( NullPointerException e ) {
@@ -125,17 +121,14 @@ public class IWService extends IntentService {
             // showToast( getString( R.string.err_network ) );
             pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
             e.printStackTrace();
-            return;
         } catch ( NetworkException e ) {
             // showToast( getString( R.string.err_network ) );
             pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
             e.printStackTrace();
-            return;
         } catch ( ProcessingException e ) {
             // showToast( getString( R.string.err_processing_data ) );
             pIntent.putExtra( EXTRA_RESPONSE_ERROR, true );
             e.printStackTrace();
-            return;
         } finally {
             LocalBroadcastManager mngr = LocalBroadcastManager
                     .getInstance( this );
@@ -162,7 +155,7 @@ public class IWService extends IntentService {
             result.setPostProccessingListener( new OnPostProccessingListener() {
 
                 @Override
-                public void onPostProccessing( boolean result )
+                public void onPostProcessing( boolean result )
                 {
                     if ( result ) {
                         ScholarMapper mapper = (ScholarMapper) Repository
@@ -186,7 +179,7 @@ public class IWService extends IntentService {
             result.setPostProccessingListener( new OnPostProccessingListener() {
 
                 @Override
-                public void onPostProccessing( boolean result )
+                public void onPostProcessing( boolean result )
                 {
                     if ( result ) {
                         ScholarMapper mapper = (ScholarMapper) Repository

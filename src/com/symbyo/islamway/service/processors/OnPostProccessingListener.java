@@ -6,5 +6,5 @@ package com.symbyo.islamway.service.processors;
  *
  */
 public interface OnPostProccessingListener {
-	void onPostProccessing( boolean result );
+	void onPostProcessing( boolean result );
 }

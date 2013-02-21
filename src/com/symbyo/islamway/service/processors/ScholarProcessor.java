@@ -37,6 +37,6 @@ public class ScholarProcessor extends Processor {
 			}
 		}
 		boolean result = UnitOfWork.getCurrent().commit( db );
-		mPostProcessingListener.onPostProccessing( result );
+		mPostProcessingListener.onPostProcessing( result );
 	}
 }

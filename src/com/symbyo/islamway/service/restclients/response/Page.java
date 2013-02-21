@@ -1,4 +1,4 @@
-package com.symbyo.islamway.service.restclients;
+package com.symbyo.islamway.service.restclients.response;
 
 public class Page {
 	private final int		mNumber;

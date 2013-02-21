@@ -1,4 +1,4 @@
-package com.symbyo.islamway.service.restclients;
+package com.symbyo.islamway.service.restclients.response;
 
 import java.util.Iterator;
 
@@ -6,28 +6,32 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.symbyo.islamway.service.restclients.NetworkException;
+import com.symbyo.islamway.service.restclients.RestClient;
+import com.symbyo.islamway.service.restclients.response.Page;
 
 public class Response implements Iterable<Page> {
 
-	private final RestClient	mClient;
-	private final int			mPagesCount;
-	private final int			mTotalCount;
-	private Page				mCurrentPage;
-	private int					returned_pages	= 0;
-	private boolean				mIsCollection	= false;
+    private final RestClient mClient;
+    private final int        mPagesCount;
+    private final int        mTotalCount;
+    private       Page       mCurrentPage;
+    private int     returned_pages = 0;
+    private boolean mIsCollection  = false;
 
-	public Response(RestClient client, String response) {
-		mClient = client;
-		
-		Gson gson = new Gson();
-		ResponseRaw raw_response = gson.fromJson( response, ResponseRaw.class );
-		
-		mIsCollection = raw_response.isCollection();
-		mPagesCount = raw_response.getPagesNumber();
-		mTotalCount = raw_response.getTotalCount();
-		Log.d( "Islamway",
-				String.format( "pages count: %d", mPagesCount ) );
-		mCurrentPage = new Page( 1, response );
+    public Response( RestClient client, String response )
+    {
+        mClient = client;
+
+        Gson gson = new Gson();
+        ResponseRaw raw_response = gson.fromJson( response, ResponseRaw.class );
+
+        mIsCollection = raw_response.isCollection();
+        mPagesCount = raw_response.getPagesNumber();
+        mTotalCount = raw_response.getTotalCount();
+        Log.d( "Islamway",
+                String.format( "pages count: %d", mPagesCount ) );
+        mCurrentPage = new Page( 1, response );
 	}
 
 	@Override
