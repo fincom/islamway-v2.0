@@ -21,6 +21,7 @@ public class ServiceHelper {
     public static final  String EXTRA_REQUEST_ID                        = "request_id";
     private static final String EXTRA_CALLBACK_ACTION                   = "callback_action";
     public static final  String EXTRA_RESPONSE_ERROR                    = "response_error";
+    public static final  String EXTRA_DATA_KEY                          = "extra_data_key";
 
     private static ServiceHelper mInstance;
     private final  Context       mContext;
@@ -226,8 +227,8 @@ public class ServiceHelper {
         return state;
     }
 
-    // @formatter:off
-    private final BroadcastReceiver mServiceResponseReceiver = new BroadcastReceiver() {
+    private final
+    BroadcastReceiver mServiceResponseReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive( Context context, Intent intent )
@@ -236,9 +237,12 @@ public class ServiceHelper {
             int request_id = intent.getIntExtra( EXTRA_REQUEST_ID, -1 );
             boolean error = intent.getBooleanExtra(
                     IWService.EXTRA_RESPONSE_ERROR, false );
+            long extra_data_key = intent.getIntExtra( IWService.EXTRA_DATA_KEY,
+                    -1 );
 
             Intent i = new Intent( action );
             i.putExtra( EXTRA_REQUEST_ID, request_id );
+            i.putExtra( EXTRA_DATA_KEY, extra_data_key );
             if ( error ) {
                 i.putExtra( EXTRA_RESPONSE_ERROR, true );
             }
@@ -251,7 +255,6 @@ public class ServiceHelper {
         }
 
     };
-    // @formatter:on
 
     /**
      * Gets all scholars that have quran content.

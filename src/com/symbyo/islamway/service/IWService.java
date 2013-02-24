@@ -5,12 +5,9 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.symbyo.islamway.domain.DomainObject;
-import com.symbyo.islamway.domain.DomainObject.SyncState;
-import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.persistance.Repository;
-import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 import com.symbyo.islamway.service.factories.CollectionResourceFactory;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
@@ -18,9 +15,9 @@ import com.symbyo.islamway.service.parsers.Parser;
 import com.symbyo.islamway.service.processors.ProcessingException;
 import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.NetworkException;
+import com.symbyo.islamway.service.restclients.RestClient;
 import com.symbyo.islamway.service.restclients.response.Page;
 import com.symbyo.islamway.service.restclients.response.Response;
-import com.symbyo.islamway.service.restclients.RestClient;
 import junit.framework.Assert;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -29,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- *
  * @author kdehairy
  */
 public class IWService extends IntentService {
@@ -39,29 +35,10 @@ public class IWService extends IntentService {
     public static final String ACTION_GET_QURAN_SCHOLARS           = "iw.service.get_quran_scholars";
     public static final String ACTION_GET_LESSONS_SCHOLARS         = "iw.service.get_lessons_scholars";
     public static final String EXTRA_RESOURCE_ID                   = "resource_id";
-    //public static final String EXTRA_PARAMS                        = "params";
     public static final String EXTRA_CALLBACK_INTENT               = "callback_intent";
     public static final String EXTRA_RESPONSE_ERROR                = "response_error";
+    public static final String EXTRA_DATA_KEY                      = "extra_data_key";
     public static final String ACTION_GET_SCHOLAR_QURAN_COLLECTION = "iw.service.get_scholar_quran_collection";
-
-    /*public enum Params {
-        SECTION( "param_section" ),
-        SCHOLAR_ID( "param_scholar_id" ),
-        IS_COLLECTIONS_ONLY( "param_is_collections_only" );
-
-        private final String mValue;
-
-        private Params( final String value )
-        {
-            mValue = value;
-        }
-
-        @Override
-        public String toString()
-        {
-            return mValue;
-        }
-    }*/
 
     public IWService()
     {
@@ -110,7 +87,7 @@ public class IWService extends IntentService {
                 Log.d( "IWService", "fetching next page" );
             }
             Assert.assertNotNull( processor );
-            processor.process( domain_collection );
+            processor.process( domain_collection, pIntent );
             Log.d( "IWService", "finished" );
         } catch ( NullPointerException e ) {
             /**
@@ -149,24 +126,6 @@ public class IWService extends IntentService {
             url_format += section.toString() + "/scholars";
             result = new ScholarResourceFactory( url_format,
                     RestClient.HTTPMethod.GET, section );
-            // set the post processing listener, to update the section sync
-            // state after processing.
-            result.setPostProcessingListener(
-                    new Processor.OnPostProcessingListener() {
-
-                        @Override
-                        public void onPostProcessing( boolean result )
-                        {
-                            if ( result ) {
-                                ScholarMapper mapper = (ScholarMapper) Repository
-                                        .getInstance( IWService.this )
-                                        .getMapper(
-                                                Scholar.class );
-                                mapper.updateSectionSyncState( section,
-                                        SyncState.SYNC_STATE_FULL );
-                            }
-                        }
-                    } );
         } else if ( action.equals( ACTION_GET_LESSONS_SCHOLARS ) ) {
             final Section section = Repository.getInstance(
                     getApplicationContext() )
@@ -175,22 +134,6 @@ public class IWService extends IntentService {
             url_format += section.toString() + "/scholars";
             result = new ScholarResourceFactory( url_format,
                     RestClient.HTTPMethod.GET, section );
-            // set the post processing listener, to update the section sync
-            // state after processing.
-            result.setPostProcessingListener( new Processor.OnPostProcessingListener() {
-
-                @Override
-                public void onPostProcessing( boolean result )
-                {
-                    if ( result ) {
-                        ScholarMapper mapper = (ScholarMapper) Repository
-                                .getInstance( IWService.this ).getMapper(
-                                        Scholar.class );
-                        mapper.updateSectionSyncState( section,
-                                SyncState.SYNC_STATE_FULL );
-                    }
-                }
-            } );
         } else if ( action.equals( ACTION_GET_SCHOLAR_QURAN_COLLECTION ) ) {
             final Section section = Repository.getInstance(
                     getApplicationContext() ).getSection( SectionType.QURAN );

@@ -1,9 +1,11 @@
 package com.symbyo.islamway.service.processors;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import com.symbyo.islamway.IWApplication;
 import com.symbyo.islamway.domain.DomainObject;
+import com.symbyo.islamway.service.IWService;
 
 import java.util.List;
 
@@ -20,9 +22,11 @@ public class CollectionsProcessor extends Processor {
 
     @Override
     protected void doProcess(
-            List<? extends DomainObject> collection, SQLiteDatabase db )
+            List<? extends DomainObject> collection, SQLiteDatabase db,
+            Intent pIntent )
     {
         int key = IWApplication.putDomainObjects( collection );
-        // TODO pass this key to the service .. law ragel!
+        pIntent.putExtra( IWService.EXTRA_DATA_KEY, key );
     }
+
 }

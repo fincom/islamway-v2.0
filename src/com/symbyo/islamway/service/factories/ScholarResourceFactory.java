@@ -49,7 +49,6 @@ public class ScholarResourceFactory extends ResourceFactory {
     public Processor createProcessor( @NonNull Context context )
     {
         ScholarProcessor processor = new ScholarProcessor( context, mSection );
-        processor.setOnPostProcessingListener( mPostProcessingListener );
         return processor;
     }
 
