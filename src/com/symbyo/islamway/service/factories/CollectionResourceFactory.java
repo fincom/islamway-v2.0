@@ -4,6 +4,7 @@ import android.content.Context;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.service.parsers.CollectionParser;
 import com.symbyo.islamway.service.parsers.Parser;
+import com.symbyo.islamway.service.processors.CollectionsProcessor;
 import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.RestClient;
 import org.eclipse.jdt.annotation.NonNull;
@@ -36,9 +37,8 @@ public class CollectionResourceFactory extends ResourceFactory {
     }
 
     @Override
-    public Processor createProcessor( @NonNull Context context )
+    public Processor createProcessor( Context context )
     {
-        // TODO implement the method body.
-        return null;
+        return new CollectionsProcessor( context );
     }
 }

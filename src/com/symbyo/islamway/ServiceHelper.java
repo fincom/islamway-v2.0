@@ -1,20 +1,16 @@
 package com.symbyo.islamway;
 
-import com.symbyo.islamway.domain.Scholar;
-import junit.framework.Assert;
-
-import org.eclipse.jdt.annotation.NonNull;
-
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
-
+import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.service.IWService;
+import junit.framework.Assert;
+import org.eclipse.jdt.annotation.NonNull;
 
 public class ServiceHelper {
 

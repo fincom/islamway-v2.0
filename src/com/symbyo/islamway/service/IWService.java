@@ -15,7 +15,6 @@ import com.symbyo.islamway.service.factories.CollectionResourceFactory;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
 import com.symbyo.islamway.service.parsers.Parser;
-import com.symbyo.islamway.service.processors.OnPostProcessingListener;
 import com.symbyo.islamway.service.processors.ProcessingException;
 import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.NetworkException;
@@ -152,20 +151,22 @@ public class IWService extends IntentService {
                     RestClient.HTTPMethod.GET, section );
             // set the post processing listener, to update the section sync
             // state after processing.
-            result.setPostProcessingListener( new OnPostProcessingListener() {
+            result.setPostProcessingListener(
+                    new Processor.OnPostProcessingListener() {
 
-                @Override
-                public void onPostProcessing( boolean result )
-                {
-                    if ( result ) {
-                        ScholarMapper mapper = (ScholarMapper) Repository
-                                .getInstance( IWService.this ).getMapper(
-                                        Scholar.class );
-                        mapper.updateSectionSyncState( section,
-                                SyncState.SYNC_STATE_FULL );
-                    }
-                }
-            } );
+                        @Override
+                        public void onPostProcessing( boolean result )
+                        {
+                            if ( result ) {
+                                ScholarMapper mapper = (ScholarMapper) Repository
+                                        .getInstance( IWService.this )
+                                        .getMapper(
+                                                Scholar.class );
+                                mapper.updateSectionSyncState( section,
+                                        SyncState.SYNC_STATE_FULL );
+                            }
+                        }
+                    } );
         } else if ( action.equals( ACTION_GET_LESSONS_SCHOLARS ) ) {
             final Section section = Repository.getInstance(
                     getApplicationContext() )
@@ -176,7 +177,7 @@ public class IWService extends IntentService {
                     RestClient.HTTPMethod.GET, section );
             // set the post processing listener, to update the section sync
             // state after processing.
-            result.setPostProcessingListener( new OnPostProcessingListener() {
+            result.setPostProcessingListener( new Processor.OnPostProcessingListener() {
 
                 @Override
                 public void onPostProcessing( boolean result )

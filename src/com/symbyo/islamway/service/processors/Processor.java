@@ -2,6 +2,7 @@ package com.symbyo.islamway.service.processors;
 
 import java.util.List;
 
+import junit.framework.Assert;
 import org.eclipse.jdt.annotation.NonNull;
 
 import android.content.Context;
@@ -17,8 +18,18 @@ public abstract class Processor {
     protected final Context                  mContext;
     protected       OnPostProcessingListener mPostProcessingListener;
 
-    public Processor( @NonNull Context context )
+    /**
+     * An interface to listen for post processing event.
+     * @author kdehairy
+     *
+     */
+    public interface OnPostProcessingListener {
+        void onPostProcessing( boolean result );
+    }
+
+    public Processor( Context context )
     {
+        Assert.assertNotNull( context );
         mContext = context;
     }
 
