@@ -8,6 +8,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -145,7 +147,8 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
 			final ImageView image_view )
 	{
 		image_view.setTag( url );
-		new AsyncTask<Void, Void, Bitmap>() {
+
+		AsyncTask<Void, Void, Bitmap> task = new AsyncTask<Void, Void, Bitmap>() {
 
 			@Override
 			protected Bitmap doInBackground( Void... params )
@@ -201,7 +204,12 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
 				}
 			}
 
-		}.execute();
+		};
+        ThreadPoolExecutor executor = (ThreadPoolExecutor)AsyncTask.THREAD_POOL_EXECUTOR;
+        executor.setRejectedExecutionHandler( new ThreadPoolExecutor.DiscardOldestPolicy() );
+        task.executeOnExecutor( executor );
+
+
 	}
 
 	@Override
