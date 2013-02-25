@@ -87,6 +87,7 @@ public class ServiceHelper {
                 mRequests.put( result, Resource.QURAN_SCHOLAR );
 
                 sendRequestToService( IWService.ACTION_GET_QURAN_SCHOLARS,
+                        ACTION_INVALIDATE_SCHOLAR_LIST,
                         result,
                         null );
         }
@@ -126,6 +127,7 @@ public class ServiceHelper {
                 mRequests.put( result, Resource.LESSONS_SCHOLAR );
 
                 sendRequestToService( IWService.ACTION_GET_LESSONS_SCHOLARS,
+                        ACTION_INVALIDATE_SCHOLAR_LIST,
                         result, null );
         }
         return result;
@@ -159,7 +161,9 @@ public class ServiceHelper {
                 mRequests.put( result, Resource.SCHOLAR_QURAN_COLLECTION );
 
                 sendRequestToService(
-                        IWService.ACTION_GET_SCHOLAR_QURAN_COLLECTION, result,
+                        IWService.ACTION_GET_SCHOLAR_QURAN_COLLECTION,
+                        ACTION_INVALIDATE_QURAN_COLLECTION_LIST,
+                        result,
                         scholar.getServerId() );
         }
         return result;
@@ -170,7 +174,7 @@ public class ServiceHelper {
      * @param request_id
      */
     private void sendRequestToService(
-            String action, int request_id,
+            String action, String callback_action, int request_id,
             Integer resource_id/*, ContentValues params*/ )
     {
         LocalBroadcastManager.getInstance( mContext ).registerReceiver(
@@ -179,8 +183,7 @@ public class ServiceHelper {
         // build the pending intent.
         Intent pIntent = new Intent( ACTION_SERVICE_RESPONSE );
         pIntent.putExtra( EXTRA_REQUEST_ID, request_id );
-        pIntent.putExtra( EXTRA_CALLBACK_ACTION,
-                ACTION_INVALIDATE_SCHOLAR_LIST );
+        pIntent.putExtra( EXTRA_CALLBACK_ACTION, callback_action );
 
         // build the service intent and start the service.
         Intent intent = new Intent( mContext, IWService.class );
@@ -237,7 +240,7 @@ public class ServiceHelper {
             int request_id = intent.getIntExtra( EXTRA_REQUEST_ID, -1 );
             boolean error = intent.getBooleanExtra(
                     IWService.EXTRA_RESPONSE_ERROR, false );
-            long extra_data_key = intent.getIntExtra( IWService.EXTRA_DATA_KEY,
+            int extra_data_key = intent.getIntExtra( IWService.EXTRA_DATA_KEY,
                     -1 );
 
             Intent i = new Intent( action );

@@ -2,6 +2,8 @@ package com.symbyo.islamway.fragments;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -10,16 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.symbyo.islamway.R;
-import com.symbyo.islamway.Searchable;
-import com.symbyo.islamway.ServiceHelper;
-import com.symbyo.islamway.Utils;
+import com.symbyo.islamway.*;
 import com.symbyo.islamway.adapters.ScholarQuranAdapter;
 import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Scholar;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import junit.framework.Assert;
+
+import java.util.List;
 
 /**
  * @author kdehairy
@@ -40,8 +41,8 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
     private ScholarQuranAdapter mAdapter;
     private OnQuranItemClick    mListener;
 
-    private Crouton           mCrouton;
-    private BroadcastReceiver mQuranCollectionRequestReceiver;
+    private Crouton mCrouton;
+
 
     public static interface OnQuranItemClick {
         public void onQuranItemClick( Collection item );
@@ -78,8 +79,7 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
         } else {
             Crouton.makeText( getSherlockActivity(),
                     R.string.err_connect_network, Style.ALERT ).show();
-            mAdapter = new ScholarQuranAdapter( getSherlockActivity(),
-                    mScholar );
+            mAdapter = new ScholarQuranAdapter( getSherlockActivity(), null );
             setListAdapter( mAdapter );
         }
         return super.onCreateView( inflater, container, savedInstanceState );
@@ -145,6 +145,37 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
             mCrouton.show();
         }
     }
+
+    private BroadcastReceiver mQuranCollectionRequestReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(
+                Context context, Intent intent )
+        {
+            final LocalBroadcastManager mngr = LocalBroadcastManager
+                    .getInstance( getSherlockActivity() );
+            mngr.unregisterReceiver( this );
+            int request_id = intent.getIntExtra( ServiceHelper.EXTRA_REQUEST_ID,
+                    ServiceHelper.REQUEST_ID_NONE );
+            if ( request_id != mRequestId ) {
+                return;
+            }
+            boolean error = intent.getBooleanExtra(
+                    ServiceHelper.EXTRA_RESPONSE_ERROR, false );
+            if ( error ) {
+                if ( getSherlockActivity() != null ) {
+                    Crouton.hide( mCrouton );
+                    Crouton.makeText( getSherlockActivity(),
+                            R.string.err_network, Style.ALERT ).show();
+                }
+            }
+            int key = intent.getIntExtra( ServiceHelper.EXTRA_DATA_KEY, 0 );
+            Crouton.hide( mCrouton );
+            List<Collection> collections = (List<Collection>) IWApplication
+                    .readDomainObjects( key );
+            mAdapter = new ScholarQuranAdapter( getSherlockActivity(), collections );
+            setListAdapter( mAdapter );
+        }
+    };
 
     @Override
     public void expandSearchView()

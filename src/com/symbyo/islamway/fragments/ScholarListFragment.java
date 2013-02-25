@@ -284,6 +284,9 @@ public class ScholarListFragment extends SherlockListFragment implements
             int request_id = intent.getIntExtra(
                     ServiceHelper.EXTRA_REQUEST_ID,
                     ServiceHelper.REQUEST_ID_NONE );
+            if ( request_id != mRequestId ) {
+                return;
+            }
             boolean error = intent.getBooleanExtra(
                     ServiceHelper.EXTRA_RESPONSE_ERROR, false );
             if ( error ) {
@@ -293,10 +296,7 @@ public class ScholarListFragment extends SherlockListFragment implements
                             R.string.err_network, Style.ALERT ).show();
                 }
             }
-            if ( request_id == mRequestId ) {
-
-                Crouton.hide( mCrouton );
-            }
+            Crouton.hide( mCrouton );
             retrieveScholars();
         }
 
