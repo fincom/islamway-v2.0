@@ -10,7 +10,7 @@ import java.util.Locale;
  * @author kdehairy
  * @since 2/20/13
  */
-public class Collection extends DomainObject {
+public class Collection extends DomainObject implements FilterableObject {
 
     private final int    mServerId;
     private final String mTitle;

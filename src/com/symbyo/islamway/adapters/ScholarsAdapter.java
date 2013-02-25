@@ -1,16 +1,5 @@
 package com.symbyo.islamway.adapters;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import org.eclipse.jdt.annotation.NonNull;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,15 +8,19 @@ import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.symbyo.islamway.R;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
+import org.eclipse.jdt.annotation.NonNull;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class ScholarsAdapter extends BaseAdapter implements Filterable {
 
@@ -38,14 +31,7 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
      */
     private List<Scholar> mScholars;
 
-    /**
-     * when filtered, this holds the original list while mScholars will hold
-     * only the filtered list.
-     */
-    private List<Scholar> mOriginalValues;
-    private ArrayFilter   mFilter;
-
-    private final Object mLock = new Object();
+    private Utils.ArrayFilter<Scholar>   mFilter;
 
     private final int ITEM_LAYOUT = R.layout.scholar_list_item;
 
@@ -242,7 +228,9 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
         public ImageView image;
     }
 
-    private class ArrayFilter extends Filter {
+    /*private class ArrayFilter extends Filter {
+
+        private List<Scholar> mOriginalValues;
         @Override
         protected FilterResults performFiltering( CharSequence prefix )
         {
@@ -313,13 +301,13 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
                 notifyDataSetInvalidated();
             }
         }
-    }
+    }*/
 
     @Override
     public Filter getFilter()
     {
         if ( mFilter == null ) {
-            mFilter = new ArrayFilter();
+            mFilter = new Utils.ArrayFilter<Scholar>(this, mScholars);
         }
         return mFilter;
     }

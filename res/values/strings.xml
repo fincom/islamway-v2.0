@@ -17,5 +17,6 @@
     <string name="sura">سورة</string>
     <string name="two_suras">سورتان</string>
     <string name="suras">سور</string>
+    <string name="menu_quran_search_hint">ابحث باسم المصحف</string>
 
 </resources>

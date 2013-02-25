@@ -59,11 +59,11 @@ public abstract class AbstractMapper {
             }
         }
 
-        List<DomainObject> result = null;
+        /*List<DomainObject> result = null;
 		if ( objects != null ) {
 			result = Collections.unmodifiableList( objects );
-		}
-		return result;
+		}*/
+		return objects;
 	}
 
 	/**

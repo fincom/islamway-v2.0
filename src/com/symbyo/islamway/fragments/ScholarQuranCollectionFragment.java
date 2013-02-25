@@ -12,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 import com.symbyo.islamway.*;
 import com.symbyo.islamway.adapters.ScholarQuranAdapter;
 import com.symbyo.islamway.domain.Collection;
@@ -40,11 +44,20 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
     private Scholar             mScholar;
     private ScholarQuranAdapter mAdapter;
     private OnQuranItemClick    mListener;
+    private MenuItem            mSearchMenuItem;
+    private final int SEARCH_MENU_ITEM_ID = 1;
 
     private Crouton mCrouton;
 
     public static interface OnQuranItemClick {
         public void onQuranItemClick( Collection item );
+    }
+
+    @Override
+    public void onSaveInstanceState( Bundle outState )
+    {
+        outState.putInt( REQUEST_KEY, mRequestId );
+        super.onSaveInstanceState( outState );
     }
 
     @Override
@@ -172,13 +185,60 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
             Crouton.hide( mCrouton );
             List<Collection> collections = (List<Collection>) IWApplication
                     .readDomainObjects( key );
-            mAdapter = new ScholarQuranAdapter( getSherlockActivity(), collections );
+            mAdapter = new ScholarQuranAdapter( getSherlockActivity(),
+                    collections );
             setListAdapter( mAdapter );
         }
     };
+
+    @Override
+    public void onCreateOptionsMenu(
+            Menu menu, MenuInflater inflater )
+    {
+        SearchView search_view = new SearchView(
+                getSherlockActivity().getSupportActionBar()
+                        .getThemedContext() );
+        search_view.setQueryHint( getString(
+                R.string.menu_quran_search_hint ) );
+        search_view.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit( String query )
+                    {
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange( String newText )
+                    {
+                        if ( mAdapter != null ) {
+                            mAdapter.getFilter().filter( newText );
+                        }
+                        return false;
+                    }
+                } );
+        mSearchMenuItem = menu.add( Menu.NONE, SEARCH_MENU_ITEM_ID, Menu.NONE,
+                R.string.menu_search );
+        mSearchMenuItem.setIcon( R.drawable.abs__ic_search )
+                .setActionView( search_view )
+                .setShowAsAction(
+                        MenuItem.SHOW_AS_ACTION_IF_ROOM
+                                | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW );
+        super.onCreateOptionsMenu( menu, inflater );
+    }
+
     @Override
     public void expandSearchView()
     {
-        // TODO implement searching
+        mSearchMenuItem.expandActionView();
+    }
+
+    @Override
+    public void onDetach()
+    {
+        LocalBroadcastManager.getInstance( getSherlockActivity() )
+                .unregisterReceiver( mQuranCollectionRequestReceiver );
+        super.onDetach();
     }
 }

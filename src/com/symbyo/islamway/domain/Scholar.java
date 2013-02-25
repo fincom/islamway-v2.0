@@ -14,7 +14,7 @@ import android.os.Parcelable;
 
 import com.symbyo.islamway.persistance.UnitOfWork;
 
-public class Scholar extends DomainObject {
+public class Scholar extends DomainObject implements FilterableObject{
 
     private final int    mServerId;
     private final String mName;
@@ -230,5 +230,11 @@ public class Scholar extends DomainObject {
     {
         return String.format( Locale.US, "id: %d, name: %s", this.getId(),
                 this.getName() );
+    }
+
+    @Override
+    public String getTitle()
+    {
+        return getName();
     }
 }

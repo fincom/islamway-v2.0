@@ -10,6 +10,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 import com.symbyo.islamway.R;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.Collection;
 
 import java.util.List;
@@ -23,6 +24,14 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
 
     private List<Collection> mCollections;
     private Context          mContext;
+
+    /**
+     * when filtered, this holds the original list while mScholars will hold
+     * only the filtered list.
+     */
+    private Utils.ArrayFilter<Collection> mFilter;
+
+    private final Object mLock = new Object();
 
     private final int ITEM_LAYOUT = R.layout.collection_list_item;
 
@@ -134,6 +143,8 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
         public TextView subTitle;
     }
 
+
+
     /**
      * <p>Returns a filter that can be used to constrain data with a filtering
      * pattern.</p>
@@ -146,6 +157,9 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
     @Override
     public Filter getFilter()
     {
-        return null;  // TODO implement the method body.
+        if ( mFilter == null ) {
+            mFilter = new Utils.ArrayFilter<Collection>(this, mCollections);
+        }
+        return mFilter;
     }
 }
