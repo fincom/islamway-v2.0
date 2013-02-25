@@ -13,5 +13,9 @@
     <string name="err_network">خطأ فى الاتصال</string>
     <string name="err_connect_network">تأكد من اتصالك بالانترنت</string>
     <string name="info_syncing">جاري تحميل البيانات&#8230;</string>
+    <string name="one_sura">سورة واحدة</string>
+    <string name="sura">سورة</string>
+    <string name="two_suras">سورتان</string>
+    <string name="suras">سور</string>
 
 </resources>

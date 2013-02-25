@@ -1,7 +1,6 @@
 package com.symbyo.islamway.adapters;
 
 
-import android.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +9,11 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.Collection;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author kdehairy
@@ -23,7 +24,7 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
     private List<Collection> mCollections;
     private Context          mContext;
 
-    private final int ITEM_LAYOUT = R.layout.two_line_list_item;
+    private final int ITEM_LAYOUT = R.layout.collection_list_item;
 
     public ScholarQuranAdapter( Context context, List<Collection> collections )
     {
@@ -105,16 +106,26 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
         if ( convertView.getTag() == null
                 || !(convertView.getTag() instanceof ViewHolder) ) {
             holder = new ViewHolder();
-            holder.title = (TextView) convertView.findViewById( R.id.text1 );
-            holder.subTitle = (TextView) convertView.findViewById( R.id.text2 );
+            holder.title = (TextView) convertView.findViewById( R.id.collection_title );
+            holder.subTitle = (TextView) convertView.findViewById( R.id.entity_count );
             convertView.setTag( holder );
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         Collection collection = getItem( position );
         holder.title.setText( collection.getTitle() );
-        holder.subTitle.setText( Integer.toString(
-                collection.getEntriesCount() ) );
+        int entity_count = collection.getEntriesCount();
+        String string;
+        if ( entity_count == 1 ) {
+            string = String.format( Locale.US, "%s", mContext.getString( R.string.one_sura ) );
+        } else if ( entity_count == 2 ) {
+            string = String.format( Locale.US, "%s", mContext.getString( R.string.two_suras ) );
+        } else if ( entity_count < 11 ) {
+            string = String.format( Locale.US, "%d %s", entity_count, mContext.getString( R.string.suras ) );
+        } else {
+            string = String.format( Locale.US, "%d %s", entity_count, mContext.getString( R.string.sura ) );
+        }
+        holder.subTitle.setText( string );
         return convertView;
     }
 
