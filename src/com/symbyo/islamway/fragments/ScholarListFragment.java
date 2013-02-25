@@ -44,8 +44,8 @@ public class ScholarListFragment extends SherlockListFragment implements
      * flag raised when the database is being read. if it is set, any attempt to
      * read the database should wait.
      */
-    private boolean mIsReadingDatabase = false;
-    private Object  mLock              = new Object();
+    private       boolean mIsReadingDatabase = false;
+    private final Object  mLock              = new Object();
 
     /**
      * This is the id of the latest request sent to the ServiceHelper.
@@ -171,7 +171,9 @@ public class ScholarListFragment extends SherlockListFragment implements
     {
         SearchView searchView = new SearchView( getSherlockActivity()
                 .getSupportActionBar().getThemedContext() );
-        searchView.setQueryHint( getString( R.string.menu_scholar_search_hint ) );
+
+        searchView.setQueryHint( getString(
+                R.string.menu_scholar_search_hint ) );
 
         // handle the query text change to live-filter the scholars list.
         searchView.setOnQueryTextListener( new OnQueryTextListener() {
@@ -259,8 +261,6 @@ public class ScholarListFragment extends SherlockListFragment implements
                 if ( mSection == null ) {
                     return null;
                 }
-
-                @SuppressWarnings("null")
                 ScholarsAdapter adapter = new ScholarsAdapter(
                         getSherlockActivity(), mSection );
                 synchronized ( mLock ) {
@@ -271,8 +271,8 @@ public class ScholarListFragment extends SherlockListFragment implements
         }.execute();
     }
 
-    // @formatter:off
-    private BroadcastReceiver mScholarsRequestReceiver = new BroadcastReceiver() {
+
+    private final BroadcastReceiver mScholarsRequestReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive( Context context, Intent intent )
@@ -284,6 +284,9 @@ public class ScholarListFragment extends SherlockListFragment implements
             int request_id = intent.getIntExtra(
                     ServiceHelper.EXTRA_REQUEST_ID,
                     ServiceHelper.REQUEST_ID_NONE );
+            if ( request_id != mRequestId ) {
+                return;
+            }
             boolean error = intent.getBooleanExtra(
                     ServiceHelper.EXTRA_RESPONSE_ERROR, false );
             if ( error ) {
@@ -293,10 +296,8 @@ public class ScholarListFragment extends SherlockListFragment implements
                             R.string.err_network, Style.ALERT ).show();
                 }
             }
-            if ( request_id == mRequestId ) {
 
-                Crouton.hide( mCrouton );
-            }
+            Crouton.hide( mCrouton );
             retrieveScholars();
         }
 

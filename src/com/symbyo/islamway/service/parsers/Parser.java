@@ -16,7 +16,7 @@ public abstract class Parser {
 			boolean is_collection )
 	{
 		Log.d( "Parser", "parsing" );
-		List<? extends DomainObject> result = null;
+		List<? extends DomainObject> result;
 		if ( is_collection ) {
 			result = doParseCollection( json );
 		} else {
@@ -40,9 +40,9 @@ public abstract class Parser {
         private int mTotalCount = INVALID;
 
         @SerializedName("items")
-        private ArrayList<T> mItems;
+        private List<T> mItems;
 
-        public ArrayList<T> getDomainObjects()
+        public List<T> getDomainObjects()
         {
             return mItems;
         }

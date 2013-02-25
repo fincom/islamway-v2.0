@@ -1,36 +1,33 @@
 package com.symbyo.islamway;
 
-import com.symbyo.islamway.domain.Scholar;
-import junit.framework.Assert;
-
-import org.eclipse.jdt.annotation.NonNull;
-
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
-
+import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.service.IWService;
+import junit.framework.Assert;
+import org.eclipse.jdt.annotation.NonNull;
 
 public class ServiceHelper {
 
     public static final  int    REQUEST_ID_NONE                         = 0;
     public static final  String ACTION_INVALIDATE_SCHOLAR_LIST          = "iw.scholar_list_invalidate";
-    public static        String ACTION_INVALIDATE_QURAN_COLLECTION_LIST = "iw.quran_collection_list_invalidate";
+    public static final  String ACTION_INVALIDATE_QURAN_COLLECTION_LIST = "iw.quran_collection_list_invalidate";
     private static final String ACTION_SERVICE_RESPONSE                 = "iw.helper.service_response";
     public static final  String EXTRA_REQUEST_ID                        = "request_id";
     private static final String EXTRA_CALLBACK_ACTION                   = "callback_action";
     public static final  String EXTRA_RESPONSE_ERROR                    = "response_error";
+    public static final  String EXTRA_DATA_KEY                          = "extra_data_key";
 
     private static ServiceHelper mInstance;
-    private        Context       mContext;
-    private Object                mLock          = new Object();
-    private int                   mLastRequestId = 0;
-    private SparseArray<Resource> mRequests      = new SparseArray<Resource>();
+    private final  Context       mContext;
+    private final Object                mLock          = new Object();
+    private       int                   mLastRequestId = 0;
+    private final SparseArray<Resource> mRequests      = new SparseArray<Resource>();
 
     public enum RequestState {
         NOT_REGISTERED,
@@ -41,7 +38,7 @@ public class ServiceHelper {
     private enum Resource {
         QURAN_SCHOLAR,
         LESSONS_SCHOLAR,
-        SCHOLAR_QURAN_COLLECTION;
+        SCHOLAR_QURAN_COLLECTION
     }
 
     public static synchronized ServiceHelper getInstance(
@@ -63,8 +60,8 @@ public class ServiceHelper {
         Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
         int result;
-        int index = -1;
-        RequestState state = null;
+        int index;
+        RequestState state;
         if ( (index = mRequests.indexOfValue( Resource.QURAN_SCHOLAR )) >= 0 ) {
             result = mRequests.keyAt( index );
             state = RequestState.PENDING;
@@ -90,6 +87,7 @@ public class ServiceHelper {
                 mRequests.put( result, Resource.QURAN_SCHOLAR );
 
                 sendRequestToService( IWService.ACTION_GET_QURAN_SCHOLARS,
+                        ACTION_INVALIDATE_SCHOLAR_LIST,
                         result,
                         null );
         }
@@ -101,8 +99,8 @@ public class ServiceHelper {
         Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
         int result;
-        int index = -1;
-        RequestState state = null;
+        int index;
+        RequestState state;
         if ( (index = mRequests.indexOfValue(
                 Resource.LESSONS_SCHOLAR )) >= 0 ) {
             result = mRequests.keyAt( index );
@@ -129,6 +127,7 @@ public class ServiceHelper {
                 mRequests.put( result, Resource.LESSONS_SCHOLAR );
 
                 sendRequestToService( IWService.ACTION_GET_LESSONS_SCHOLARS,
+                        ACTION_INVALIDATE_SCHOLAR_LIST,
                         result, null );
         }
         return result;
@@ -139,8 +138,7 @@ public class ServiceHelper {
         Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
         int result;
-        int index = -1;
-        RequestState state = null;
+        RequestState state;
         if ( request_id == REQUEST_ID_NONE ) {
             synchronized ( mLock ) {
                 result = ++mLastRequestId;
@@ -163,7 +161,9 @@ public class ServiceHelper {
                 mRequests.put( result, Resource.SCHOLAR_QURAN_COLLECTION );
 
                 sendRequestToService(
-                        IWService.ACTION_GET_SCHOLAR_QURAN_COLLECTION, result,
+                        IWService.ACTION_GET_SCHOLAR_QURAN_COLLECTION,
+                        ACTION_INVALIDATE_QURAN_COLLECTION_LIST,
+                        result,
                         scholar.getServerId() );
         }
         return result;
@@ -174,7 +174,7 @@ public class ServiceHelper {
      * @param request_id
      */
     private void sendRequestToService(
-            String action, int request_id,
+            String action, String callback_action, int request_id,
             Integer resource_id/*, ContentValues params*/ )
     {
         LocalBroadcastManager.getInstance( mContext ).registerReceiver(
@@ -183,8 +183,7 @@ public class ServiceHelper {
         // build the pending intent.
         Intent pIntent = new Intent( ACTION_SERVICE_RESPONSE );
         pIntent.putExtra( EXTRA_REQUEST_ID, request_id );
-        pIntent.putExtra( EXTRA_CALLBACK_ACTION,
-                ACTION_INVALIDATE_SCHOLAR_LIST );
+        pIntent.putExtra( EXTRA_CALLBACK_ACTION, callback_action );
 
         // build the service intent and start the service.
         Intent intent = new Intent( mContext, IWService.class );
@@ -231,8 +230,8 @@ public class ServiceHelper {
         return state;
     }
 
-    // @formatter:off
-    private BroadcastReceiver mServiceResponseReceiver = new BroadcastReceiver() {
+    private final
+    BroadcastReceiver mServiceResponseReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive( Context context, Intent intent )
@@ -241,9 +240,12 @@ public class ServiceHelper {
             int request_id = intent.getIntExtra( EXTRA_REQUEST_ID, -1 );
             boolean error = intent.getBooleanExtra(
                     IWService.EXTRA_RESPONSE_ERROR, false );
+            int extra_data_key = intent.getIntExtra( IWService.EXTRA_DATA_KEY,
+                    -1 );
 
             Intent i = new Intent( action );
             i.putExtra( EXTRA_REQUEST_ID, request_id );
+            i.putExtra( EXTRA_DATA_KEY, extra_data_key );
             if ( error ) {
                 i.putExtra( EXTRA_RESPONSE_ERROR, true );
             }
@@ -256,7 +258,6 @@ public class ServiceHelper {
         }
 
     };
-    // @formatter:on
 
     /**
      * Gets all scholars that have quran content.

@@ -14,32 +14,32 @@ import com.symbyo.islamway.persistance.mappers.AbstractMapper;
 public class UnitOfWork {
 
 
-	private List<DomainObject>				newObjects	= new ArrayList<DomainObject>();
+    private final List<DomainObject> newObjects = new ArrayList<DomainObject>();
 
-	// @formatter:off
-	private static ThreadLocal<UnitOfWork>	current		= new ThreadLocal<UnitOfWork>() {
-			@Override
-			protected UnitOfWork initialValue()
-			{
-				return new UnitOfWork();
-			}
-		};
-	// @formatter:on
+    // @formatter:off
+    private static final ThreadLocal<UnitOfWork> current = new ThreadLocal<UnitOfWork>() {
+        @Override
+        protected UnitOfWork initialValue()
+        {
+            return new UnitOfWork();
+        }
+    };
+    // @formatter:on
 
-	public static UnitOfWork getCurrent()
-	{
-		return current.get();
-	}
+    public static UnitOfWork getCurrent()
+    {
+        return current.get();
+    }
 
-	public void registerNew( DomainObject object )
-	{
-		Assert.assertTrue( "object do exist in the database",
-				object.getId() == DomainObject.INVALID_ID );
-		if ( newObjects.contains( object ) ) {
-			return;
-		}
-		newObjects.add( object );
-		Log.d( "Islamway", String.format( "New Object registered: %s", object.toString() ) );
+    public void registerNew( DomainObject object )
+    {
+        Assert.assertTrue( "object do exist in the database",
+                object.getId() == DomainObject.INVALID_ID );
+        if ( newObjects.contains( object ) ) {
+            return;
+        }
+        newObjects.add( object );
+        Log.d( "Islamway", String.format( "New Object registered: %s", object.toString() ) );
 	}
 
 	/**

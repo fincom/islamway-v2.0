@@ -14,8 +14,9 @@ import de.keyboardsurfer.android.widget.crouton.Style;
  */
 public class Utils {
 
-    public static Style CROUTON_PROGRESS_STYLE = new Style.Builder().setDuration(
-            Style.DURATION_INFINITE )
+    public static final Style CROUTON_PROGRESS_STYLE = new Style.Builder()
+            .setDuration(
+                    Style.DURATION_INFINITE )
             .setBackgroundColorValue( Style.holoBlueLight )
             .setHeight( ViewGroup.LayoutParams.WRAP_CONTENT )
             .build();
@@ -30,10 +31,7 @@ public class Utils {
         if ( networkInfo != null && networkInfo.isConnected() ) {
             int network_type = networkInfo.getType();
             boolean wifi_only = isWifiOnly( context );
-            if ( network_type != ConnectivityManager.TYPE_WIFI && wifi_only ) {
-                return false;
-            }
-            return true;
+            return !(network_type != ConnectivityManager.TYPE_WIFI && wifi_only);
         }
         return false;
     }

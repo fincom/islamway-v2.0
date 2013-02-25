@@ -2,6 +2,9 @@ package com.symbyo.islamway.service.processors;
 
 import java.util.List;
 
+import android.content.Intent;
+import com.symbyo.islamway.persistance.Repository;
+import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 import org.eclipse.jdt.annotation.NonNull;
 
 import android.content.Context;
@@ -25,7 +28,7 @@ public class ScholarProcessor extends Processor {
 	@SuppressWarnings("null")
 	@Override
 	protected void doProcess( List<? extends DomainObject> collection,
-			@NonNull SQLiteDatabase db )
+			@NonNull SQLiteDatabase db, Intent pIntent )
 	{
 		if ( mSection != null ) {
 			Log.d( "IWService",
@@ -37,6 +40,13 @@ public class ScholarProcessor extends Processor {
 			}
 		}
 		boolean result = UnitOfWork.getCurrent().commit( db );
-		mPostProcessingListener.onPostProcessing( result );
+        if ( result ) {
+            ScholarMapper mapper = (ScholarMapper) Repository
+                    .getInstance( mContext )
+                    .getMapper(
+                            Scholar.class );
+            mapper.updateSectionSyncState( mSection,
+                    DomainObject.SyncState.SYNC_STATE_FULL );
+        }
 	}
 }

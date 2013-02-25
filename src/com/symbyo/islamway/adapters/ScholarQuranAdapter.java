@@ -1,12 +1,18 @@
 package com.symbyo.islamway.adapters;
 
+
+import android.R;
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import com.symbyo.islamway.domain.Scholar;
+import android.widget.TextView;
+import com.symbyo.islamway.domain.Collection;
+
+import java.util.List;
 
 /**
  * @author kdehairy
@@ -14,10 +20,15 @@ import com.symbyo.islamway.domain.Scholar;
  */
 public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
 
-    public ScholarQuranAdapter(
-            Context context, Scholar scholar )
-    {
+    private List<Collection> mCollections;
+    private Context          mContext;
 
+    private final int ITEM_LAYOUT = R.layout.two_line_list_item;
+
+    public ScholarQuranAdapter( Context context, List<Collection> collections )
+    {
+        mCollections = collections;
+        mContext = context;
     }
 
     /**
@@ -28,7 +39,11 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
     @Override
     public int getCount()
     {
-        return 0;  // TODO implement the method body.
+        int size = 0;
+        if ( mCollections != null ) {
+            size = mCollections.size();
+        }
+        return size;
     }
 
     /**
@@ -39,9 +54,13 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
      * @return The data at the specified position.
      */
     @Override
-    public Object getItem( int position )
+    public Collection getItem( int position )
     {
-        return null;  // TODO implement the method body.
+        Collection collection = null;
+        if ( mCollections != null ) {
+            collection = mCollections.get( position );
+        }
+        return collection;
     }
 
     /**
@@ -53,7 +72,7 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
     @Override
     public long getItemId( int position )
     {
-        return 0;  // TODO implement the method body.
+        return position;
     }
 
     /**
@@ -78,7 +97,30 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
     public View getView(
             int position, View convertView, ViewGroup parent )
     {
-        return null;  // TODO implement the method body.
+        if ( convertView == null ) {
+            convertView = LayoutInflater.from( mContext ).inflate( ITEM_LAYOUT,
+                    null );
+        }
+        ViewHolder holder;
+        if ( convertView.getTag() == null
+                || !(convertView.getTag() instanceof ViewHolder) ) {
+            holder = new ViewHolder();
+            holder.title = (TextView) convertView.findViewById( R.id.text1 );
+            holder.subTitle = (TextView) convertView.findViewById( R.id.text2 );
+            convertView.setTag( holder );
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+        Collection collection = getItem( position );
+        holder.title.setText( collection.getTitle() );
+        holder.subTitle.setText( Integer.toString(
+                collection.getEntriesCount() ) );
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        public TextView title;
+        public TextView subTitle;
     }
 
     /**

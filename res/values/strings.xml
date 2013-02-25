@@ -2,8 +2,6 @@
 <resources>
 
     <string name="app_name">Islamway</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="menu_settings">إعدادات</string>
     <string name="menu_search">بحث</string>
     <string name="menu_scholar_search_hint">ابحث باسم الشيخ</string>
     <string name="quran">القرآن</string>
@@ -14,7 +12,6 @@
     <string name="settings_wifi_only">wifi only</string>
     <string name="err_network">خطأ فى الاتصال</string>
     <string name="err_connect_network">تأكد من اتصالك بالانترنت</string>
-    <string name="err_processing_data">Error processing data</string>
     <string name="info_syncing">جاري تحميل البيانات&#8230;</string>
 
 </resources>

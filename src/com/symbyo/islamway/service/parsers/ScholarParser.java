@@ -20,7 +20,7 @@ public class ScholarParser extends Parser {
 	{
 		Gson gson = new Gson();
 		JSONScholar scholar_raw = gson.fromJson( json, JSONScholar.class );
-		ArrayList<Scholar> result = new ArrayList<Scholar>();
+		List<Scholar> result = new ArrayList<Scholar>();
 		result.add( scholar_raw.toDomainObject() );
 		return result;
 	}

@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -28,6 +30,7 @@ import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 
 public class ScholarsAdapter extends BaseAdapter implements Filterable {
+
     private final Context mContext;
 
     /**
@@ -87,7 +90,9 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
             convertView = LayoutInflater.from( mContext ).inflate( ITEM_LAYOUT,
                     null );
         }
-        ViewHolder holder = null;
+
+        ViewHolder holder;
+
         if ( convertView.getTag() == null
                 || !(convertView.getTag() instanceof ViewHolder) ) {
             holder = new ViewHolder();
@@ -99,7 +104,8 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Scholar scholar = (Scholar) getItem( position );
+
+        Scholar scholar = getItem( position );
         holder.title.setText( scholar.getName() );
         Bitmap bmp = getThumbnail( scholar.getImageFileName() );
         if ( bmp == null ) {
@@ -145,7 +151,7 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
             final ImageView image_view )
     {
         image_view.setTag( url );
-        new AsyncTask<Void, Void, String>() {
+        AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
 
             @Override
             protected String doInBackground( Void... params )
@@ -219,7 +225,10 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
                 }
             }
 
-        }.execute();
+        };
+        ThreadPoolExecutor executor = (ThreadPoolExecutor)AsyncTask.THREAD_POOL_EXECUTOR;
+        executor.setRejectedExecutionHandler( new ThreadPoolExecutor.DiscardOldestPolicy() );
+        task.executeOnExecutor( executor );
     }
 
     @Override
@@ -246,7 +255,7 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
             }
 
             if ( prefix == null || prefix.length() == 0 ) {
-                ArrayList<Scholar> list;
+                List<Scholar> list;
                 synchronized ( mLock ) {
                     list = new ArrayList<Scholar>( mOriginalValues );
                 }
@@ -255,16 +264,15 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
             } else {
                 String prefixString = prefix.toString();
 
-                ArrayList<Scholar> values;
+                List<Scholar> values;
                 synchronized ( mLock ) {
                     values = new ArrayList<Scholar>( mOriginalValues );
                 }
 
-                final int count = values.size();
-                final ArrayList<Scholar> newValues = new ArrayList<Scholar>();
+                //final int count = values.size();
+                final List<Scholar> newValues = new ArrayList<Scholar>();
 
-                for ( int i = 0; i < count; i++ ) {
-                    final Scholar scholar = values.get( i );
+                for ( final Scholar scholar : values ) {
                     final String valueText = scholar.getName();
 
                     // First match against the whole, non-splitted value
@@ -272,12 +280,12 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
                         newValues.add( scholar );
                     } else {
                         final String[] words = valueText.split( " " );
-                        final int wordCount = words.length;
+                        //final int wordCount = words.length;
 
                         // Start at index 0, in case valueText starts with
                         // space(s)
-                        for ( int k = 0; k < wordCount; k++ ) {
-                            if ( words[k].startsWith( prefixString ) ) {
+                        for ( String word : words ) {
+                            if ( word.startsWith( prefixString ) ) {
                                 newValues.add( scholar );
                                 break;
                             }

@@ -27,40 +27,43 @@ public class RestClient {
     /**
      * 70 is the max value accepted by the server
      */
-    private final int	ENTRIES_PER_PAGE	= 70;
-	
-	private final int TIME_OUT = 20000;
+    private final int ENTRIES_PER_PAGE = 70;
 
-	protected final int		RESOURCE_ID_NONE	= -1;
-	protected int			mResourceId			= RESOURCE_ID_NONE;
-	//protected ContentValues	mParams;
-	protected final String	mUrlFormat;
-	protected HTTPMethod	mHTTPMethod;
+    private final int TIME_OUT = 20000;
 
-	public enum HTTPMethod {
-		GET("GET"),
-		POST("POST");
+    protected final int RESOURCE_ID_NONE = -1;
+    protected       int mResourceId      = RESOURCE_ID_NONE;
+    //protected ContentValues	mParams;
+    protected final String mUrlFormat;
+    protected final HTTPMethod mHTTPMethod;
 
-		private final String	mValue;
+    public enum HTTPMethod {
+        GET( "GET" ),
+        POST( "POST" );
 
-		private HTTPMethod(String value) {
-			mValue = value;
-		}
+        private final String mValue;
 
-		@Override
-		public String toString()
-		{
-			return mValue;
-		}
-	}
+        private HTTPMethod( String value )
+        {
+            mValue = value;
+        }
 
-	public RestClient(@NonNull final String url_format, HTTPMethod http_method) {
-		mUrlFormat = url_format;
-		if ( http_method == null ) {
-			http_method = HTTPMethod.GET;
-		}
-		mHTTPMethod = http_method;
-	}
+        @Override
+        public String toString()
+        {
+            return mValue;
+        }
+    }
+
+    public RestClient(
+            @NonNull final String url_format, HTTPMethod http_method )
+    {
+        mUrlFormat = url_format;
+        if ( http_method == null ) {
+            http_method = HTTPMethod.GET;
+        }
+        mHTTPMethod = http_method;
+    }
 
 	/*/**
 	 * 
@@ -74,7 +77,7 @@ public class RestClient {
 		return this;
 	}*/
 
-	public Response getResponse() throws NetworkException
+    public Response getResponse() throws NetworkException
 	{
 		HttpURLConnection conn = null;
 		Response result = null;
@@ -162,7 +165,6 @@ public class RestClient {
 			throw new Error( "method is not supported "
 					+ "or set after the connection is established" );
 		}
-		return;
 	}
 
 	private String readResponse( InputStream in ) throws IOException
@@ -171,7 +173,7 @@ public class RestClient {
 		String response = null;
 		try {
 			reader = new BufferedReader( new InputStreamReader( in ) );
-			String line = "";
+			String line;
 			StringBuilder bldr = new StringBuilder();
 			while ( (line = reader.readLine()) != null ) {
 				bldr.append( line );

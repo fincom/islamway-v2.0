@@ -25,40 +25,41 @@ import com.symbyo.islamway.persistance.Repository;
  */
 public abstract class AbstractMapper {
 
-	protected Context	mContext;
+    protected final Context mContext;
 
-	public AbstractMapper(@NonNull Context context) {
-		mContext = context;
-	}
+    public AbstractMapper( @NonNull Context context )
+    {
+        mContext = context;
+    }
 
-	/**
-	 * Finds multiple DomainObjects of the same type based on a parameterized
-	 * Sql statement.
-	 * 
-	 * @param stmt
-	 * @return
-	 */
-	protected List<? extends DomainObject> findMany( StatementSource stmt )
-	{
-		ArrayList<DomainObject> objects = null;
-		SQLiteDatabase db = null;
-		Cursor c = null;
-		try {
-			db = Repository.getInstance( mContext ).getReadableDatabase();
-			Log.d( "Islamway", stmt.sql() );
-			c = db.rawQuery( stmt.sql(), stmt.parameters() );
-			if ( c != null ) {
-				objects = loadAll( c );
-			}
-		} catch ( SQLiteException e ) {
-			e.printStackTrace();
-		} finally {
-			if ( c != null ) {
-				c.close();
-			}
-		}
+    /**
+     * Finds multiple DomainObjects of the same type based on a parameterized
+     * Sql statement.
+     *
+     * @param stmt
+     * @return
+     */
+    protected List<? extends DomainObject> findMany( StatementSource stmt )
+    {
+        List<DomainObject> objects = null;
+        SQLiteDatabase db;
+        Cursor c = null;
+        try {
+            db = Repository.getInstance( mContext ).getReadableDatabase();
+            Log.d( "Islamway", stmt.sql() );
+            c = db.rawQuery( stmt.sql(), stmt.parameters() );
+            if ( c != null ) {
+                objects = loadAll( c );
+            }
+        } catch ( SQLiteException e ) {
+            e.printStackTrace();
+        } finally {
+            if ( c != null ) {
+                c.close();
+            }
+        }
 
-		List<DomainObject> result = null;
+        List<DomainObject> result = null;
 		if ( objects != null ) {
 			result = Collections.unmodifiableList( objects );
 		}
@@ -71,10 +72,10 @@ public abstract class AbstractMapper {
 	 * @param c
 	 * @return
 	 */
-	private ArrayList<DomainObject> loadAll( @NonNull Cursor c )
+	private List<DomainObject> loadAll( @NonNull Cursor c )
 	{
 		ArrayList<DomainObject> objects = null;
-		int count = 0;
+		int count;
 		if ( (count = c.getCount()) > 0 ) {
 			objects = new ArrayList<DomainObject>( count );
 			while ( c.moveToNext() ) {

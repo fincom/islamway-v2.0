@@ -21,7 +21,7 @@ public class CollectionParser extends Parser {
         Gson gson = new Gson();
         JSONCollection collection_raw = gson.fromJson( json,
                 JSONCollection.class );
-        ArrayList<Collection> result = new ArrayList<Collection>();
+        List<Collection> result = new ArrayList<Collection>();
         result.add( collection_raw.toDomainObject() );
         return result;
     }
@@ -35,7 +35,7 @@ public class CollectionParser extends Parser {
         }.getType();
         JSONResponse<JSONCollection> response = gson.fromJson( json,
                 response_type );
-        ArrayList<Collection> result = new ArrayList<Collection>(
+        List<Collection> result = new ArrayList<Collection>(
                 response.getDomainObjects().size() );
         for ( JSONCollection collection_raw : response.getDomainObjects() ) {
             result.add( collection_raw.toDomainObject() );
