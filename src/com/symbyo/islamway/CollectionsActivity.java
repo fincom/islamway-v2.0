@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import com.symbyo.islamway.domain.Collection;
+import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.fragments.ScholarCollectionFragment;
@@ -62,6 +63,12 @@ public class CollectionsActivity extends BaseSlidingActivity
     public void onCollectionItemClick(
             Collection item )
     {
-        // TODO implement the method body.
+        if ( item.getType() == Entry.EntryType.MUSHAF ) {
+
+        } else if ( item.getType() == Entry.EntryType.LESSON_SERIES ) {
+
+        } else if ( item.getType() == Entry.EntryType.GROUP ) {
+
+        }
     }
 }

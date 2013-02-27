@@ -19,7 +19,7 @@ import java.util.List;
  * @author kdehairy
  * @since 2/20/13
  */
-public class ScholarCollectionAdapter extends BaseAdapter
+public class CollectionAdapter extends BaseAdapter
         implements Filterable {
 
     private List<Collection> mCollections;
@@ -35,7 +35,7 @@ public class ScholarCollectionAdapter extends BaseAdapter
 
     private final int ITEM_LAYOUT = R.layout.collection_list_item;
 
-    public ScholarCollectionAdapter(
+    public CollectionAdapter(
             Context context, List<Collection> collections )
     {
         mCollections = collections;

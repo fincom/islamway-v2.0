@@ -17,17 +17,17 @@ public class Collection extends Entry implements FilterableObject {
 
     public Collection(
             int id, int server_id, String title, int view_counts,
-            int entries_count )
+            int entries_count, EntryType type )
     {
-        super( id, server_id, title, view_counts );
+        super( id, server_id, title, view_counts, type );
         mEntriesCount = entries_count;
     }
 
     public Collection(
             int server_id, String title, int view_counts,
-            int entries_count )
+            int entries_count, EntryType type )
     {
-        super( INVALID_ID, server_id, title, view_counts );
+        super( INVALID_ID, server_id, title, view_counts, type );
         mEntriesCount = entries_count;
     }
 

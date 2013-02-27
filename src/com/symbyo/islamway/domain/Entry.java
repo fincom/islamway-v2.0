@@ -12,14 +12,24 @@ public abstract class Entry extends DomainObject {
     private final int    mServerId;
     private final String mTitle;
     private final int    mViewsCount;
+    private final EntryType mEntryType;
+
+    public enum EntryType {
+        LESSON_SERIES,
+        GROUP,
+        MUSHAF,
+        LESSON,
+        QURAN_RECITATION
+    }
 
     public Entry(
-            int id, int server_id, String title, int view_counts )
+            int id, int server_id, String title, int view_counts, EntryType type )
     {
         super( id );
         mServerId = server_id;
         mTitle = title;
         mViewsCount = view_counts;
+        mEntryType = type;
     }
 
     protected Entry( Parcel source )
@@ -28,6 +38,7 @@ public abstract class Entry extends DomainObject {
         mServerId = source.readInt();
         mTitle = source.readString();
         mViewsCount = source.readInt();
+        mEntryType = EntryType.values()[source.readInt()];
     }
 
     @Override
@@ -36,6 +47,7 @@ public abstract class Entry extends DomainObject {
         dest.writeInt( getServerId() );
         dest.writeString( getTitle() );
         dest.writeInt( getViewsCount() );
+        dest.writeInt( mEntryType.ordinal() );
         doWriteToParcel( dest );
     }
 
@@ -66,6 +78,10 @@ public abstract class Entry extends DomainObject {
     public int getViewsCount()
     {
         return mViewsCount;
+    }
+
+    public EntryType getType() {
+        return mEntryType;
     }
 
     protected abstract void doWriteToParcel( Parcel dest );
