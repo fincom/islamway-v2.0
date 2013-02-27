@@ -1,10 +1,11 @@
 package com.symbyo.islamway.service.restclients.response;
 
 public class Page {
-	private final int		mNumber;
-	private final String	mResponse;
+	private final int    mNumber;
+	private final String mResponse;
 
-	public Page(int number, String response) {
+	public Page( int number, String response )
+	{
 		mNumber = number;
 		mResponse = response;
 	}

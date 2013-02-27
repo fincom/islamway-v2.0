@@ -16,66 +16,66 @@ import junit.framework.Assert;
  * @since 2/13/13
  */
 public class CollectionsActivity extends BaseSlidingActivity
-        implements ScholarCollectionFragment.OnCollectionItemClick {
-    public static final String EXTRA_SCHOLAR = "extra_key_scholar";
-    public static final String EXTRA_SECTION = "extra_key_section";
+		implements ScholarCollectionFragment.OnCollectionItemClick {
+	public static final String EXTRA_SCHOLAR = "extra_key_scholar";
+	public static final String EXTRA_SECTION = "extra_key_section";
 
-    @Override
-    public void onCreate( Bundle savedInstanceState )
-    {
-        super.onCreate( savedInstanceState );
-        Intent intent = getIntent();
-        Scholar scholar = (Scholar) intent.getParcelableExtra( EXTRA_SCHOLAR );
-        Section section = (Section) intent.getParcelableExtra( EXTRA_SECTION );
+	@Override
+	public void onCreate( Bundle savedInstanceState )
+	{
+		super.onCreate( savedInstanceState );
+		Intent intent = getIntent();
+		Scholar scholar = (Scholar) intent.getParcelableExtra( EXTRA_SCHOLAR );
+		Section section = (Section) intent.getParcelableExtra( EXTRA_SECTION );
 
-        Assert.assertNotNull( "A scholar object must be passed to the activity",
-                scholar );
-        //setTitle( scholar.getName() );
+		Assert.assertNotNull( "A scholar object must be passed to the activity",
+							  scholar );
+		//setTitle( scholar.getName() );
 
-        if ( savedInstanceState == null ) {
-            // TODO attach the scholar quran fragment.
-            Bundle bndl = new Bundle();
-            bndl.putParcelable( ScholarCollectionFragment.SCHOLAR_KEY,
-                    scholar );
-            bndl.putParcelable( ScholarCollectionFragment.SECTION_KEY,
-                    section );
-            Fragment content = new ScholarCollectionFragment();
-            content.setArguments( bndl );
-            getSupportFragmentManager().beginTransaction()
-                    .replace( R.id.content_frame, content )
-                    .commit();
-        }
+		if ( savedInstanceState == null ) {
+			// TODO attach the scholar quran fragment.
+			Bundle bndl = new Bundle();
+			bndl.putParcelable( ScholarCollectionFragment.SCHOLAR_KEY,
+								scholar );
+			bndl.putParcelable( ScholarCollectionFragment.SECTION_KEY,
+								section );
+			Fragment content = new ScholarCollectionFragment();
+			content.setArguments( bndl );
+			getSupportFragmentManager().beginTransaction()
+					.replace( R.id.content_frame, content )
+					.commit();
+		}
 
-    }
+	}
 
-    /**
-     * Called when an item in the sliding menu is clicked.
-     *
-     * @param item item selected from the sliding menu.
-     */
-    @Override
-    protected void slideMenuItemClicked( SlideMenuFragment.SlideMenuItem item )
-    {
-        // TODO implement the method body.
-    }
+	/**
+	 * Called when an item in the sliding menu is clicked.
+	 *
+	 * @param item item selected from the sliding menu.
+	 */
+	@Override
+	protected void slideMenuItemClicked( SlideMenuFragment.SlideMenuItem item )
+	{
+		// TODO implement the method body.
+	}
 
-    @Override
-    public void onCollectionItemClick(
-            Collection item )
-    {
-        if ( item.getType() == Entry.EntryType.MUSHAF ) {
+	@Override
+	public void onCollectionItemClick(
+			Collection item )
+	{
+		if ( item.getType() == Entry.EntryType.MUSHAF ) {
 
-        } else if ( item.getType() == Entry.EntryType.LESSON_SERIES ) {
+		} else if ( item.getType() == Entry.EntryType.LESSON_SERIES ) {
 
-        } else if ( item.getType() == Entry.EntryType.GROUP ) {
-            Fragment content = new SubCollectionsFragment();
-            Bundle bndl = new Bundle();
-            bndl.putParcelable( SubCollectionsFragment.PARENT_KEY, item );
-            content.setArguments( bndl );
-            getSupportFragmentManager().beginTransaction()
-                    .replace( R.id.content_frame, content )
-                    .addToBackStack( null )
-                    .commit();
-        }
-    }
+		} else if ( item.getType() == Entry.EntryType.GROUP ) {
+			Fragment content = new SubCollectionsFragment();
+			Bundle bndl = new Bundle();
+			bndl.putParcelable( SubCollectionsFragment.PARENT_KEY, item );
+			content.setArguments( bndl );
+			getSupportFragmentManager().beginTransaction()
+					.replace( R.id.content_frame, content )
+					.addToBackStack( null )
+					.commit();
+		}
+	}
 }

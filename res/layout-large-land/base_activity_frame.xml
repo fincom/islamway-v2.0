@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clickable="true" >
-    
-    <FrameLayout
-        android:id="@+id/slidemenu_frame"
-        android:layout_width="@dimen/slidingmenu_width"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true">
 
     <FrameLayout
-        android:id="@+id/content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@id/slidemenu_frame" />
+            android:id="@+id/slidemenu_frame"
+            android:layout_width="@dimen/slidingmenu_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"/>
+
+    <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/slidemenu_frame"/>
 
 </RelativeLayout>

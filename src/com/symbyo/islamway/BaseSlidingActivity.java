@@ -2,19 +2,18 @@ package com.symbyo.islamway;
 
 import android.os.Bundle;
 import android.view.View;
-
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.persistance.Repository;
-
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 
-public abstract class BaseSlidingActivity extends SlidingFragmentActivity implements
+public abstract class BaseSlidingActivity extends SlidingFragmentActivity
+		implements
 		OnSlideMenuItemClick {
-	
+
 	@Override
 	public void onCreate( Bundle savedInstanceState )
 	{
@@ -22,7 +21,7 @@ public abstract class BaseSlidingActivity extends SlidingFragmentActivity implem
 
 		// create the repository singleton object.
 		Repository.getInstance( getApplicationContext() );
-		
+
 		setContentView( R.layout.base_activity_frame );
 
 		// check if the slidingmenu_frame frame exists. if it does, then the
@@ -51,13 +50,13 @@ public abstract class BaseSlidingActivity extends SlidingFragmentActivity implem
 					.commit();
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected( MenuItem item )
 	{
 		switch ( item.getItemId() ) {
-		case android.R.id.home:
-			toggle();
+			case android.R.id.home:
+				toggle();
 		}
 		return super.onOptionsItemSelected( item );
 	}
@@ -67,13 +66,14 @@ public abstract class BaseSlidingActivity extends SlidingFragmentActivity implem
 	{
 		slideMenuItemClicked( item );
 	}
-	
+
 	/**
 	 * Called when an item in the sliding menu is clicked.
+	 *
 	 * @param item
 	 */
-	abstract protected void slideMenuItemClicked ( SlideMenuItem item );
-	
+	abstract protected void slideMenuItemClicked( SlideMenuItem item );
+
 	@Override
 	protected void onDestroy()
 	{

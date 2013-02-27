@@ -4,7 +4,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
@@ -14,21 +13,21 @@ import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.persistance.Repository;
 
 public class ScholarsActivity extends BaseSlidingActivity implements
-        ScholarListFragment.OnScholarItemClick {
+		ScholarListFragment.OnScholarItemClick {
 
-	private final int		REQUEST_INVALID		= 0;
-	private final String	REQUEST_KEY			= "request";
-	private final String	ACTIVITY_TITLE_KEY	= "title";
+	private final int    REQUEST_INVALID    = 0;
+	private final String REQUEST_KEY        = "request";
+	private final String ACTIVITY_TITLE_KEY = "title";
 
 	/**
 	 * This is the id of the latest request sent to the ServiceHelper.
 	 */
-	private int				mRequestId			= REQUEST_INVALID;
+	private int mRequestId = REQUEST_INVALID;
 
 	/**
 	 * The Activity title.
 	 */
-	private String			mActivityTitle;
+	private String mActivityTitle;
 
 	@Override
 	protected void onSaveInstanceState( Bundle outState )
@@ -77,7 +76,7 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 				fragment.expandSearchView();
 			}
 		} catch ( ClassCastException e ) {
-            e.printStackTrace();
+			e.printStackTrace();
 		}
 
 		return super.onSearchRequested();
@@ -116,18 +115,19 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 			getSupportFragmentManager().beginTransaction().remove( frgmnt )
 					.commit();
 		}
-        // change the title
-        mActivityTitle = item.text;
-        setTitle( mActivityTitle );
+		// change the title
+		mActivityTitle = item.text;
+		setTitle( mActivityTitle );
 	}
 
-    @Override
-    public void onLoadScholarCollectionsClick( Scholar scholar, Section section )
-    {
-        Intent intent = new Intent(this,  CollectionsActivity.class );
-        intent.putExtra( CollectionsActivity.EXTRA_SCHOLAR, scholar );
-        intent.putExtra( CollectionsActivity.EXTRA_SECTION, section );
+	@Override
+	public void onLoadScholarCollectionsClick( Scholar scholar,
+											   Section section )
+	{
+		Intent intent = new Intent( this, CollectionsActivity.class );
+		intent.putExtra( CollectionsActivity.EXTRA_SCHOLAR, scholar );
+		intent.putExtra( CollectionsActivity.EXTRA_SECTION, section );
 
-        startActivity( intent );
-    }
+		startActivity( intent );
+	}
 }

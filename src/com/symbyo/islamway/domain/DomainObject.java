@@ -5,26 +5,27 @@ import android.os.Parcelable;
 
 public abstract class DomainObject implements Parcelable {
 
-	public static final int	INVALID_ID	= -1;
+	public static final int INVALID_ID = -1;
 
-	protected int			mId			= INVALID_ID;
+	protected int mId = INVALID_ID;
 
-	protected DomainObject(int id) {
+	protected DomainObject( int id )
+	{
 		mId = id;
 	}
-	
+
 	public enum SyncState {
 		SYNC_STATE_NONE,
 		SYNC_STATE_BASIC,
 		SYNC_STATE_FULL
 	}
 
-	protected DomainObject(Parcel source) {
+	protected DomainObject( Parcel source )
+	{
 		mId = source.readInt();
 	}
 
 	/**
-	 * 
 	 * @return object id or INVALID_ID if it has none.
 	 */
 	public int getId()

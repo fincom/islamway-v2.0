@@ -15,18 +15,18 @@ import java.util.List;
  */
 public class CollectionsProcessor extends Processor {
 
-    public CollectionsProcessor( Context context )
-    {
-        super( context );
-    }
+	public CollectionsProcessor( Context context )
+	{
+		super( context );
+	}
 
-    @Override
-    protected void doProcess(
-            List<? extends DomainObject> collection, SQLiteDatabase db,
-            Intent pIntent )
-    {
-        int key = IWApplication.putDomainObjects( collection );
-        pIntent.putExtra( IWService.EXTRA_DATA_KEY, key );
-    }
+	@Override
+	protected void doProcess(
+			List<? extends DomainObject> collection, SQLiteDatabase db,
+			Intent pIntent )
+	{
+		int key = IWApplication.putDomainObjects( collection );
+		pIntent.putExtra( IWService.EXTRA_DATA_KEY, key );
+	}
 
 }

@@ -1,25 +1,26 @@
 package com.symbyo.islamway.domain;
 
-import java.util.List;
-
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import com.symbyo.islamway.persistance.Repository;
+
+import java.util.List;
 
 public class Section extends DomainObject {
 
 	public enum SectionType {
-		QURAN("recitations"),
-		LESSONS("lessons");
+		QURAN( "recitations" ),
+		LESSONS( "lessons" );
 
-		private final String	mValue;
+		private final String mValue;
 
-		private SectionType(final String value) {
+		private SectionType( final String value )
+		{
 			mValue = value;
 		}
-		
-		public int getId() {
+
+		public int getId()
+		{
 			return ordinal() + 1;
 		}
 
@@ -30,14 +31,16 @@ public class Section extends DomainObject {
 		}
 	}
 
-	private final SectionType	mType;
+	private final SectionType mType;
 
-	public Section(SectionType type) {
+	public Section( SectionType type )
+	{
 		super( type.getId() );
 		mType = type;
 	}
 
-	protected Section(Parcel source) {
+	protected Section( Parcel source )
+	{
 		super( source );
 		mType = SectionType.values()[source.readInt()];
 	}
@@ -69,21 +72,23 @@ public class Section extends DomainObject {
 		}
 		return false;
 	}
-	
+
 	//@formatter:off
-	public static final Parcelable.Creator<Section> CREATOR = 
+	public static final Parcelable.Creator<Section> CREATOR =
 			new Parcelable.Creator<Section>() {
 
-		@Override
-		public Section createFromParcel(Parcel source) {
-			return new Section(source);
-		}
+				@Override
+				public Section createFromParcel( Parcel source )
+				{
+					return new Section( source );
+				}
 
-		@Override
-		public Section[] newArray(int size) {	
-			return new Section[size];
-		}
-	};
+				@Override
+				public Section[] newArray( int size )
+				{
+					return new Section[size];
+				}
+			};
 	//@formatter:on
 
 	@Override
@@ -103,8 +108,9 @@ public class Section extends DomainObject {
 				.getMapper( Scholar.class );
 		return mapper.findScholarsBySection( this );
 	}
-	
-	public SyncState getSyncState() {
+
+	public SyncState getSyncState()
+	{
 		IScholarFinder mapper = (IScholarFinder) Repository.getInstance()
 				.getMapper( Scholar.class );
 		return mapper.getSectionSyncState( this );

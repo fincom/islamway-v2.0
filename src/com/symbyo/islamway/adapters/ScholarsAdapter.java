@@ -24,209 +24,215 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class ScholarsAdapter extends BaseAdapter implements Filterable {
 
-    private final Context mContext;
+	private final Context mContext;
 
-    /**
-     * List of scholars returned by this adapter.
-     */
-    private List<Scholar> mScholars;
+	/**
+	 * List of scholars returned by this adapter.
+	 */
+	private List<Scholar> mScholars;
 
-    private Utils.ArrayFilter<Scholar>   mFilter;
+	private Utils.ArrayFilter<Scholar> mFilter;
 
-    private final int ITEM_LAYOUT = R.layout.scholar_list_item;
+	private final int ITEM_LAYOUT = R.layout.scholar_list_item;
 
-    public ScholarsAdapter( @NonNull Context context, @NonNull Section section )
-    {
-        super();
-        mContext = context;
-        mScholars = section.getSectionScholars();
+	public ScholarsAdapter( @NonNull Context context, @NonNull Section section )
+	{
+		super();
+		mContext = context;
+		mScholars = section.getSectionScholars();
 
-    }
+	}
 
-    @Override
-    public int getCount()
-    {
-        int size = 0;
-        if ( mScholars != null ) {
-            size = mScholars.size();
-        }
-        return size;
-    }
+	@Override
+	public int getCount()
+	{
+		int size = 0;
+		if ( mScholars != null ) {
+			size = mScholars.size();
+		}
+		return size;
+	}
 
-    @Override
-    public Scholar getItem( int position )
-    {
-        Scholar scholar = null;
-        if ( mScholars != null ) {
-            scholar = mScholars.get( position );
-        }
-        return scholar;
-    }
+	@Override
+	public Scholar getItem( int position )
+	{
+		Scholar scholar = null;
+		if ( mScholars != null ) {
+			scholar = mScholars.get( position );
+		}
+		return scholar;
+	}
 
-    @Override
-    public long getItemId( int position )
-    {
-        return position;
-    }
+	@Override
+	public long getItemId( int position )
+	{
+		return position;
+	}
 
-    @Override
-    public View getView( int position, View convertView, ViewGroup parent )
-    {
-        if ( convertView == null ) {
-            convertView = LayoutInflater.from( mContext ).inflate( ITEM_LAYOUT,
-                    null );
-        }
+	@Override
+	public View getView( int position, View convertView, ViewGroup parent )
+	{
+		if ( convertView == null ) {
+			convertView = LayoutInflater.from( mContext ).inflate( ITEM_LAYOUT,
+																   null );
+		}
 
-        ViewHolder holder;
+		ViewHolder holder;
 
-        if ( convertView.getTag() == null
-                || !(convertView.getTag() instanceof ViewHolder) ) {
-            holder = new ViewHolder();
-            holder.image = (ImageView) convertView
-                    .findViewById( R.id.scholar_image );
-            holder.title = (TextView) convertView
-                    .findViewById( R.id.scholar_name );
-            convertView.setTag( holder );
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
+		if ( convertView.getTag() == null
+				|| !(convertView.getTag() instanceof ViewHolder) ) {
+			holder = new ViewHolder();
+			holder.image = (ImageView) convertView
+					.findViewById( R.id.scholar_image );
+			holder.title = (TextView) convertView
+					.findViewById( R.id.scholar_name );
+			convertView.setTag( holder );
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
 
-        Scholar scholar = getItem( position );
-        holder.title.setText( scholar.getName() );
-        Bitmap bmp = getThumbnail( scholar.getImageFileName() );
-        if ( bmp == null ) {
-            Drawable placeHolder = mContext.getResources().getDrawable(
-                    R.drawable.scholar_placeholder );
-            holder.image.setImageDrawable( placeHolder );
-            // download the scholar image
-            if ( scholar.getImageUrl() != null ) {
-                downloadImage( scholar.getImageUrl(),
-                        scholar.getImageFileName(), holder.image );
-            }
-        } else {
-            holder.image.setImageBitmap( bmp );
-        }
-        return convertView;
-    }
+		Scholar scholar = getItem( position );
+		holder.title.setText( scholar.getName() );
+		Bitmap bmp = getThumbnail( scholar.getImageFileName() );
+		if ( bmp == null ) {
+			Drawable placeHolder = mContext.getResources().getDrawable(
+					R.drawable.scholar_placeholder );
+			holder.image.setImageDrawable( placeHolder );
+			// download the scholar image
+			if ( scholar.getImageUrl() != null ) {
+				downloadImage( scholar.getImageUrl(),
+							   scholar.getImageFileName(), holder.image );
+			}
+		} else {
+			holder.image.setImageBitmap( bmp );
+		}
+		return convertView;
+	}
 
-    private Bitmap getThumbnail( String file_name )
-    {
-        Bitmap bitmap = null;
-        if ( file_name != null && !file_name.isEmpty() ) {
-            InputStream inStream = null;
-            try {
-                inStream = mContext.openFileInput( file_name );
-                bitmap = BitmapFactory.decodeStream( inStream );
-            } catch ( FileNotFoundException e ) {
-            } finally {
-                try {
-                    if ( inStream != null ) {
-                        inStream.close();
-                    }
-                } catch ( IOException e ) {
-                    e.printStackTrace();
-                }
-            }
-        }
+	private Bitmap getThumbnail( String file_name )
+	{
+		Bitmap bitmap = null;
+		if ( file_name != null && !file_name.isEmpty() ) {
+			InputStream inStream = null;
+			try {
+				inStream = mContext.openFileInput( file_name );
+				bitmap = BitmapFactory.decodeStream( inStream );
+			} catch ( FileNotFoundException e ) {
+			} finally {
+				try {
+					if ( inStream != null ) {
+						inStream.close();
+					}
+				} catch ( IOException e ) {
+					e.printStackTrace();
+				}
+			}
+		}
 
-        return bitmap;
-    }
+		return bitmap;
+	}
 
-    private void downloadImage(
-            final String url, final String file_name,
-            final ImageView image_view )
-    {
-        image_view.setTag( url );
-        AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
+	private void downloadImage(
+			final String url, final String file_name,
+			final ImageView image_view )
+	{
+		image_view.setTag( url );
+		AsyncTask<Void, Void, String> task =
+				new AsyncTask<Void, Void, String>() {
 
-            @Override
-            protected String doInBackground( Void... params )
-            {
-                return doDownloadImage( url );
-            }
+					@Override
+					protected String doInBackground( Void... params )
+					{
+						return doDownloadImage( url );
+					}
 
-            private String doDownloadImage( String imageUrl )
-            {
-                BufferedInputStream reader = null;
-                BufferedOutputStream writer = null;
-                HttpURLConnection cnn = null;
-                try {
-                    // download the file
-                    URL url = new URL( imageUrl );
-                    cnn = (HttpURLConnection) url
-                            .openConnection();
-                    reader = new BufferedInputStream( cnn.getInputStream() );
-                    //bmp = BitmapFactory.decodeStream( reader );
-                    // write it into the internal memory.
-                    byte[] buffer = new byte[1024];
-                    writer = new BufferedOutputStream( mContext.openFileOutput(
-                            file_name,
-                            Context.MODE_PRIVATE ), buffer.length );
-                    int read;
-                    while ( (read = reader.read( buffer, 0,
-                            buffer.length )) != -1 ) {
-                        writer.write( buffer, 0, read );
-                    }
+					private String doDownloadImage( String imageUrl )
+					{
+						BufferedInputStream reader = null;
+						BufferedOutputStream writer = null;
+						HttpURLConnection cnn = null;
+						try {
+							// download the file
+							URL url = new URL( imageUrl );
+							cnn = (HttpURLConnection) url
+									.openConnection();
+							reader = new BufferedInputStream(
+									cnn.getInputStream() );
+							//bmp = BitmapFactory.decodeStream( reader );
+							// write it into the internal memory.
+							byte[] buffer = new byte[1024];
+							writer = new BufferedOutputStream(
+									mContext.openFileOutput(
+											file_name,
+											Context.MODE_PRIVATE ),
+									buffer.length );
+							int read;
+							while ( (read = reader.read( buffer, 0,
+														 buffer.length )) != -1 ) {
+								writer.write( buffer, 0, read );
+							}
 
-                } catch ( MalformedURLException e ) {
-                    e.printStackTrace();
-                } catch ( IOException e ) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        if ( reader != null ) {
-                            reader.close();
-                        }
-                        if ( writer != null ) {
-                            writer.close();
-                        }
-                        if ( cnn != null ) {
-                            cnn.disconnect();
-                        }
-                    } catch ( IOException e ) {
-                    }
-                }
+						} catch ( MalformedURLException e ) {
+							e.printStackTrace();
+						} catch ( IOException e ) {
+							e.printStackTrace();
+						} finally {
+							try {
+								if ( reader != null ) {
+									reader.close();
+								}
+								if ( writer != null ) {
+									writer.close();
+								}
+								if ( cnn != null ) {
+									cnn.disconnect();
+								}
+							} catch ( IOException e ) {
+							}
+						}
 
-                return file_name;
-            }
+						return file_name;
+					}
 
-            @Override
-            protected void onPostExecute( String image_file )
-            {
-                super.onPostExecute( image_file );
-                String tag = (String) image_view.getTag();
-                if ( tag != null && tag.equals( url ) ) {
-                    Bitmap bmp = null;
-                    try {
-                        bmp = BitmapFactory.decodeStream(
-                                mContext.openFileInput(
-                                        image_file ) );
-                    } catch ( FileNotFoundException e ) {
-                        e.printStackTrace();
-                        // TODO implement error handling
-                    }
-                    if ( bmp != null ) {
-                        image_view.setImageBitmap( bmp );
-                    }
-                }
-            }
+					@Override
+					protected void onPostExecute( String image_file )
+					{
+						super.onPostExecute( image_file );
+						String tag = (String) image_view.getTag();
+						if ( tag != null && tag.equals( url ) ) {
+							Bitmap bmp = null;
+							try {
+								bmp = BitmapFactory.decodeStream(
+										mContext.openFileInput(
+												image_file ) );
+							} catch ( FileNotFoundException e ) {
+								e.printStackTrace();
+								// TODO implement error handling
+							}
+							if ( bmp != null ) {
+								image_view.setImageBitmap( bmp );
+							}
+						}
+					}
 
-        };
-        ThreadPoolExecutor executor = (ThreadPoolExecutor)AsyncTask.THREAD_POOL_EXECUTOR;
-        executor.setRejectedExecutionHandler( new ThreadPoolExecutor.DiscardOldestPolicy() );
-        task.executeOnExecutor( executor );
-    }
+				};
+		ThreadPoolExecutor executor =
+				(ThreadPoolExecutor) AsyncTask.THREAD_POOL_EXECUTOR;
+		executor.setRejectedExecutionHandler(
+				new ThreadPoolExecutor.DiscardOldestPolicy() );
+		task.executeOnExecutor( executor );
+	}
 
-    @Override
-    public boolean areAllItemsEnabled()
-    {
-        return true;
-    }
+	@Override
+	public boolean areAllItemsEnabled()
+	{
+		return true;
+	}
 
-    private static class ViewHolder {
-        public TextView  title;
-        public ImageView image;
-    }
+	private static class ViewHolder {
+		public TextView  title;
+		public ImageView image;
+	}
 
     /*private class ArrayFilter extends Filter {
 
@@ -303,12 +309,12 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
         }
     }*/
 
-    @Override
-    public Filter getFilter()
-    {
-        if ( mFilter == null ) {
-            mFilter = new Utils.ArrayFilter<Scholar>(this, mScholars);
-        }
-        return mFilter;
-    }
+	@Override
+	public Filter getFilter()
+	{
+		if ( mFilter == null ) {
+			mFilter = new Utils.ArrayFilter<Scholar>( this, mScholars );
+		}
+		return mFilter;
+	}
 }

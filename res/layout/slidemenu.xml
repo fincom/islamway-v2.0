@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <ListView
-        android:id="@+id/slidemenu_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            android:id="@+id/slidemenu_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
 
         <TextView
-            android:id="@+id/settings_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/slidemenu_item_padding"
-            android:text="@string/settings"
-            android:textAppearance="@android:style/TextAppearance.Medium" />
+                android:id="@+id/settings_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/slidemenu_item_padding"
+                android:text="@string/settings"
+                android:textAppearance="@android:style/TextAppearance.Medium"/>
 
         <CheckBox
-            android:id="@+id/wifi_only"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/settings_title"
-            android:checked="true"
-            android:padding="@dimen/slidemenu_item_padding"
-            android:text="@string/settings_wifi_only" />
+                android:id="@+id/wifi_only"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/settings_title"
+                android:checked="true"
+                android:padding="@dimen/slidemenu_item_padding"
+                android:text="@string/settings_wifi_only"/>
 
     </RelativeLayout>
 

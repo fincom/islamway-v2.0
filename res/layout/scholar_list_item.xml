@@ -5,21 +5,21 @@
                 android:padding="5dp">
 
     <ImageView
-        android:id="@+id/scholar_image"
-        android:layout_width="48dp"
-        android:layout_height="50dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:contentDescription="@string/scholar_image"
-        android:src="@drawable/scholar_placeholder" />
+            android:id="@+id/scholar_image"
+            android:layout_width="48dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/scholar_image"
+            android:src="@drawable/scholar_placeholder"/>
 
     <TextView
-        android:id="@+id/scholar_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_margin="5dp"
-        android:textAppearance="@android:style/TextAppearance.Medium"
-        android:layout_toLeftOf="@id/scholar_image" />
+            android:id="@+id/scholar_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:layout_toLeftOf="@id/scholar_image"/>
 
 </RelativeLayout>

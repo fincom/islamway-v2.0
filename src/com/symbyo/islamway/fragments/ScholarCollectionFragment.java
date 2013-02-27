@@ -14,32 +14,32 @@ import junit.framework.Assert;
  */
 public class ScholarCollectionFragment extends BaseCollectionFragment {
 
-    public final static String SCHOLAR_KEY = "scholars_key";
-    public static final String SECTION_KEY = "section_key";
+	public final static String SCHOLAR_KEY = "scholars_key";
+	public static final String SECTION_KEY = "section_key";
 
 
-    private Scholar               mScholar;
-    private Section               mSection;
+	private Scholar mScholar;
+	private Section mSection;
 
-    @Override
-    protected void doOnCreate( Bundle savedInstanceState )
-    {
-        // get the scholar
-        mScholar = (Scholar) getArguments().getParcelable( SCHOLAR_KEY );
-        mSection = (Section) getArguments().getParcelable( SECTION_KEY );
-        Assert.assertNotNull( mScholar );
-        getSherlockActivity().setTitle( mScholar.getName() );
-    }
+	@Override
+	protected void doOnCreate( Bundle savedInstanceState )
+	{
+		// get the scholar
+		mScholar = (Scholar) getArguments().getParcelable( SCHOLAR_KEY );
+		mSection = (Section) getArguments().getParcelable( SECTION_KEY );
+		Assert.assertNotNull( mScholar );
+		getSherlockActivity().setTitle( mScholar.getName() );
+	}
 
-    @Override
-    protected int doRequestCollections( ServiceHelper helper )
-    {
-        return helper.getScholarCollection( mScholar, mSection );
-    }
+	@Override
+	protected int doRequestCollections( ServiceHelper helper )
+	{
+		return helper.getScholarCollection( mScholar, mSection );
+	}
 
-    @Override
-    protected void setActivityTitle( Activity activity )
-    {
-        activity.setTitle( mScholar.getName() );
-    }
+	@Override
+	protected void setActivityTitle( Activity activity )
+	{
+		activity.setTitle( mScholar.getName() );
+	}
 }

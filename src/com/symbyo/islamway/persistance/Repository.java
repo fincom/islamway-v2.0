@@ -1,31 +1,30 @@
 package com.symbyo.islamway.persistance;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.domain.Section;
+import com.symbyo.islamway.persistance.mappers.AbstractMapper;
+import com.symbyo.islamway.persistance.mappers.ScholarMapper;
+import junit.framework.Assert;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import junit.framework.Assert;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-
-import com.symbyo.islamway.domain.Scholar;
-import com.symbyo.islamway.domain.Section;
-import com.symbyo.islamway.persistance.mappers.AbstractMapper;
-import com.symbyo.islamway.persistance.mappers.ScholarMapper;
-
 public class Repository extends SQLiteOpenHelper {
 
-	private final static String	DATABASE_NAME		= "data.sqlite";
-	private final static int	VERSION				= 1;
+	private final static String DATABASE_NAME = "data.sqlite";
+	private final static int    VERSION       = 1;
 
-	private final String		CREATE_SCRIPT		= "create_database.sql";
+	private final String CREATE_SCRIPT = "create_database.sql";
 
-	private final Context		mContext;
-	private static Repository	mInstance			= null;
+	private final Context mContext;
+	private static Repository mInstance = null;
 
-	private int					mOpenConnections	= 0;
+	private int mOpenConnections = 0;
 
 	public synchronized static Repository getInstance( Context context )
 	{
@@ -42,16 +41,16 @@ public class Repository extends SQLiteOpenHelper {
 		return mInstance;
 	}
 
-	private Repository(Context context) {
+	private Repository( Context context )
+	{
 		super( context, DATABASE_NAME, null, VERSION );
 		mContext = context;
 	}
 
 	/**
 	 * strips sql script from comments and split it into array of statements.
-	 * 
-	 * @param input
-	 *            inputstream with the sql script.
+	 *
+	 * @param input inputstream with the sql script.
 	 * @return array of strings of statements.
 	 * @throws IOException
 	 */
@@ -71,19 +70,27 @@ public class Repository extends SQLiteOpenHelper {
 			if ( multiLineComment == null ) {
 				// Check for first multi-line comment type
 				if ( line.startsWith( "/*" ) ) {
-					if ( !line.endsWith( "}" ) ) multiLineComment = "/*";
+					if ( !line.endsWith( "}" ) ) {
+						multiLineComment = "/*";
+					}
 					// Check for second multi-line comment type
 				} else if ( line.startsWith( "{" ) ) {
-					if ( !line.endsWith( "}" ) ) multiLineComment = "{";
+					if ( !line.endsWith( "}" ) ) {
+						multiLineComment = "{";
+					}
 					// Append line if line is not empty or a single line comment
 				} else if ( !line.startsWith( "--" ) && !line.equals( "" ) ) {
 					sql.append( line );
 				} // Check for matching end comment
 			} else if ( multiLineComment.equals( "/*" ) ) {
-				if ( line.endsWith( "*/" ) ) multiLineComment = null;
+				if ( line.endsWith( "*/" ) ) {
+					multiLineComment = null;
+				}
 				// Check for matching end comment
 			} else if ( multiLineComment.equals( "{" ) ) {
-				if ( line.endsWith( "}" ) ) multiLineComment = null;
+				if ( line.endsWith( "}" ) ) {
+					multiLineComment = null;
+				}
 			}
 		}
 		reader.close();
@@ -136,7 +143,7 @@ public class Repository extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade( SQLiteDatabase database, int old_version,
-			int new_version )
+						   int new_version )
 	{
 		onCreate( database );
 	}
@@ -164,8 +171,9 @@ public class Repository extends SQLiteOpenHelper {
 	}
 
 	// Persistence public interface ////////////////////////////////////////////
-	
-	public Section getSection(Section.SectionType type) {
-		return new Section(type);
+
+	public Section getSection( Section.SectionType type )
+	{
+		return new Section( type );
 	}
 }

@@ -1,17 +1,14 @@
 package com.symbyo.islamway.service.parsers;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Scholar;
-import com.symbyo.islamway.service.restclients.RestClient;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScholarParser extends Parser {
 
@@ -29,10 +26,13 @@ public class ScholarParser extends Parser {
 	protected List<Scholar> doParseCollection( String json )
 	{
 		Gson gson = new Gson();
-        Type response_type = new TypeToken<JSONResponse<JSONScholar>>(){}.getType();
-		JSONResponse<JSONScholar> response = gson.fromJson( json, response_type );
+		Type response_type = new TypeToken<JSONResponse<JSONScholar>>() {
+		}.getType();
+		JSONResponse<JSONScholar> response =
+				gson.fromJson( json, response_type );
 		ArrayList<Scholar> result = new ArrayList<Scholar>( response
-				.getDomainObjects().size() );
+																	.getDomainObjects()
+																	.size() );
 		for ( JSONScholar scholar_raw : response.getDomainObjects() ) {
 			result.add( scholar_raw.toDomainObject() );
 		}
@@ -40,40 +40,40 @@ public class ScholarParser extends Parser {
 	}
 
 
-
-	private class JSONScholar extends JSONDomainObject<Scholar>{
+	private class JSONScholar extends JSONDomainObject<Scholar> {
 
 		@SerializedName("id")
-		private int		mServerId;
+		private int mServerId;
 
 		@SerializedName("name")
-		private String	mName		= null;
+		private String mName = null;
 
 		@SerializedName("email")
-		private String	mEmail		= null;
+		private String mEmail = null;
 
 		@SerializedName("phone")
-		private String	mPhone		= null;
-		private String	mPageUrl	= null;
+		private String mPhone   = null;
+		private String mPageUrl = null;
 
 		@SerializedName("photo")
-		private String	mImageUrl	= null;
+		private String mImageUrl = null;
 
-		private String	mImageFile	= null;
+		private String mImageFile = null;
 
 		@SerializedName("views_count")
-		private int		mViewCount	= 0;
+		private int mViewCount = 0;
 
 		@SerializedName("popularity")
-		private int		mPopularity	= 0;
+		private int mPopularity = 0;
 
-        @Override
-        public Scholar toDomainObject()
-        {
-            Log.d( "Parser",
-                    String.format( "parsed Scholar server_id: %d", mServerId ) );
-            return new Scholar( mServerId, mName, mEmail, mPhone, mPageUrl,
-                    mImageUrl, mImageFile, mViewCount, mPopularity );
-        }
-    }
+		@Override
+		public Scholar toDomainObject()
+		{
+			Log.d( "Parser",
+				   String.format( "parsed Scholar server_id: %d", mServerId ) );
+			return new Scholar( mServerId, mName, mEmail, mPhone, mPageUrl,
+								mImageUrl, mImageFile, mViewCount,
+								mPopularity );
+		}
+	}
 }

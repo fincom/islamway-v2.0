@@ -1,5 +1,11 @@
 package com.symbyo.islamway.service.restclients;
 
+import android.content.ContentValues;
+import android.util.Log;
+import com.symbyo.islamway.service.restclients.response.Response;
+import junit.framework.Assert;
+import org.eclipse.jdt.annotation.NonNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,62 +14,51 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
-import com.google.gson.annotations.SerializedName;
-import com.symbyo.islamway.domain.DomainObject;
-import com.symbyo.islamway.service.restclients.response.Response;
-import junit.framework.Assert;
-
-import org.eclipse.jdt.annotation.NonNull;
-
-import android.content.ContentValues;
-import android.util.Log;
-
 public class RestClient {
 
-    /**
-     * 70 is the max value accepted by the server
-     */
-    private final int ENTRIES_PER_PAGE = 70;
+	/**
+	 * 70 is the max value accepted by the server
+	 */
+	private final int ENTRIES_PER_PAGE = 70;
 
-    private final int TIME_OUT = 20000;
+	private final int TIME_OUT = 20000;
 
-    protected final int RESOURCE_ID_NONE = -1;
-    protected       int mResourceId      = RESOURCE_ID_NONE;
-    //protected ContentValues	mParams;
-    protected final String mUrlFormat;
-    protected final HTTPMethod mHTTPMethod;
+	protected final int RESOURCE_ID_NONE = -1;
+	protected       int mResourceId      = RESOURCE_ID_NONE;
+	//protected ContentValues	mParams;
+	protected final String     mUrlFormat;
+	protected final HTTPMethod mHTTPMethod;
 
-    public enum HTTPMethod {
-        GET( "GET" ),
-        POST( "POST" );
+	public enum HTTPMethod {
+		GET( "GET" ),
+		POST( "POST" );
 
-        private final String mValue;
+		private final String mValue;
 
-        private HTTPMethod( String value )
-        {
-            mValue = value;
-        }
+		private HTTPMethod( String value )
+		{
+			mValue = value;
+		}
 
-        @Override
-        public String toString()
-        {
-            return mValue;
-        }
-    }
+		@Override
+		public String toString()
+		{
+			return mValue;
+		}
+	}
 
-    public RestClient(
-            @NonNull final String url_format, HTTPMethod http_method )
-    {
-        mUrlFormat = url_format;
-        if ( http_method == null ) {
-            http_method = HTTPMethod.GET;
-        }
-        mHTTPMethod = http_method;
-    }
+	public RestClient(
+			@NonNull final String url_format, HTTPMethod http_method )
+	{
+		mUrlFormat = url_format;
+		if ( http_method == null ) {
+			http_method = HTTPMethod.GET;
+		}
+		mHTTPMethod = http_method;
+	}
 
 	/*/**
 	 * 
@@ -77,13 +72,13 @@ public class RestClient {
 		return this;
 	}*/
 
-    public Response getResponse() throws NetworkException
+	public Response getResponse() throws NetworkException
 	{
 		HttpURLConnection conn = null;
 		Response result = null;
 		try {
-			Log.d( "Islamway", prepareUrl(null) );
-			URL url = new URL( prepareUrl(null) );
+			Log.d( "Islamway", prepareUrl( null ) );
+			URL url = new URL( prepareUrl( null ) );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
 			/** < set the connection method */
@@ -92,7 +87,7 @@ public class RestClient {
 			/** < read the stream into mResponse */
 			if ( conn.getResponseCode() == HttpURLConnection.HTTP_OK ) {
 				result = new Response( this,
-						readResponse( conn.getInputStream() ) );
+									   readResponse( conn.getInputStream() ) );
 			}
 
 		} catch ( MalformedURLException e ) {
@@ -118,8 +113,8 @@ public class RestClient {
 		try {
 			ContentValues params = new ContentValues();
 			params.put( "page", page_number );
-			Log.d( "Islamway", prepareUrl(params) );
-			URL url = new URL( prepareUrl(params) );
+			Log.d( "Islamway", prepareUrl( params ) );
+			URL url = new URL( prepareUrl( params ) );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout( TIME_OUT );
@@ -147,23 +142,23 @@ public class RestClient {
 
 	/**
 	 * configures the HttpURLConnection with the HTTPMethod.
-	 * 
+	 *
 	 * @param connection
 	 */
 	private void setHTTPMethod( HttpURLConnection connection )
 	{
 		switch ( mHTTPMethod ) {
-		case GET:
-			break;
-		case POST:
-			connection.setDoOutput( true );
+			case GET:
+				break;
+			case POST:
+				connection.setDoOutput( true );
 		}
 		try {
 			connection.setRequestMethod( mHTTPMethod.toString() );
 		} catch ( ProtocolException e ) {
 			e.printStackTrace();
 			throw new Error( "method is not supported "
-					+ "or set after the connection is established" );
+									 + "or set after the connection is established" );
 		}
 	}
 
@@ -191,26 +186,26 @@ public class RestClient {
 		return response;
 	}
 
-	protected String prepareUrl(ContentValues params)
-    {
-        String url;
-        if (params == null) {
-            params = new ContentValues();
-        }
-        if ( mResourceId == RESOURCE_ID_NONE ) {
-            url = mUrlFormat;
-        } else {
-            url = String.format( Locale.US, mUrlFormat, mResourceId );
-        }
-        params.put( "count", ENTRIES_PER_PAGE );
-        url += "?";
-        for (Map.Entry<String, Object> entry : params.valueSet()) {
-            url += entry.getKey() + "=" + entry.getValue() + "&";
-        }
-        url = url.substring( 0, url.length() - 1  );
+	protected String prepareUrl( ContentValues params )
+	{
+		String url;
+		if ( params == null ) {
+			params = new ContentValues();
+		}
+		if ( mResourceId == RESOURCE_ID_NONE ) {
+			url = mUrlFormat;
+		} else {
+			url = String.format( Locale.US, mUrlFormat, mResourceId );
+		}
+		params.put( "count", ENTRIES_PER_PAGE );
+		url += "?";
+		for ( Map.Entry<String, Object> entry : params.valueSet() ) {
+			url += entry.getKey() + "=" + entry.getValue() + "&";
+		}
+		url = url.substring( 0, url.length() - 1 );
 
-        return url;
-    }
+		return url;
+	}
 
 	public void setResourceId( int resource_id )
 	{

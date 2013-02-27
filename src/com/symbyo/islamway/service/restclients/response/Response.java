@@ -1,37 +1,35 @@
 package com.symbyo.islamway.service.restclients.response;
 
-import java.util.Iterator;
-
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.symbyo.islamway.service.restclients.NetworkException;
 import com.symbyo.islamway.service.restclients.RestClient;
-import com.symbyo.islamway.service.restclients.response.Page;
+
+import java.util.Iterator;
 
 public class Response implements Iterable<Page> {
 
-    private final RestClient mClient;
-    private final int        mPagesCount;
-    private final int        mTotalCount;
-    private       Page       mCurrentPage;
-    private int     returned_pages = 0;
-    private boolean mIsCollection  = false;
+	private final RestClient mClient;
+	private final int        mPagesCount;
+	private final int        mTotalCount;
+	private       Page       mCurrentPage;
+	private int     returned_pages = 0;
+	private boolean mIsCollection  = false;
 
-    public Response( RestClient client, String response )
-    {
-        mClient = client;
+	public Response( RestClient client, String response )
+	{
+		mClient = client;
 
-        Gson gson = new Gson();
-        ResponseRaw raw_response = gson.fromJson( response, ResponseRaw.class );
+		Gson gson = new Gson();
+		ResponseRaw raw_response = gson.fromJson( response, ResponseRaw.class );
 
-        mIsCollection = raw_response.isCollection();
-        mPagesCount = raw_response.getPagesNumber();
-        mTotalCount = raw_response.getTotalCount();
-        Log.d( "Islamway",
-                String.format( "pages count: %d", mPagesCount ) );
-        mCurrentPage = new Page( 1, response );
+		mIsCollection = raw_response.isCollection();
+		mPagesCount = raw_response.getPagesNumber();
+		mTotalCount = raw_response.getTotalCount();
+		Log.d( "Islamway",
+			   String.format( "pages count: %d", mPagesCount ) );
+		mCurrentPage = new Page( 1, response );
 	}
 
 	@Override
@@ -86,19 +84,20 @@ public class Response implements Iterable<Page> {
 	{
 		return mIsCollection;
 	}
-	
-	public int getSize() {
+
+	public int getSize()
+	{
 		return mTotalCount;
 	}
 
 	private static class ResponseRaw {
-		public final int	INVALID		= -1;
+		public final int INVALID = -1;
 
 		@SerializedName("count")
-		private int			mCount		= INVALID;
+		private int mCount = INVALID;
 
 		@SerializedName("total_count")
-		private int			mTotalCount	= INVALID;
+		private int mTotalCount = INVALID;
 
 		public int getPagesNumber()
 		{
@@ -108,7 +107,7 @@ public class Response implements Iterable<Page> {
 			}
 			return (int) Math.ceil( (float) mTotalCount / (float) mCount );
 		}
-		
+
 		public int getTotalCount()
 		{
 			return mTotalCount;

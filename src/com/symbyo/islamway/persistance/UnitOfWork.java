@@ -1,49 +1,49 @@
 package com.symbyo.islamway.persistance;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import junit.framework.Assert;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
-
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.persistance.mappers.AbstractMapper;
+import junit.framework.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UnitOfWork {
 
 
-    private final List<DomainObject> newObjects = new ArrayList<DomainObject>();
+	private final List<DomainObject> newObjects = new ArrayList<DomainObject>();
 
-    // @formatter:off
-    private static final ThreadLocal<UnitOfWork> current = new ThreadLocal<UnitOfWork>() {
-        @Override
-        protected UnitOfWork initialValue()
-        {
-            return new UnitOfWork();
-        }
-    };
-    // @formatter:on
+	// @formatter:off
+	private static final ThreadLocal<UnitOfWork> current =
+			new ThreadLocal<UnitOfWork>() {
+				@Override
+				protected UnitOfWork initialValue()
+				{
+					return new UnitOfWork();
+				}
+			};
+	// @formatter:on
 
-    public static UnitOfWork getCurrent()
-    {
-        return current.get();
-    }
+	public static UnitOfWork getCurrent()
+	{
+		return current.get();
+	}
 
-    public void registerNew( DomainObject object )
-    {
-        Assert.assertTrue( "object do exist in the database",
-                object.getId() == DomainObject.INVALID_ID );
-        if ( newObjects.contains( object ) ) {
-            return;
-        }
-        newObjects.add( object );
-        Log.d( "Islamway", String.format( "New Object registered: %s", object.toString() ) );
+	public void registerNew( DomainObject object )
+	{
+		Assert.assertTrue( "object do exist in the database",
+						   object.getId() == DomainObject.INVALID_ID );
+		if ( newObjects.contains( object ) ) {
+			return;
+		}
+		newObjects.add( object );
+		Log.d( "Islamway", String.format( "New Object registered: %s",
+										  object.toString() ) );
 	}
 
 	/**
-	 * 
 	 * @param db
 	 * @return true if successful, false otherwise
 	 */
@@ -57,7 +57,7 @@ public class UnitOfWork {
 		boolean result = true;
 		try {
 			Log.d( "Islamway",
-					String.format( "inserting %d objects", newObjects.size() ) );
+				   String.format( "inserting %d objects", newObjects.size() ) );
 			db.beginTransaction();
 			for ( DomainObject obj : newObjects ) {
 				AbstractMapper mapper = Repository.getInstance().getMapper(

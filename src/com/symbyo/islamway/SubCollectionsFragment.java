@@ -11,27 +11,27 @@ import junit.framework.Assert;
  */
 public class SubCollectionsFragment extends BaseCollectionFragment {
 
-    public final static String PARENT_KEY = "parent_key";
+	public final static String PARENT_KEY = "parent_key";
 
-    private Collection mParent;
+	private Collection mParent;
 
-    @Override
-    protected void doOnCreate( Bundle savedInstanceState )
-    {
-        mParent = (Collection) getArguments().getParcelable( PARENT_KEY );
-        Assert.assertNotNull( mParent );
-        getSherlockActivity().setTitle( mParent.getTitle() );
-    }
+	@Override
+	protected void doOnCreate( Bundle savedInstanceState )
+	{
+		mParent = (Collection) getArguments().getParcelable( PARENT_KEY );
+		Assert.assertNotNull( mParent );
+		getSherlockActivity().setTitle( mParent.getTitle() );
+	}
 
-    @Override
-    protected int doRequestCollections( ServiceHelper helper )
-    {
-        return helper.getSubCollections( mParent );
-    }
+	@Override
+	protected int doRequestCollections( ServiceHelper helper )
+	{
+		return helper.getSubCollections( mParent );
+	}
 
-    @Override
-    protected void setActivityTitle( Activity activity )
-    {
-        activity.setTitle( mParent.getTitle() );
-    }
+	@Override
+	protected void setActivityTitle( Activity activity )
+	{
+		activity.setTitle( mParent.getTitle() );
+	}
 }
