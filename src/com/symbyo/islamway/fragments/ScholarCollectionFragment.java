@@ -17,7 +17,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.symbyo.islamway.*;
-import com.symbyo.islamway.adapters.ScholarQuranAdapter;
+import com.symbyo.islamway.adapters.ScholarCollectionAdapter;
 import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Scholar;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -30,7 +30,7 @@ import java.util.List;
  * @author kdehairy
  * @since 2/20/13
  */
-public class ScholarQuranCollectionFragment extends SherlockListFragment
+public class ScholarCollectionFragment extends SherlockListFragment
         implements
         Searchable {
 
@@ -41,16 +41,16 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
      * This is the id of the latest request sent to the ServiceHelper.
      */
     private int mRequestId = ServiceHelper.REQUEST_ID_NONE;
-    private Scholar             mScholar;
-    private ScholarQuranAdapter mAdapter;
-    private OnQuranItemClick    mListener;
-    private MenuItem            mSearchMenuItem;
+    private Scholar                  mScholar;
+    private ScholarCollectionAdapter mAdapter;
+    private OnCollectionItemClick    mListener;
+    private MenuItem                 mSearchMenuItem;
     private final int SEARCH_MENU_ITEM_ID = 1;
 
     private Crouton mCrouton;
 
-    public static interface OnQuranItemClick {
-        public void onQuranItemClick( Collection item );
+    public static interface OnCollectionItemClick {
+        public void onCollectionItemClick( Collection item );
     }
 
     @Override
@@ -86,13 +86,13 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
                 mAdapter = null;
             }
             setListAdapter( mAdapter );
-            requestQuranCollections();
+            requestCollections();
 
         } else {
             Crouton.makeText( getSherlockActivity(),
                     R.string.err_connect_network, Style.ALERT ).show();
 
-            mAdapter = new ScholarQuranAdapter( getSherlockActivity(), null );
+            mAdapter = new ScholarCollectionAdapter( getSherlockActivity(), null );
             setListAdapter( mAdapter );
         }
         return super.onCreateView( inflater, container, savedInstanceState );
@@ -110,10 +110,10 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
                             AdapterView<?> parent, View view, int position,
                             long id )
                     {
-                        Collection quran_collection = (Collection) getListAdapter()
+                        Collection collection = (Collection) getListAdapter()
                                 .getItem(
                                         position );
-                        mListener.onQuranItemClick( quran_collection );
+                        mListener.onCollectionItemClick( collection );
                     }
                 } );
     }
@@ -122,10 +122,10 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
     public void onAttach( Activity activity )
     {
         try {
-            mListener = (OnQuranItemClick) activity;
+            mListener = (OnCollectionItemClick) activity;
         } catch ( ClassCastException e ) {
             throw new ClassCastException( activity.toString()
-                    + " must implement OnQuranItemClick" );
+                    + " must implement OnCollectionItemClick" );
         }
         if ( mCrouton != null ) {
             Crouton.hide( mCrouton );
@@ -134,20 +134,20 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
         super.onAttach( activity );
     }
 
-    private void requestQuranCollections()
+    private void requestCollections()
     {
         // TODO request Collection collections from the server.
         final LocalBroadcastManager mngr = LocalBroadcastManager
                 .getInstance( getSherlockActivity() );
-        mngr.registerReceiver( mQuranCollectionRequestReceiver,
+        mngr.registerReceiver( mCollectionRequestReceiver,
                 new IntentFilter(
-                        ServiceHelper.ACTION_INVALIDATE_QURAN_COLLECTION_LIST ) );
+                        ServiceHelper.ACTION_INVALIDATE_COLLECTION_LIST ) );
         ServiceHelper helper = ServiceHelper.getInstance(
                 getSherlockActivity().getApplicationContext() );
         ServiceHelper.RequestState state = helper.getRequestState( mRequestId );
 
         if ( state == ServiceHelper.RequestState.NOT_REGISTERED ) {
-            mRequestId = helper.getScholarQuranCollection( mScholar );
+            mRequestId = helper.getScholarCollection( mScholar );
 
             mCrouton = Crouton.makeText( getSherlockActivity(),
                     R.string.info_syncing, Utils.CROUTON_PROGRESS_STYLE );
@@ -159,7 +159,7 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
         }
     }
 
-    private BroadcastReceiver mQuranCollectionRequestReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mCollectionRequestReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(
                 Context context, Intent intent )
@@ -185,7 +185,7 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
             Crouton.hide( mCrouton );
             List<Collection> collections = (List<Collection>) IWApplication
                     .readDomainObjects( key );
-            mAdapter = new ScholarQuranAdapter( getSherlockActivity(),
+            mAdapter = new ScholarCollectionAdapter( getSherlockActivity(),
                     collections );
             setListAdapter( mAdapter );
         }
@@ -238,7 +238,7 @@ public class ScholarQuranCollectionFragment extends SherlockListFragment
     public void onDetach()
     {
         LocalBroadcastManager.getInstance( getSherlockActivity() )
-                .unregisterReceiver( mQuranCollectionRequestReceiver );
+                .unregisterReceiver( mCollectionRequestReceiver );
         super.onDetach();
     }
 }

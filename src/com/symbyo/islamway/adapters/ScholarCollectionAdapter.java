@@ -20,7 +20,7 @@ import java.util.Locale;
  * @author kdehairy
  * @since 2/20/13
  */
-public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
+public class ScholarCollectionAdapter extends BaseAdapter implements Filterable {
 
     private List<Collection> mCollections;
     private Context          mContext;
@@ -35,7 +35,8 @@ public class ScholarQuranAdapter extends BaseAdapter implements Filterable {
 
     private final int ITEM_LAYOUT = R.layout.collection_list_item;
 
-    public ScholarQuranAdapter( Context context, List<Collection> collections )
+    public ScholarCollectionAdapter(
+            Context context, List<Collection> collections )
     {
         mCollections = collections;
         mContext = context;

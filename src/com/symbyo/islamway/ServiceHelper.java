@@ -14,14 +14,14 @@ import org.eclipse.jdt.annotation.NonNull;
 
 public class ServiceHelper {
 
-    public static final  int    REQUEST_ID_NONE                         = 0;
-    public static final  String ACTION_INVALIDATE_SCHOLAR_LIST          = "iw.scholar_list_invalidate";
-    public static final  String ACTION_INVALIDATE_QURAN_COLLECTION_LIST = "iw.quran_collection_list_invalidate";
-    private static final String ACTION_SERVICE_RESPONSE                 = "iw.helper.service_response";
-    public static final  String EXTRA_REQUEST_ID                        = "request_id";
-    private static final String EXTRA_CALLBACK_ACTION                   = "callback_action";
-    public static final  String EXTRA_RESPONSE_ERROR                    = "response_error";
-    public static final  String EXTRA_DATA_KEY                          = "extra_data_key";
+    public static final  int    REQUEST_ID_NONE                   = 0;
+    public static final  String ACTION_INVALIDATE_SCHOLAR_LIST    = "iw.scholar_list_invalidate";
+    public static final  String ACTION_INVALIDATE_COLLECTION_LIST = "iw.quran_collection_list_invalidate";
+    private static final String ACTION_SERVICE_RESPONSE           = "iw.helper.service_response";
+    public static final  String EXTRA_REQUEST_ID                  = "request_id";
+    private static final String EXTRA_CALLBACK_ACTION             = "callback_action";
+    public static final  String EXTRA_RESPONSE_ERROR              = "response_error";
+    public static final  String EXTRA_DATA_KEY                    = "extra_data_key";
 
     private static ServiceHelper mInstance;
     private final  Context       mContext;
@@ -152,7 +152,7 @@ public class ServiceHelper {
         switch ( state ) {
             case FINISHED:
                 Intent intent = new Intent(
-                        ACTION_INVALIDATE_QURAN_COLLECTION_LIST );
+                        ACTION_INVALIDATE_COLLECTION_LIST );
                 LocalBroadcastManager.getInstance( mContext )
                                      .sendBroadcast( intent );
             case PENDING:
@@ -162,7 +162,7 @@ public class ServiceHelper {
 
                 sendRequestToService(
                         IWService.ACTION_GET_SCHOLAR_QURAN_COLLECTION,
-                        ACTION_INVALIDATE_QURAN_COLLECTION_LIST,
+                        ACTION_INVALIDATE_COLLECTION_LIST,
                         result,
                         scholar.getServerId() );
         }
@@ -274,7 +274,7 @@ public class ServiceHelper {
         return getLessonsScholars( REQUEST_ID_NONE );
     }
 
-    public int getScholarQuranCollection( Scholar scholar )
+    public int getScholarCollection( Scholar scholar )
     {
         return getScholarQuranCollection( REQUEST_ID_NONE, scholar );
     }

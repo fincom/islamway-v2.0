@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Scholar;
-import com.symbyo.islamway.fragments.ScholarQuranCollectionFragment;
+import com.symbyo.islamway.fragments.ScholarCollectionFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
 import junit.framework.Assert;
 
@@ -14,7 +14,7 @@ import junit.framework.Assert;
  * @since 2/13/13
  */
 public class QuranCollectionsActivity extends BaseSlidingActivity
-        implements ScholarQuranCollectionFragment.OnQuranItemClick {
+        implements ScholarCollectionFragment.OnCollectionItemClick {
     public static final String EXTRA_SCHOLAR = "extra_key_scholar";
 
     @Override
@@ -30,9 +30,9 @@ public class QuranCollectionsActivity extends BaseSlidingActivity
         if ( savedInstanceState == null ) {
             // TODO attach the scholar quran fragment.
             Bundle bndl = new Bundle();
-            bndl.putParcelable( ScholarQuranCollectionFragment.SCHOLAR_KEY,
+            bndl.putParcelable( ScholarCollectionFragment.SCHOLAR_KEY,
                     scholar );
-            Fragment content = new ScholarQuranCollectionFragment();
+            Fragment content = new ScholarCollectionFragment();
             content.setArguments( bndl );
             getSupportFragmentManager().beginTransaction()
                     .replace( R.id.content_frame, content )
@@ -53,7 +53,7 @@ public class QuranCollectionsActivity extends BaseSlidingActivity
     }
 
     @Override
-    public void onQuranItemClick(
+    public void onCollectionItemClick(
             Collection item )
     {
         // TODO implement the method body.
