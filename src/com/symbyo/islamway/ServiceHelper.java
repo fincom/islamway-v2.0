@@ -8,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
 import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.service.IWService;
 import junit.framework.Assert;
 import org.eclipse.jdt.annotation.NonNull;
@@ -38,7 +39,8 @@ public class ServiceHelper {
     private enum Resource {
         QURAN_SCHOLAR,
         LESSONS_SCHOLAR,
-        SCHOLAR_QURAN_COLLECTION
+        SCHOLAR_QURAN_COLLECTION,
+        SCHOLAR_LESSON_COLLECTION
     }
 
     public static synchronized ServiceHelper getInstance(
@@ -79,7 +81,7 @@ public class ServiceHelper {
             case FINISHED:
                 Intent intent = new Intent( ACTION_INVALIDATE_SCHOLAR_LIST );
                 LocalBroadcastManager.getInstance( mContext )
-                                     .sendBroadcast( intent );
+                        .sendBroadcast( intent );
             case PENDING:
                 break;
             case NOT_REGISTERED:
@@ -119,7 +121,7 @@ public class ServiceHelper {
             case FINISHED:
                 Intent intent = new Intent( ACTION_INVALIDATE_SCHOLAR_LIST );
                 LocalBroadcastManager.getInstance( mContext )
-                                     .sendBroadcast( intent );
+                        .sendBroadcast( intent );
             case PENDING:
                 break;
             case NOT_REGISTERED:
@@ -133,7 +135,8 @@ public class ServiceHelper {
         return result;
     }
 
-    private int getScholarQuranCollection( int request_id, Scholar scholar )
+    private int getScholarQuranCollection(
+            int request_id, Scholar scholar, Section section )
     {
         Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
@@ -154,17 +157,28 @@ public class ServiceHelper {
                 Intent intent = new Intent(
                         ACTION_INVALIDATE_COLLECTION_LIST );
                 LocalBroadcastManager.getInstance( mContext )
-                                     .sendBroadcast( intent );
+                        .sendBroadcast( intent );
             case PENDING:
                 break;
             case NOT_REGISTERED:
-                mRequests.put( result, Resource.SCHOLAR_QURAN_COLLECTION );
+                if ( section.getType() == Section.SectionType.QURAN ) {
+                    mRequests.put( result, Resource.SCHOLAR_QURAN_COLLECTION );
 
-                sendRequestToService(
-                        IWService.ACTION_GET_SCHOLAR_QURAN_COLLECTION,
-                        ACTION_INVALIDATE_COLLECTION_LIST,
-                        result,
-                        scholar.getServerId() );
+                    sendRequestToService(
+                            IWService.ACTION_GET_SCHOLAR_QURAN_COLLECTION,
+                            ACTION_INVALIDATE_COLLECTION_LIST,
+                            result,
+                            scholar.getServerId() );
+                } else if ( section.getType() == Section.SectionType.LESSONS ) {
+                    mRequests.put( result, Resource.SCHOLAR_LESSON_COLLECTION );
+
+                    sendRequestToService(
+                            IWService.ACTION_GET_SCHOLAR_LESSON_COLLECTION,
+                            ACTION_INVALIDATE_COLLECTION_LIST,
+                            result,
+                            scholar.getServerId() );
+                }
+
         }
         return result;
     }
@@ -274,8 +288,8 @@ public class ServiceHelper {
         return getLessonsScholars( REQUEST_ID_NONE );
     }
 
-    public int getScholarCollection( Scholar scholar )
+    public int getScholarCollection( Scholar scholar, Section section )
     {
-        return getScholarQuranCollection( REQUEST_ID_NONE, scholar );
+        return getScholarQuranCollection( REQUEST_ID_NONE, scholar, section );
     }
 }

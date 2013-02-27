@@ -32,14 +32,15 @@ import java.util.Locale;
 public class IWService extends IntentService {
 
     @SuppressWarnings("FieldCanBeLocal")
-    private final       String BASE_URL                            = "http://ar.islamway.net/api/";
-    public static final String ACTION_GET_QURAN_SCHOLARS           = "iw.service.get_quran_scholars";
-    public static final String ACTION_GET_LESSONS_SCHOLARS         = "iw.service.get_lessons_scholars";
-    public static final String EXTRA_RESOURCE_ID                   = "resource_id";
-    public static final String EXTRA_CALLBACK_INTENT               = "callback_intent";
-    public static final String EXTRA_RESPONSE_ERROR                = "response_error";
-    public static final String EXTRA_DATA_KEY                      = "extra_data_key";
-    public static final String ACTION_GET_SCHOLAR_QURAN_COLLECTION = "iw.service.get_scholar_quran_collection";
+    private final       String BASE_URL                             = "http://ar.islamway.net/api/";
+    public static final String ACTION_GET_QURAN_SCHOLARS            = "iw.service.get_quran_scholars";
+    public static final String ACTION_GET_LESSONS_SCHOLARS          = "iw.service.get_lessons_scholars";
+    public static final String EXTRA_RESOURCE_ID                    = "resource_id";
+    public static final String EXTRA_CALLBACK_INTENT                = "callback_intent";
+    public static final String EXTRA_RESPONSE_ERROR                 = "response_error";
+    public static final String EXTRA_DATA_KEY                       = "extra_data_key";
+    public static final String ACTION_GET_SCHOLAR_QURAN_COLLECTION  = "iw.service.get_scholar_quran_collection";
+    public static final String ACTION_GET_SCHOLAR_LESSON_COLLECTION = "iw.service.get_scholar_lessons_collection";
 
     public IWService()
     {
@@ -138,6 +139,12 @@ public class IWService extends IntentService {
         } else if ( action.equals( ACTION_GET_SCHOLAR_QURAN_COLLECTION ) ) {
             final Section section = Repository.getInstance(
                     getApplicationContext() ).getSection( SectionType.QURAN );
+            url_format += section.toString() + "/scholar/%d/collections";
+            result = new CollectionResourceFactory( url_format,
+                    RestClient.HTTPMethod.GET, section );
+        }  else if ( action.equals( ACTION_GET_SCHOLAR_LESSON_COLLECTION ) ) {
+            final Section section = Repository.getInstance(
+                    getApplicationContext() ).getSection( SectionType.LESSONS );
             url_format += section.toString() + "/scholar/%d/collections";
             result = new CollectionResourceFactory( url_format,
                     RestClient.HTTPMethod.GET, section );

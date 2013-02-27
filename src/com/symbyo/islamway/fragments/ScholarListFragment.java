@@ -55,7 +55,7 @@ public class ScholarListFragment extends SherlockListFragment implements
     private Crouton mCrouton;
 
     public static interface OnScholarItemClick {
-        public void onScholarItemClick( Scholar scholar );
+        public void onLoadScholarCollectionsClick( Scholar scholar, Section section );
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ScholarListFragment extends SherlockListFragment implements
                     {
                         Scholar scholar = (Scholar) getListAdapter().getItem(
                                 position );
-                        mListener.onScholarItemClick( scholar );
+                        mListener.onLoadScholarCollectionsClick( scholar, mSection );
                     }
                 } );
     }

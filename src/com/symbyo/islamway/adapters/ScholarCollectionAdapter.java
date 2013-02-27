@@ -14,13 +14,13 @@ import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.Collection;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author kdehairy
  * @since 2/20/13
  */
-public class ScholarCollectionAdapter extends BaseAdapter implements Filterable {
+public class ScholarCollectionAdapter extends BaseAdapter
+        implements Filterable {
 
     private List<Collection> mCollections;
     private Context          mContext;
@@ -116,8 +116,10 @@ public class ScholarCollectionAdapter extends BaseAdapter implements Filterable 
         if ( convertView.getTag() == null
                 || !(convertView.getTag() instanceof ViewHolder) ) {
             holder = new ViewHolder();
-            holder.title = (TextView) convertView.findViewById( R.id.collection_title );
-            holder.subTitle = (TextView) convertView.findViewById( R.id.entity_count );
+            holder.title = (TextView) convertView.findViewById(
+                    R.id.collection_title );
+            holder.subTitle = (TextView) convertView.findViewById(
+                    R.id.entry_count );
             convertView.setTag( holder );
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -125,7 +127,7 @@ public class ScholarCollectionAdapter extends BaseAdapter implements Filterable 
         Collection collection = getItem( position );
         holder.title.setText( collection.getTitle() );
         int entity_count = collection.getEntriesCount();
-        String string;
+        /*String string;
         if ( entity_count == 1 ) {
             string = String.format( Locale.US, "%s", mContext.getString( R.string.one_sura ) );
         } else if ( entity_count == 2 ) {
@@ -134,8 +136,8 @@ public class ScholarCollectionAdapter extends BaseAdapter implements Filterable 
             string = String.format( Locale.US, "%d %s", entity_count, mContext.getString( R.string.suras ) );
         } else {
             string = String.format( Locale.US, "%d %s", entity_count, mContext.getString( R.string.sura ) );
-        }
-        holder.subTitle.setText( string );
+        }*/
+        holder.subTitle.setText( Integer.toString( entity_count ) );
         return convertView;
     }
 
@@ -143,7 +145,6 @@ public class ScholarCollectionAdapter extends BaseAdapter implements Filterable 
         public TextView title;
         public TextView subTitle;
     }
-
 
 
     /**
@@ -159,7 +160,7 @@ public class ScholarCollectionAdapter extends BaseAdapter implements Filterable 
     public Filter getFilter()
     {
         if ( mFilter == null ) {
-            mFilter = new Utils.ArrayFilter<Collection>(this, mCollections);
+            mFilter = new Utils.ArrayFilter<Collection>( this, mCollections );
         }
         return mFilter;
     }

@@ -20,6 +20,7 @@ import com.symbyo.islamway.*;
 import com.symbyo.islamway.adapters.ScholarCollectionAdapter;
 import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.domain.Section;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import junit.framework.Assert;
@@ -34,14 +35,16 @@ public class ScholarCollectionFragment extends SherlockListFragment
         implements
         Searchable {
 
-    public final static String SCHOLAR_KEY = "scholars";
-    private final       String REQUEST_KEY = "request";
+    public final static  String SCHOLAR_KEY = "scholars_key";
+    private final        String REQUEST_KEY = "request";
+    public static final String SECTION_KEY = "section_key";
 
     /**
      * This is the id of the latest request sent to the ServiceHelper.
      */
     private int mRequestId = ServiceHelper.REQUEST_ID_NONE;
     private Scholar                  mScholar;
+    private Section                  mSection;
     private ScholarCollectionAdapter mAdapter;
     private OnCollectionItemClick    mListener;
     private MenuItem                 mSearchMenuItem;
@@ -73,6 +76,7 @@ public class ScholarCollectionFragment extends SherlockListFragment
 
         // get the scholar
         mScholar = (Scholar) getArguments().getParcelable( SCHOLAR_KEY );
+        mSection = (Section) getArguments().getParcelable( SECTION_KEY );
         Assert.assertNotNull( mScholar );
     }
 
@@ -92,7 +96,8 @@ public class ScholarCollectionFragment extends SherlockListFragment
             Crouton.makeText( getSherlockActivity(),
                     R.string.err_connect_network, Style.ALERT ).show();
 
-            mAdapter = new ScholarCollectionAdapter( getSherlockActivity(), null );
+            mAdapter = new ScholarCollectionAdapter( getSherlockActivity(),
+                    null );
             setListAdapter( mAdapter );
         }
         return super.onCreateView( inflater, container, savedInstanceState );
@@ -147,7 +152,7 @@ public class ScholarCollectionFragment extends SherlockListFragment
         ServiceHelper.RequestState state = helper.getRequestState( mRequestId );
 
         if ( state == ServiceHelper.RequestState.NOT_REGISTERED ) {
-            mRequestId = helper.getScholarCollection( mScholar );
+            mRequestId = helper.getScholarCollection( mScholar, mSection );
 
             mCrouton = Crouton.makeText( getSherlockActivity(),
                     R.string.info_syncing, Utils.CROUTON_PROGRESS_STYLE );
@@ -183,6 +188,7 @@ public class ScholarCollectionFragment extends SherlockListFragment
             }
             int key = intent.getIntExtra( ServiceHelper.EXTRA_DATA_KEY, 0 );
             Crouton.hide( mCrouton );
+            @SuppressWarnings("unchecked")
             List<Collection> collections = (List<Collection>) IWApplication
                     .readDomainObjects( key );
             mAdapter = new ScholarCollectionAdapter( getSherlockActivity(),

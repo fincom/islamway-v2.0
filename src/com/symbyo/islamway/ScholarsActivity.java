@@ -122,10 +122,12 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 	}
 
     @Override
-    public void onScholarItemClick( Scholar scholar )
+    public void onLoadScholarCollectionsClick( Scholar scholar, Section section )
     {
-        Intent intent = new Intent(this,  QuranCollectionsActivity.class );
-        intent.putExtra( QuranCollectionsActivity.EXTRA_SCHOLAR, scholar );
+        Intent intent = new Intent(this,  CollectionsActivity.class );
+        intent.putExtra( CollectionsActivity.EXTRA_SCHOLAR, scholar );
+        intent.putExtra( CollectionsActivity.EXTRA_SECTION, section );
+
         startActivity( intent );
     }
 }
