@@ -84,8 +84,13 @@ public class ScholarListFragment extends SherlockListFragment implements
         if ( mSection.getSyncState() == Section.SyncState.SYNC_STATE_FULL ) {
             // get the quran scholars list from the database.
             Log.d( "Islamway", "loading scholars form database" );
-            retrieveScholars();
+            if ( mAdapter == null ) {
+                retrieveScholars();
+            }
+
         } else if ( Utils.isNetworkAvailable( getSherlockActivity() ) ) {
+            // we force setting the adapter to null to force the UI to display
+            // loading animation on the listview.
             if ( mAdapter != null ) {
                 mAdapter = null;
             }

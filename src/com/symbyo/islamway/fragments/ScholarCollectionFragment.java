@@ -1,5 +1,6 @@
 package com.symbyo.islamway.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import com.symbyo.islamway.BaseCollectionFragment;
 import com.symbyo.islamway.ServiceHelper;
@@ -27,13 +28,18 @@ public class ScholarCollectionFragment extends BaseCollectionFragment {
         mScholar = (Scholar) getArguments().getParcelable( SCHOLAR_KEY );
         mSection = (Section) getArguments().getParcelable( SECTION_KEY );
         Assert.assertNotNull( mScholar );
+        getSherlockActivity().setTitle( mScholar.getName() );
     }
 
     @Override
-    protected int doRequestCollections()
+    protected int doRequestCollections( ServiceHelper helper )
     {
-        ServiceHelper helper = ServiceHelper.getInstance(
-                getSherlockActivity().getApplicationContext() );
         return helper.getScholarCollection( mScholar, mSection );
+    }
+
+    @Override
+    protected void setActivityTitle( Activity activity )
+    {
+        activity.setTitle( mScholar.getName() );
     }
 }

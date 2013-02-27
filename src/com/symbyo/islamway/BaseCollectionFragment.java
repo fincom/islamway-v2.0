@@ -18,11 +18,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.symbyo.islamway.adapters.CollectionAdapter;
 import com.symbyo.islamway.domain.Collection;
-import com.symbyo.islamway.domain.Scholar;
-import com.symbyo.islamway.domain.Section;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-import junit.framework.Assert;
 
 import java.util.List;
 
@@ -76,13 +73,13 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState )
     {
+        setActivityTitle( getSherlockActivity() );
+        Crouton.cancelAllCroutons();
         if ( Utils.isNetworkAvailable( getSherlockActivity() ) ) {
-            if ( mAdapter != null ) {
-                mAdapter = null;
-            }
             setListAdapter( mAdapter );
-            requestCollections();
-
+            if ( mAdapter == null ) {
+                requestCollections();
+            }
         } else {
             Crouton.makeText( getSherlockActivity(),
                     R.string.err_connect_network, Style.ALERT ).show();
@@ -141,7 +138,7 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
         ServiceHelper.RequestState state = helper.getRequestState( mRequestId );
 
         if ( state == ServiceHelper.RequestState.NOT_REGISTERED ) {
-            mRequestId = doRequestCollections();
+            mRequestId = doRequestCollections( helper );
 
             mCrouton = Crouton.makeText( getSherlockActivity(),
                     R.string.info_syncing, Utils.CROUTON_PROGRESS_STYLE );
@@ -239,5 +236,7 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
 
     protected abstract void doOnCreate( Bundle savedInstanceState );
 
-    protected abstract int doRequestCollections();
+    protected abstract int doRequestCollections( ServiceHelper helper );
+
+    protected abstract void setActivityTitle( Activity activity );
 }

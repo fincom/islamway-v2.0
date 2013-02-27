@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseArray;
+import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.service.IWService;
@@ -40,7 +41,7 @@ public class ServiceHelper {
         QURAN_SCHOLAR,
         LESSONS_SCHOLAR,
         SCHOLAR_QURAN_COLLECTION,
-        SCHOLAR_LESSON_COLLECTION
+        SUB_COLLECTION, SCHOLAR_LESSON_COLLECTION
     }
 
     public static synchronized ServiceHelper getInstance(
@@ -183,6 +184,41 @@ public class ServiceHelper {
         return result;
     }
 
+    private int getSubCollections( int request_id, Collection parent )
+    {
+        Assert.assertTrue( request_id >= REQUEST_ID_NONE );
+
+        int result;
+        RequestState state;
+        if ( request_id == REQUEST_ID_NONE ) {
+            synchronized ( mLock ) {
+                result = ++mLastRequestId;
+            }
+            state = RequestState.NOT_REGISTERED;
+        } else {
+            result = request_id;
+            state = getRequestState( request_id );
+        }
+
+        switch ( state ) {
+            case FINISHED:
+                Intent intent = new Intent(
+                        ACTION_INVALIDATE_COLLECTION_LIST );
+                LocalBroadcastManager.getInstance( mContext )
+                        .sendBroadcast( intent );
+            case PENDING:
+                break;
+            case NOT_REGISTERED:
+                mRequests.put( result, Resource.SUB_COLLECTION );
+                sendRequestToService(
+                        IWService.ACTION_GET_SUB_COLLECTION,
+                        ACTION_INVALIDATE_COLLECTION_LIST,
+                        result,
+                        parent.getServerId() );
+        }
+        return result;
+    }
+
     /**
      * @param action
      * @param request_id
@@ -291,5 +327,10 @@ public class ServiceHelper {
     public int getScholarCollection( Scholar scholar, Section section )
     {
         return getScholarQuranCollection( REQUEST_ID_NONE, scholar, section );
+    }
+
+    public int getSubCollections( Collection parent )
+    {
+        return getSubCollections( REQUEST_ID_NONE, parent );
     }
 }

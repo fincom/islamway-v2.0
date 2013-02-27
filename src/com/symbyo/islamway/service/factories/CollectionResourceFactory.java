@@ -15,13 +15,10 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class CollectionResourceFactory extends ResourceFactory {
 
-    protected final Section mSection;
-
     public CollectionResourceFactory(
-            String url_format, RestClient.HTTPMethod method, Section section )
+            String url_format, RestClient.HTTPMethod method )
     {
         super( url_format, method );
-        mSection = section;
     }
 
     @Override

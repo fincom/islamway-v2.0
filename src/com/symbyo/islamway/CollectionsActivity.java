@@ -30,7 +30,7 @@ public class CollectionsActivity extends BaseSlidingActivity
 
         Assert.assertNotNull( "A scholar object must be passed to the activity",
                 scholar );
-        setTitle( scholar.getName() );
+        //setTitle( scholar.getName() );
 
         if ( savedInstanceState == null ) {
             // TODO attach the scholar quran fragment.
@@ -68,7 +68,14 @@ public class CollectionsActivity extends BaseSlidingActivity
         } else if ( item.getType() == Entry.EntryType.LESSON_SERIES ) {
 
         } else if ( item.getType() == Entry.EntryType.GROUP ) {
-
+            Fragment content = new SubCollectionsFragment();
+            Bundle bndl = new Bundle();
+            bndl.putParcelable( SubCollectionsFragment.PARENT_KEY, item );
+            content.setArguments( bndl );
+            getSupportFragmentManager().beginTransaction()
+                    .replace( R.id.content_frame, content )
+                    .addToBackStack( null )
+                    .commit();
         }
     }
 }

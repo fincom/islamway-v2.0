@@ -41,6 +41,7 @@ public class IWService extends IntentService {
     public static final String EXTRA_DATA_KEY                       = "extra_data_key";
     public static final String ACTION_GET_SCHOLAR_QURAN_COLLECTION  = "iw.service.get_scholar_quran_collection";
     public static final String ACTION_GET_SCHOLAR_LESSON_COLLECTION = "iw.service.get_scholar_lessons_collection";
+    public static final String ACTION_GET_SUB_COLLECTION            = "iw.service.get_sub_collection";
 
     public IWService()
     {
@@ -56,8 +57,6 @@ public class IWService extends IntentService {
         final int resource_id = intent.getIntExtra( EXTRA_RESOURCE_ID, -1 );
         Log.d( "Islamway", String.format( Locale.US, "Scholar server_id: %d",
                 resource_id ) );
-        /*final ContentValues params = (ContentValues) intent
-                .getParcelableExtra( EXTRA_PARAMS );*/
 
         if ( action == null ) {
             throw new NullPointerException( "intent action can't be null" );
@@ -70,11 +69,8 @@ public class IWService extends IntentService {
         if ( resource_id >= 0 ) {
             rest_client.setResourceId( resource_id );
         }
-        /*if ( params != null ) {
-            rest_client.setParameters( params );
-        }*/
-        Response response;
 
+        Response response;
         try {
             Log.d( "IWService", "start" );
             response = rest_client.getResponse();
@@ -122,7 +118,6 @@ public class IWService extends IntentService {
         ResourceFactory result = null;
         String url_format = BASE_URL;
         if ( action.equals( ACTION_GET_QURAN_SCHOLARS ) ) {
-            /** /recitations/scholars */
             final Section section = Repository.getInstance(
                     getApplicationContext() ).getSection( SectionType.QURAN );
             url_format += section.toString() + "/scholars";
@@ -141,13 +136,17 @@ public class IWService extends IntentService {
                     getApplicationContext() ).getSection( SectionType.QURAN );
             url_format += section.toString() + "/scholar/%d/collections";
             result = new CollectionResourceFactory( url_format,
-                    RestClient.HTTPMethod.GET, section );
+                    RestClient.HTTPMethod.GET );
         }  else if ( action.equals( ACTION_GET_SCHOLAR_LESSON_COLLECTION ) ) {
             final Section section = Repository.getInstance(
                     getApplicationContext() ).getSection( SectionType.LESSONS );
             url_format += section.toString() + "/scholar/%d/collections";
             result = new CollectionResourceFactory( url_format,
-                    RestClient.HTTPMethod.GET, section );
+                    RestClient.HTTPMethod.GET );
+        } else if ( action.equals( ACTION_GET_SUB_COLLECTION ) ) {
+            url_format += "collection/%d/entries";
+            result = new CollectionResourceFactory( url_format,
+                    RestClient.HTTPMethod.GET );
         }
         if ( result == null ) {
             throw new NullPointerException( "ResourceFactory is null" );
