@@ -1,13 +1,15 @@
-package com.symbyo.islamway;
+package com.symbyo.islamway.activities;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.fragments.ScholarListFragment;
+import com.symbyo.islamway.fragments.Searchable;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.persistance.Repository;

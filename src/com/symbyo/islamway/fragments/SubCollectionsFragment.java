@@ -1,8 +1,10 @@
-package com.symbyo.islamway;
+package com.symbyo.islamway.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.domain.Collection;
+import com.symbyo.islamway.fragments.BaseCollectionFragment;
 import junit.framework.Assert;
 
 /**

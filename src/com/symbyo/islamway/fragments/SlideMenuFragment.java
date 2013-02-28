@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.symbyo.islamway.OnSlideMenuItemClick;
 import com.symbyo.islamway.R;
 
 public class SlideMenuFragment extends SherlockFragment {
@@ -162,4 +161,13 @@ public class SlideMenuFragment extends SherlockFragment {
 
 	}
 
+	/**
+	 * Activities that incorporate the SlideMenu fragment must implement this
+	 * interface.
+	 *
+	 * @author kdehairy
+	 */
+	public static interface OnSlideMenuItemClick {
+		void onSlideMenuItemClick( SlideMenuItem item );
+	}
 }

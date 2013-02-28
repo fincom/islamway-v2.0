@@ -1,4 +1,4 @@
-package com.symbyo.islamway;
+package com.symbyo.islamway.fragments;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -16,6 +16,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
+import com.symbyo.islamway.*;
 import com.symbyo.islamway.adapters.CollectionAdapter;
 import com.symbyo.islamway.domain.Collection;
 import de.keyboardsurfer.android.widget.crouton.Crouton;

@@ -2,7 +2,6 @@ package com.symbyo.islamway.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
-import com.symbyo.islamway.BaseCollectionFragment;
 import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;

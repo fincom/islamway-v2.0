@@ -1,14 +1,16 @@
-package com.symbyo.islamway;
+package com.symbyo.islamway.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.fragments.ScholarCollectionFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
+import com.symbyo.islamway.fragments.SubCollectionsFragment;
 import junit.framework.Assert;
 
 /**

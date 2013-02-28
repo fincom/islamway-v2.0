@@ -1,10 +1,11 @@
-package com.symbyo.islamway;
+package com.symbyo.islamway.activities;
 
 import android.os.Bundle;
 import android.view.View;
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.symbyo.islamway.R;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.persistance.Repository;
@@ -12,7 +13,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 
 public abstract class BaseSlidingActivity extends SlidingFragmentActivity
 		implements
-		OnSlideMenuItemClick {
+		SlideMenuFragment.OnSlideMenuItemClick {
 
 	@Override
 	public void onCreate( Bundle savedInstanceState )

@@ -20,7 +20,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
 import com.symbyo.islamway.R;
-import com.symbyo.islamway.Searchable;
 import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.ServiceHelper.RequestState;
 import com.symbyo.islamway.Utils;
