@@ -11,15 +11,17 @@ import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.fragments.ScholarListFragment;
 import com.symbyo.islamway.fragments.Searchable;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
+import com.symbyo.islamway.fragments.SlideMenuFragment.MenuItemType;
 import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.persistance.Repository;
 
 public class ScholarsActivity extends BaseSlidingActivity implements
 		ScholarListFragment.OnScholarItemClick {
 
-	private final int    REQUEST_INVALID    = 0;
-	private final String REQUEST_KEY        = "request";
-	private final String ACTIVITY_TITLE_KEY = "title";
+	private final       int    REQUEST_INVALID      = 0;
+	private final       String REQUEST_KEY          = "request";
+	private final       String ACTIVITY_TITLE_KEY   = "title";
+	public static final String EXTRA_SLIDEMENU_ITEM = "selected_item_type";
 
 	/**
 	 * This is the id of the latest request sent to the ServiceHelper.
@@ -44,20 +46,36 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 	{
 		super.onCreate( savedInstanceState );
 
+		mActivityTitle = getString( R.string.quran );
 		if ( savedInstanceState != null ) {
 			// load back the latest request id, if any
 			mRequestId = savedInstanceState.getInt( REQUEST_KEY );
 			// load the activity title
 			mActivityTitle = savedInstanceState.getString( ACTIVITY_TITLE_KEY );
-			if ( mActivityTitle == null ) {
-				mActivityTitle = getString( R.string.quran );
-			}
 		} else {
-			mActivityTitle = getString( R.string.quran );
 			// load the content fragment into the frame.
+			Intent intent = getIntent();
+			MenuItemType type = MenuItemType.values()[intent.getIntExtra(
+					EXTRA_SLIDEMENU_ITEM,
+					MenuItemType.QURAN.ordinal() )];
+			Section section;
+			switch ( type ) {
+				case QURAN:
+					section = Repository.getInstance( getApplicationContext() )
+							.getSection( SectionType.QURAN );
+					mActivityTitle = getString( R.string.quran );
+					break;
+				case LESSONS:
+					section = Repository.getInstance( getApplicationContext() )
+							.getSection( SectionType.LESSONS );
+					mActivityTitle = getString( R.string.lessons );
+					break;
+				default:
+					section = Repository.getInstance( getApplicationContext() )
+							.getSection( SectionType.QURAN );
+					mActivityTitle = getString( R.string.quran );
+			}
 			Bundle bndl = new Bundle();
-			Section section = Repository.getInstance( getApplicationContext() )
-					.getSection( SectionType.QURAN );
 			bndl.putParcelable( ScholarListFragment.SECTION_KEY, section );
 			Fragment content = new ScholarListFragment();
 			content.setArguments( bndl );
@@ -120,6 +138,7 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 		// change the title
 		mActivityTitle = item.text;
 		setTitle( mActivityTitle );
+		showContent();
 	}
 
 	@Override

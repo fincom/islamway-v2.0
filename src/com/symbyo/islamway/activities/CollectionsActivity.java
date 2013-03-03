@@ -58,7 +58,16 @@ public class CollectionsActivity extends BaseSlidingActivity
 	@Override
 	protected void slideMenuItemClicked( SlideMenuFragment.SlideMenuItem item )
 	{
-		// TODO implement the method body.
+		switch ( item.type ) {
+			case QURAN:
+			case LESSONS:
+				Intent intent = new Intent( this, ScholarsActivity.class );
+				intent.putExtra( ScholarsActivity.EXTRA_SLIDEMENU_ITEM,
+								 item.type.ordinal() );
+				intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+				startActivity( intent );
+		}
+		showContent();
 	}
 
 	@Override
