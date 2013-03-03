@@ -103,7 +103,7 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 	}
 
 	@Override
-	protected void slideMenuItemClicked( SlideMenuItem item )
+	protected boolean slideMenuItemClicked( SlideMenuItem item )
 	{
 		if ( item.type == SlideMenuFragment.MenuItemType.QURAN ) {
 			Fragment content = new ScholarListFragment();
@@ -138,7 +138,7 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 		// change the title
 		mActivityTitle = item.text;
 		setTitle( mActivityTitle );
-		showContent();
+		return true;
 	}
 
 	@Override

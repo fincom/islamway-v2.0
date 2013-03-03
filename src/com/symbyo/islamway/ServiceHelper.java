@@ -20,6 +20,8 @@ public class ServiceHelper {
 			"iw.scholar_list_invalidate";
 	public static final  String ACTION_INVALIDATE_COLLECTION_LIST =
 			"iw.quran_collection_list_invalidate";
+	public static final  String ACTION_INVALIDATE_ENTRIES_LIST    =
+			"action_invalidate_entries_list";
 	private static final String ACTION_SERVICE_RESPONSE           =
 			"iw.helper.service_response";
 	public static final  String EXTRA_REQUEST_ID                  =
@@ -33,8 +35,11 @@ public class ServiceHelper {
 
 	private static ServiceHelper mInstance;
 	private final  Context       mContext;
-	private final Object                mLock          = new Object();
-	private       int                   mLastRequestId = 0;
+	private final Object mLock =
+			new Object();
+
+	private       int                   mLastRequestId =
+			0;
 	private final SparseArray<Resource> mRequests      =
 			new SparseArray<Resource>();
 
@@ -110,10 +115,9 @@ public class ServiceHelper {
 		Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
 		int result;
-		int index;
+		int index = mRequests.indexOfValue( Resource.LESSONS_SCHOLAR );
 		RequestState state;
-		if ( (index = mRequests.indexOfValue(
-				Resource.LESSONS_SCHOLAR )) >= 0 ) {
+		if ( index >= 0 ) {
 			result = mRequests.keyAt( index );
 			state = RequestState.PENDING;
 		} else if ( request_id == REQUEST_ID_NONE ) {
@@ -223,6 +227,40 @@ public class ServiceHelper {
 						ACTION_INVALIDATE_COLLECTION_LIST,
 						result,
 						parent.getServerId() );
+		}
+		return result;
+	}
+
+	private int getCollectionEntries( int request_id,
+									  Collection collection )
+	{
+		Assert.assertTrue( request_id >= REQUEST_ID_NONE );
+
+		int result;
+		RequestState state;
+		if ( request_id == REQUEST_ID_NONE ) {
+			synchronized ( mLock ) {
+				result = ++mLastRequestId;
+			}
+			state = RequestState.NOT_REGISTERED;
+		} else {
+			result = request_id;
+			state = getRequestState( request_id );
+		}
+
+		switch ( state ) {
+			case FINISHED:
+				Intent intent = new Intent( ACTION_INVALIDATE_ENTRIES_LIST );
+				LocalBroadcastManager.getInstance( mContext )
+						.sendBroadcast( intent );
+			case PENDING:
+				break;
+			case NOT_REGISTERED:
+				sendRequestToService(
+						IWService.ACTION_GET_COLLECTION_ENTRIES,
+						ACTION_INVALIDATE_COLLECTION_LIST,
+						result,
+						collection.getServerId() );
 		}
 		return result;
 	}
@@ -340,5 +378,10 @@ public class ServiceHelper {
 	public int getSubCollections( Collection parent )
 	{
 		return getSubCollections( REQUEST_ID_NONE, parent );
+	}
+
+	public int getCollectionEntries( Collection collection )
+	{
+		return getCollectionEntries( REQUEST_ID_NONE, collection );
 	}
 }

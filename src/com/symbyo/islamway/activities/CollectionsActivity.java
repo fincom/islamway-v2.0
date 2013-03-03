@@ -9,7 +9,7 @@ import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.fragments.ScholarCollectionFragment;
-import com.symbyo.islamway.fragments.SlideMenuFragment;
+import com.symbyo.islamway.fragments.SlideMenuFragment.SlideMenuItem;
 import com.symbyo.islamway.fragments.SubCollectionsFragment;
 import junit.framework.Assert;
 
@@ -35,7 +35,6 @@ public class CollectionsActivity extends BaseSlidingActivity
 		//setTitle( scholar.getName() );
 
 		if ( savedInstanceState == null ) {
-			// TODO attach the scholar quran fragment.
 			Bundle bndl = new Bundle();
 			bndl.putParcelable( ScholarCollectionFragment.SCHOLAR_KEY,
 								scholar );
@@ -50,24 +49,10 @@ public class CollectionsActivity extends BaseSlidingActivity
 
 	}
 
-	/**
-	 * Called when an item in the sliding menu is clicked.
-	 *
-	 * @param item item selected from the sliding menu.
-	 */
 	@Override
-	protected void slideMenuItemClicked( SlideMenuFragment.SlideMenuItem item )
+	protected boolean slideMenuItemClicked( SlideMenuItem item )
 	{
-		switch ( item.type ) {
-			case QURAN:
-			case LESSONS:
-				Intent intent = new Intent( this, ScholarsActivity.class );
-				intent.putExtra( ScholarsActivity.EXTRA_SLIDEMENU_ITEM,
-								 item.type.ordinal() );
-				intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-				startActivity( intent );
-		}
-		showContent();
+		return false;
 	}
 
 	@Override

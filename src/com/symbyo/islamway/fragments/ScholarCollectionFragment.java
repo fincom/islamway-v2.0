@@ -23,9 +23,10 @@ public class ScholarCollectionFragment extends BaseCollectionFragment {
 	@Override
 	protected void doOnCreate( Bundle savedInstanceState )
 	{
-		// get the scholar
-		mScholar = (Scholar) getArguments().getParcelable( SCHOLAR_KEY );
-		mSection = (Section) getArguments().getParcelable( SECTION_KEY );
+		Bundle bndl = getArguments();
+		Assert.assertNotNull( bndl );
+		mScholar = (Scholar) bndl.getParcelable( SCHOLAR_KEY );
+		mSection = (Section) bndl.getParcelable( SECTION_KEY );
 		Assert.assertNotNull( mScholar );
 		getSherlockActivity().setTitle( mScholar.getName() );
 	}

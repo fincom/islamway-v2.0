@@ -1,5 +1,6 @@
 package com.symbyo.islamway.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import com.actionbarsherlock.view.MenuItem;
@@ -65,15 +66,27 @@ public abstract class BaseSlidingActivity extends SlidingFragmentActivity
 	@Override
 	public void onSlideMenuItemClick( SlideMenuItem item )
 	{
-		slideMenuItemClicked( item );
+		boolean is_processed = slideMenuItemClicked( item );
+		if ( !is_processed ) {
+			switch ( item.type ) {
+				case QURAN:
+				case LESSONS:
+					Intent intent = new Intent( this, ScholarsActivity.class );
+					intent.putExtra( ScholarsActivity.EXTRA_SLIDEMENU_ITEM,
+									 item.type.ordinal() );
+					intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+					startActivity( intent );
+			}
+		}
+		showContent();
 	}
 
 	/**
 	 * Called when an item in the sliding menu is clicked.
-	 *
 	 * @param item
+	 * @return true if you already processed the event.
 	 */
-	abstract protected void slideMenuItemClicked( SlideMenuItem item );
+	abstract protected boolean slideMenuItemClicked( SlideMenuItem item );
 
 	@Override
 	protected void onDestroy()

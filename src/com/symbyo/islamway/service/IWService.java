@@ -30,7 +30,7 @@ import java.util.Locale;
  */
 public class IWService extends IntentService {
 
-	@SuppressWarnings( "FieldCanBeLocal" )
+	@SuppressWarnings("FieldCanBeLocal")
 	private final       String BASE_URL                             =
 			"http://ar.islamway.net/api/";
 	public static final String ACTION_GET_QURAN_SCHOLARS            =
@@ -51,6 +51,8 @@ public class IWService extends IntentService {
 			"iw.service.get_scholar_lessons_collection";
 	public static final String ACTION_GET_SUB_COLLECTION            =
 			"iw.service.get_sub_collection";
+	public static final String ACTION_GET_COLLECTION_ENTRIES        =
+			"iw.service.get_collection_entries";
 
 	public IWService()
 	{
@@ -159,7 +161,10 @@ public class IWService extends IntentService {
 			url_format += "collection/%d/entries";
 			result = new CollectionResourceFactory( url_format,
 													RestClient.HTTPMethod.GET );
+		} else if ( action.equals( ACTION_GET_COLLECTION_ENTRIES ) ) {
+			url_format += "";
 		}
+
 		if ( result == null ) {
 			throw new NullPointerException( "ResourceFactory is null" );
 		}
