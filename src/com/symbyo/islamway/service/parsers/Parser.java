@@ -1,7 +1,7 @@
 package com.symbyo.islamway.service.parsers;
 
-import android.util.Log;
 import com.google.gson.annotations.SerializedName;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public abstract class Parser {
 	public List<? extends DomainObject> parse( String json,
 											   boolean is_collection )
 	{
-		Log.d( "Parser", "parsing" );
+		Utils.Log( "parsing" );
 		List<? extends DomainObject> result;
 		if ( is_collection ) {
 			result = doParseCollection( json );
@@ -31,13 +31,13 @@ public abstract class Parser {
 	protected class JSONResponse<T extends JSONDomainObject> {
 		public final int INVALID = -1;
 
-		@SerializedName("count")
+		@SerializedName( "count" )
 		private int mCount = INVALID;
 
-		@SerializedName("total_count")
+		@SerializedName( "total_count" )
 		private int mTotalCount = INVALID;
 
-		@SerializedName("items")
+		@SerializedName( "items" )
 		private List<T> mItems;
 
 		public List<T> getDomainObjects()

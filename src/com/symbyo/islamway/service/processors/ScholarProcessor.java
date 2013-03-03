@@ -3,7 +3,7 @@ package com.symbyo.islamway.service.processors;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
@@ -24,15 +24,15 @@ public class ScholarProcessor extends Processor {
 		mSection = section;
 	}
 
-	@SuppressWarnings("null")
+	@SuppressWarnings( "null" )
 	@Override
 	protected void doProcess( List<? extends DomainObject> collection,
 							  @NonNull SQLiteDatabase db, Intent pIntent )
 	{
 		if ( mSection != null ) {
-			Log.d( "IWService",
-				   String.format( "processing %d scholars",
-								  collection.size() ) );
+			Utils.Log(
+					String.format( "processing %d scholars",
+								   collection.size() ) );
 			for ( DomainObject obj : collection ) {
 				Scholar scholar = (Scholar) obj;
 				scholar.addSection( mSection );

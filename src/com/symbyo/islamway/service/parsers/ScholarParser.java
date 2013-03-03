@@ -1,9 +1,9 @@
 package com.symbyo.islamway.service.parsers;
 
-import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.Scholar;
 
 import java.lang.reflect.Type;
@@ -42,35 +42,36 @@ public class ScholarParser extends Parser {
 
 	private class JSONScholar extends JSONDomainObject<Scholar> {
 
-		@SerializedName("id")
+		@SerializedName( "id" )
 		private int mServerId;
 
-		@SerializedName("name")
+		@SerializedName( "name" )
 		private String mName = null;
 
-		@SerializedName("email")
+		@SerializedName( "email" )
 		private String mEmail = null;
 
-		@SerializedName("phone")
+		@SerializedName( "phone" )
 		private String mPhone   = null;
 		private String mPageUrl = null;
 
-		@SerializedName("photo")
+		@SerializedName( "photo" )
 		private String mImageUrl = null;
 
 		private String mImageFile = null;
 
-		@SerializedName("views_count")
+		@SerializedName( "views_count" )
 		private int mViewCount = 0;
 
-		@SerializedName("popularity")
+		@SerializedName( "popularity" )
 		private int mPopularity = 0;
 
 		@Override
 		public Scholar toDomainObject()
 		{
-			Log.d( "Parser",
-				   String.format( "parsed Scholar server_id: %d", mServerId ) );
+			Utils.Log(
+					String.format( "parsed Scholar server_id: %d",
+								   mServerId ) );
 			return new Scholar( mServerId, mName, mEmail, mPhone, mPageUrl,
 								mImageUrl, mImageFile, mViewCount,
 								mPopularity );

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.persistance.Repository;
 import junit.framework.Assert;
@@ -41,9 +41,9 @@ public abstract class Processor {
 			if ( db == null ) {
 				throw new SQLiteException();
 			}
-			Log.d( "IWService",
-				   String.format( "processing %d objects",
-								  domain_collection.size() ) );
+			Utils.Log(
+					String.format( "processing %d objects",
+								   domain_collection.size() ) );
 			doProcess( domain_collection, db, pIntent );
 		} catch ( SQLiteException e ) {
 			try {

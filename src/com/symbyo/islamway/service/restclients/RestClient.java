@@ -1,7 +1,7 @@
 package com.symbyo.islamway.service.restclients;
 
 import android.content.ContentValues;
-import android.util.Log;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.service.restclients.response.Response;
 import junit.framework.Assert;
 import org.eclipse.jdt.annotation.NonNull;
@@ -77,7 +77,7 @@ public class RestClient {
 		HttpURLConnection conn = null;
 		Response result = null;
 		try {
-			Log.d( "Islamway", prepareUrl( null ) );
+			Utils.Log( prepareUrl( null ) );
 			URL url = new URL( prepareUrl( null ) );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
@@ -113,7 +113,7 @@ public class RestClient {
 		try {
 			ContentValues params = new ContentValues();
 			params.put( "page", page_number );
-			Log.d( "Islamway", prepareUrl( params ) );
+			Utils.Log( prepareUrl( params ) );
 			URL url = new URL( prepareUrl( params ) );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();

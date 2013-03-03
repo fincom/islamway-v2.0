@@ -1,8 +1,8 @@
 package com.symbyo.islamway.service.restclients.response;
 
-import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.service.restclients.NetworkException;
 import com.symbyo.islamway.service.restclients.RestClient;
 
@@ -27,8 +27,8 @@ public class Response implements Iterable<Page> {
 		mIsCollection = raw_response.isCollection();
 		mPagesCount = raw_response.getPagesNumber();
 		mTotalCount = raw_response.getTotalCount();
-		Log.d( "Islamway",
-			   String.format( "pages count: %d", mPagesCount ) );
+		Utils.Log(
+				String.format( "pages count: %d", mPagesCount ) );
 		mCurrentPage = new Page( 1, response );
 	}
 
@@ -93,10 +93,10 @@ public class Response implements Iterable<Page> {
 	private static class ResponseRaw {
 		public final int INVALID = -1;
 
-		@SerializedName("count")
+		@SerializedName( "count" )
 		private int mCount = INVALID;
 
-		@SerializedName("total_count")
+		@SerializedName( "total_count" )
 		private int mTotalCount = INVALID;
 
 		public int getPagesNumber()

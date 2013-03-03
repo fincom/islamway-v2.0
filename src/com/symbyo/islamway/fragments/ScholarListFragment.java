@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +67,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 		// from the database everytime the configuration changes.
 		setRetainInstance( true );
 		setHasOptionsMenu( true );
-		Log.d( "Islamway", "onCreate called" );
+		Utils.Log( "onCreate called" );
 		super.onCreate( savedInstanceState );
 
 		if ( savedInstanceState != null ) {
@@ -86,7 +85,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 	{
 		if ( mSection.getSyncState() == Section.SyncState.SYNC_STATE_FULL ) {
 			// get the quran scholars list from the database.
-			Log.d( "Islamway", "loading scholars form database" );
+			Utils.Log( "loading scholars form database" );
 			if ( mAdapter == null ) {
 				retrieveScholars();
 			}
@@ -99,7 +98,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 			}
 			setListAdapter( mAdapter );
 			requestScholars();
-			Log.d( "Islamway", "fetching scholars from server." );
+			Utils.Log( "fetching scholars from server." );
 
 		} else {
 			Crouton.makeText( getSherlockActivity(),
@@ -291,7 +290,7 @@ public class ScholarListFragment extends SherlockListFragment implements
 				@Override
 				public void onReceive( Context context, Intent intent )
 				{
-					Log.d( "Islamway", "response received" );
+					Utils.Log( "response received" );
 					final LocalBroadcastManager mngr = LocalBroadcastManager
 							.getInstance( getSherlockActivity() );
 					mngr.unregisterReceiver( this );

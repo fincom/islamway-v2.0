@@ -2,7 +2,7 @@ package com.symbyo.islamway.persistance;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.persistance.mappers.AbstractMapper;
 import junit.framework.Assert;
@@ -39,8 +39,8 @@ public class UnitOfWork {
 			return;
 		}
 		newObjects.add( object );
-		Log.d( "Islamway", String.format( "New Object registered: %s",
-										  object.toString() ) );
+		Utils.Log( String.format( "New Object registered: %s",
+								  object.toString() ) );
 	}
 
 	/**
@@ -56,8 +56,9 @@ public class UnitOfWork {
 	{
 		boolean result = true;
 		try {
-			Log.d( "Islamway",
-				   String.format( "inserting %d objects", newObjects.size() ) );
+			Utils.Log(
+					String.format( "inserting %d objects",
+								   newObjects.size() ) );
 			db.beginTransaction();
 			for ( DomainObject obj : newObjects ) {
 				AbstractMapper mapper = Repository.getInstance().getMapper(

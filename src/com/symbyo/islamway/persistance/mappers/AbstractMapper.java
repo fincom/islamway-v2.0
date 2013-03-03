@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.persistance.Repository;
 import org.eclipse.jdt.annotation.NonNull;
@@ -42,7 +42,7 @@ public abstract class AbstractMapper {
 		Cursor c = null;
 		try {
 			db = Repository.getInstance( mContext ).getReadableDatabase();
-			Log.d( "Islamway", stmt.sql() );
+			Utils.Log( stmt.sql() );
 			c = db.rawQuery( stmt.sql(), stmt.parameters() );
 			if ( c != null ) {
 				objects = loadAll( c );

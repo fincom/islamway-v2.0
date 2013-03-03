@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.util.SparseArray;
 import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Scholar;
@@ -95,7 +94,7 @@ public class ServiceHelper {
 			case PENDING:
 				break;
 			case NOT_REGISTERED:
-				Log.d( "Islamway", "request queued" );
+				Utils.Log( "request queued" );
 				mRequests.put( result, Resource.QURAN_SCHOLAR );
 
 				sendRequestToService( IWService.ACTION_GET_QURAN_SCHOLARS,
@@ -135,7 +134,7 @@ public class ServiceHelper {
 			case PENDING:
 				break;
 			case NOT_REGISTERED:
-				Log.d( "Islamway", "request queued" );
+				Utils.Log( "request queued" );
 				mRequests.put( result, Resource.LESSONS_SCHOLAR );
 
 				sendRequestToService( IWService.ACTION_GET_LESSONS_SCHOLARS,
@@ -252,7 +251,7 @@ public class ServiceHelper {
 							 resource_id.intValue() );
 		}
 		/*if ( params != null ) {
-            intent.putExtra( IWService.EXTRA_PARAMS, params );
+			intent.putExtra( IWService.EXTRA_PARAMS, params );
         }*/
 
 		intent.putExtra( IWService.EXTRA_CALLBACK_INTENT, pIntent );
@@ -275,16 +274,16 @@ public class ServiceHelper {
 		int index = mRequests.indexOfKey( request_id );
 		if ( index >= 0 ) {
 			state = RequestState.PENDING;
-			Log.d( "Islamway", "request pending" );
+			Utils.Log( "request pending" );
 		} else if ( request_id == REQUEST_ID_NONE ) {
 			state = RequestState.NOT_REGISTERED;
-			Log.d( "Islamway", "request is not registered" );
+			Utils.Log( "request is not registered" );
 		} else if ( request_id < mLastRequestId ) {
 			state = RequestState.FINISHED;
-			Log.d( "Islamway", "request has finished" );
+			Utils.Log( "request has finished" );
 		} else {
 			state = RequestState.NOT_REGISTERED;
-			Log.d( "Islamway", "request is not registered" );
+			Utils.Log( "request is not registered" );
 		}
 		return state;
 	}

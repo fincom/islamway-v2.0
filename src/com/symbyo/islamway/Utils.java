@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
@@ -20,12 +21,13 @@ import java.util.List;
  */
 public class Utils {
 
-	public static final Style CROUTON_PROGRESS_STYLE = new Style.Builder()
+	public static final  Style  CROUTON_PROGRESS_STYLE = new Style.Builder()
 			.setDuration(
 					Style.DURATION_INFINITE )
 			.setBackgroundColorValue( Style.holoBlueLight )
 			.setHeight( ViewGroup.LayoutParams.WRAP_CONTENT )
 			.build();
+	private static final String APP_TAG                = "Islamway";
 
 	public static boolean isNetworkAvailable( Context context )
 	{
@@ -117,6 +119,13 @@ public class Utils {
 			} else {
 				mAdapter.notifyDataSetInvalidated();
 			}
+		}
+	}
+
+	public static void Log( String message )
+	{
+		if ( BuildConfig.DEBUG ) {
+			Log.d( APP_TAG, message );
 		}
 	}
 }

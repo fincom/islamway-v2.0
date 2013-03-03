@@ -16,7 +16,10 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.SearchView;
-import com.symbyo.islamway.*;
+import com.symbyo.islamway.IWApplication;
+import com.symbyo.islamway.R;
+import com.symbyo.islamway.ServiceHelper;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.adapters.CollectionAdapter;
 import com.symbyo.islamway.domain.Collection;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -182,7 +185,7 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
 					int key = intent.getIntExtra( ServiceHelper.EXTRA_DATA_KEY,
 												  0 );
 					Crouton.hide( mCrouton );
-					@SuppressWarnings("unchecked")
+					@SuppressWarnings( "unchecked" )
 					List<Collection> collections =
 							(List<Collection>) IWApplication
 									.readDomainObjects( key );

@@ -128,7 +128,7 @@ public class CollectionAdapter extends BaseAdapter
 		holder.title.setText( collection.getTitle() );
 		int entity_count = collection.getEntriesCount();
 		/*String string;
-        if ( entity_count == 1 ) {
+		if ( entity_count == 1 ) {
             string = String.format( Locale.US, "%s", mContext.getString( R.string.one_sura ) );
         } else if ( entity_count == 2 ) {
             string = String.format( Locale.US, "%s", mContext.getString( R.string.two_suras ) );

@@ -3,7 +3,7 @@ package com.symbyo.islamway.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
@@ -64,8 +64,8 @@ public class IWService extends IntentService {
 		final Intent pIntent = (Intent) intent
 				.getParcelableExtra( EXTRA_CALLBACK_INTENT );
 		final int resource_id = intent.getIntExtra( EXTRA_RESOURCE_ID, -1 );
-		Log.d( "Islamway", String.format( Locale.US, "Scholar server_id: %d",
-										  resource_id ) );
+		Utils.Log( String.format( Locale.US, "Scholar server_id: %d",
+								  resource_id ) );
 
 		if ( action == null ) {
 			throw new NullPointerException( "intent action can't be null" );
@@ -81,22 +81,22 @@ public class IWService extends IntentService {
 
 		Response response;
 		try {
-			Log.d( "IWService", "start" );
+			Utils.Log( "start" );
 			response = rest_client.getResponse();
 			List<DomainObject> domain_collection =
 					new LinkedList<DomainObject>();
 			Assert.assertNotNull( parser );
 			for ( Page page : response ) {
-				Log.d( "IWService",
-					   String.format( "page number: %d", page.getNumber() ) );
+				Utils.Log(
+						String.format( "page number: %d", page.getNumber() ) );
 				String json = page.getResponseText();
 				domain_collection.addAll( parser.parse( json,
 														response.isCollection() ) );
-				Log.d( "IWService", "fetching next page" );
+				Utils.Log( "fetching next page" );
 			}
 			Assert.assertNotNull( processor );
 			processor.process( domain_collection, pIntent );
-			Log.d( "IWService", "finished" );
+			Utils.Log( "finished" );
 		} catch ( NullPointerException e ) {
 			/**
 			 * a network error has occurred during getting the next page, and

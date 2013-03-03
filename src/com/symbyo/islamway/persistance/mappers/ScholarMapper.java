@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
+import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.DomainObject.SyncState;
 import com.symbyo.islamway.domain.IScholarFinder;
@@ -260,9 +260,9 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 			throw new Error( "DomainObject not instance of Scholar" );
 		}
 		Scholar scholar = (Scholar) obj;
-		Log.d( "ScholarMapper",
-			   String.format( "Scholar server_id: %d",
-							  scholar.getServerId() ) );
+		Utils.Log(
+				String.format( "Scholar server_id: %d",
+							   scholar.getServerId() ) );
 		try {
 			if ( db == null || !db.isOpen() ) {
 				db = Repository.getInstance( mContext ).getWritableDatabase();
