@@ -28,7 +28,10 @@
         </activity>
 
         <activity
-                android:name=".activities.CollectionsActivity"/>
+                android:name=".activities.ScholarsCollectionsActivity"/>
+
+        <activity
+            android:name=".activities.LeafEntriesActivity" />
 
         <service
                 android:name=".service.IWService"

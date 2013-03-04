@@ -13,6 +13,8 @@ import com.symbyo.islamway.service.IWService;
 import junit.framework.Assert;
 import org.eclipse.jdt.annotation.NonNull;
 
+import java.util.Locale;
+
 public class ServiceHelper {
 
 	public static final  int    REQUEST_ID_NONE                   = 0;
@@ -223,7 +225,7 @@ public class ServiceHelper {
 			case NOT_REGISTERED:
 				mRequests.put( result, Resource.SUB_COLLECTION );
 				sendRequestToService(
-						IWService.ACTION_GET_SUB_COLLECTION,
+						IWService.ACTION_GET_SUB_ENTRIES,
 						ACTION_INVALIDATE_COLLECTION_LIST,
 						result,
 						parent.getServerId() );
@@ -257,7 +259,7 @@ public class ServiceHelper {
 				break;
 			case NOT_REGISTERED:
 				sendRequestToService(
-						IWService.ACTION_GET_COLLECTION_ENTRIES,
+						IWService.ACTION_GET_SUB_ENTRIES,
 						ACTION_INVALIDATE_COLLECTION_LIST,
 						result,
 						collection.getServerId() );
@@ -332,10 +334,15 @@ public class ServiceHelper {
 		@Override
 		public void onReceive( Context context, Intent intent )
 		{
+			Utils.Log( "response received." );
 			String action = intent.getStringExtra( EXTRA_CALLBACK_ACTION );
 			int request_id = intent.getIntExtra( EXTRA_REQUEST_ID, -1 );
+			Utils.Log(
+					String.format( Locale.US, "request id: %d", request_id ) );
 			boolean error = intent.getBooleanExtra(
 					IWService.EXTRA_RESPONSE_ERROR, false );
+			Utils.Log(
+					String.format( Locale.US, "error: %b", error ) );
 			int extra_data_key = intent.getIntExtra( IWService.EXTRA_DATA_KEY,
 													 -1 );
 
@@ -349,6 +356,7 @@ public class ServiceHelper {
 			synchronized ( mLock ) {
 				mRequests.remove( request_id );
 			}
+			Utils.Log( "response sent to requester." );
 			LocalBroadcastManager.getInstance( mContext ).unregisterReceiver(
 					this );
 		}

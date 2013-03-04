@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.Collection;
+import com.symbyo.islamway.domain.Entry;
+import com.symbyo.islamway.fragments.BaseEntryFragment;
 import com.symbyo.islamway.fragments.CollectionEntriesFragment;
 import com.symbyo.islamway.fragments.SlideMenuFragment;
 import junit.framework.Assert;
@@ -13,7 +15,8 @@ import junit.framework.Assert;
  * @author kdehairy
  * @since 3/3/13
  */
-public class EntriesActivity extends BaseSlidingActivity {
+public class LeafEntriesActivity extends BaseSlidingActivity
+		implements BaseEntryFragment.OnEntryItemClick {
 
 	public static final String EXTRA_COLLECTION = "extra_collection";
 
@@ -47,5 +50,12 @@ public class EntriesActivity extends BaseSlidingActivity {
 					.replace( R.id.content_frame, content )
 					.commit();
 		}
+	}
+
+	@Override
+	public void onEntryItemClick( Entry item )
+	{
+		// TODO implement the method body
+
 	}
 }

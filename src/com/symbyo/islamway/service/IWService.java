@@ -30,7 +30,7 @@ import java.util.Locale;
  */
 public class IWService extends IntentService {
 
-	@SuppressWarnings("FieldCanBeLocal")
+	@SuppressWarnings( "FieldCanBeLocal" )
 	private final       String BASE_URL                             =
 			"http://ar.islamway.net/api/";
 	public static final String ACTION_GET_QURAN_SCHOLARS            =
@@ -49,10 +49,8 @@ public class IWService extends IntentService {
 			"iw.service.get_scholar_quran_collection";
 	public static final String ACTION_GET_SCHOLAR_LESSON_COLLECTION =
 			"iw.service.get_scholar_lessons_collection";
-	public static final String ACTION_GET_SUB_COLLECTION            =
+	public static final String ACTION_GET_SUB_ENTRIES               =
 			"iw.service.get_sub_collection";
-	public static final String ACTION_GET_COLLECTION_ENTRIES        =
-			"iw.service.get_collection_entries";
 
 	public IWService()
 	{
@@ -66,8 +64,9 @@ public class IWService extends IntentService {
 		final Intent pIntent = (Intent) intent
 				.getParcelableExtra( EXTRA_CALLBACK_INTENT );
 		final int resource_id = intent.getIntExtra( EXTRA_RESOURCE_ID, -1 );
-		Utils.Log( String.format( Locale.US, "Scholar server_id: %d",
+		Utils.Log( String.format( Locale.US, "resource id: %d",
 								  resource_id ) );
+		Utils.Log( "action: " + action );
 
 		if ( action == null ) {
 			throw new NullPointerException( "intent action can't be null" );
@@ -83,7 +82,7 @@ public class IWService extends IntentService {
 
 		Response response;
 		try {
-			Utils.Log( "start" );
+			Utils.Log( "==start request==" );
 			response = rest_client.getResponse();
 			List<DomainObject> domain_collection =
 					new LinkedList<DomainObject>();
@@ -98,7 +97,7 @@ public class IWService extends IntentService {
 			}
 			Assert.assertNotNull( processor );
 			processor.process( domain_collection, pIntent );
-			Utils.Log( "finished" );
+			Utils.Log( "==finished==" );
 		} catch ( NullPointerException e ) {
 			/**
 			 * a network error has occurred during getting the next page, and
@@ -157,12 +156,10 @@ public class IWService extends IntentService {
 			url_format += section.toString() + "/scholar/%d/collections";
 			result = new CollectionResourceFactory( url_format,
 													RestClient.HTTPMethod.GET );
-		} else if ( action.equals( ACTION_GET_SUB_COLLECTION ) ) {
+		} else if ( action.equals( ACTION_GET_SUB_ENTRIES ) ) {
 			url_format += "collection/%d/entries";
 			result = new CollectionResourceFactory( url_format,
 													RestClient.HTTPMethod.GET );
-		} else if ( action.equals( ACTION_GET_COLLECTION_ENTRIES ) ) {
-			url_format += "";
 		}
 
 		if ( result == null ) {

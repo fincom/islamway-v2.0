@@ -77,17 +77,23 @@ public class RestClient {
 		HttpURLConnection conn = null;
 		Response result = null;
 		try {
-			Utils.Log( prepareUrl( null ) );
-			URL url = new URL( prepareUrl( null ) );
+			String url_str = prepareUrl( null );
+			Utils.Log( "request url: " + url_str );
+			URL url = new URL( url_str );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
 			/** < set the connection method */
 			setHTTPMethod( conn );
 			conn.setReadTimeout( TIME_OUT );
 			/** < read the stream into mResponse */
-			if ( conn.getResponseCode() == HttpURLConnection.HTTP_OK ) {
+			int response_code = conn.getResponseCode();
+			Utils.Log( String.format( Locale.US, "response code: %d",
+									  response_code ) );
+			if ( response_code == HttpURLConnection.HTTP_OK ) {
 				result = new Response( this,
 									   readResponse( conn.getInputStream() ) );
+				Utils.Log( String.format( Locale.US, "total items count: %d",
+										  result.getSize() ) );
 			}
 
 		} catch ( MalformedURLException e ) {
@@ -113,8 +119,9 @@ public class RestClient {
 		try {
 			ContentValues params = new ContentValues();
 			params.put( "page", page_number );
-			Utils.Log( prepareUrl( params ) );
-			URL url = new URL( prepareUrl( params ) );
+			String url_str = prepareUrl( params );
+			Utils.Log( "request url: " + url_str );
+			URL url = new URL( url_str );
 			/** < connect */
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setReadTimeout( TIME_OUT );

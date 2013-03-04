@@ -6,7 +6,7 @@ import android.os.Parcel;
  * @author kdehairy
  * @since 2/20/13
  */
-public class Collection extends Entry implements FilterableObject {
+public class Collection extends Entry {
 
 
 	private final int mEntriesCount;

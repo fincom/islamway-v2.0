@@ -10,7 +10,7 @@ import junit.framework.Assert;
  * @author kdehairy
  * @since 2/27/13
  */
-public class SubCollectionsFragment extends BaseCollectionFragment {
+public class SubCollectionsFragment extends BaseEntryFragment {
 
 	public final static String PARENT_KEY = "parent_key";
 

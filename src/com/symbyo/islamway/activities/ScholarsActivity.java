@@ -145,9 +145,9 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 	public void onLoadScholarCollectionsClick( Scholar scholar,
 											   Section section )
 	{
-		Intent intent = new Intent( this, CollectionsActivity.class );
-		intent.putExtra( CollectionsActivity.EXTRA_SCHOLAR, scholar );
-		intent.putExtra( CollectionsActivity.EXTRA_SECTION, section );
+		Intent intent = new Intent( this, ScholarsCollectionsActivity.class );
+		intent.putExtra( ScholarsCollectionsActivity.EXTRA_SCHOLAR, scholar );
+		intent.putExtra( ScholarsCollectionsActivity.EXTRA_SECTION, section );
 
 		startActivity( intent );
 	}

@@ -11,7 +11,7 @@ import junit.framework.Assert;
  * @author kdehairy
  * @since 2/20/13
  */
-public class ScholarCollectionFragment extends BaseCollectionFragment {
+public class ScholarCollectionFragment extends BaseEntryFragment {
 
 	public final static String SCHOLAR_KEY = "scholars_key";
 	public static final String SECTION_KEY = "section_key";

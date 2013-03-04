@@ -7,7 +7,7 @@ import junit.framework.Assert;
  * @author kdehairy
  * @since 2/27/13
  */
-public abstract class Entry extends DomainObject {
+public abstract class Entry extends DomainObject implements FilterableObject {
 
 	private final int       mServerId;
 	private final String    mTitle;

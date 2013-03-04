@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.symbyo.islamway.R;
 import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.Collection;
+import com.symbyo.islamway.domain.Entry;
 
 import java.util.List;
 
@@ -19,26 +20,30 @@ import java.util.List;
  * @author kdehairy
  * @since 2/20/13
  */
-public class CollectionAdapter extends BaseAdapter
+public class EntryAdapter extends BaseAdapter
 		implements Filterable {
 
-	private List<Collection> mCollections;
-	private Context          mContext;
+	private List<Entry> mEntries;
+	private Context     mContext;
+
+	private final int TYPE_COLLECTION = 1;
+	private final int TYPE_LEAF       = 2;
+
 
 	/**
 	 * when filtered, this holds the original list while mScholars will hold
 	 * only the filtered list.
 	 */
-	private Utils.ArrayFilter<Collection> mFilter;
+	private Utils.ArrayFilter<Entry> mFilter;
 
 	private final Object mLock = new Object();
 
 	private final int ITEM_LAYOUT = R.layout.collection_list_item;
 
-	public CollectionAdapter(
-			Context context, List<Collection> collections )
+	public EntryAdapter(
+			Context context, List<Entry> entries )
 	{
-		mCollections = collections;
+		mEntries = entries;
 		mContext = context;
 	}
 
@@ -51,8 +56,8 @@ public class CollectionAdapter extends BaseAdapter
 	public int getCount()
 	{
 		int size = 0;
-		if ( mCollections != null ) {
-			size = mCollections.size();
+		if ( mEntries != null ) {
+			size = mEntries.size();
 		}
 		return size;
 	}
@@ -65,13 +70,40 @@ public class CollectionAdapter extends BaseAdapter
 	 * @return The data at the specified position.
 	 */
 	@Override
-	public Collection getItem( int position )
+	public Entry getItem( int position )
 	{
-		Collection collection = null;
-		if ( mCollections != null ) {
-			collection = mCollections.get( position );
+		Entry entry = null;
+		if ( mEntries != null ) {
+			entry = mEntries.get( position );
 		}
-		return collection;
+		return entry;
+	}
+
+	@Override
+	public int getItemViewType( int position )
+	{
+		Entry entry = getItem( position );
+		int type;
+		switch ( entry.getType() ) {
+			case GROUP:
+			case LESSON_SERIES:
+			case MUSHAF:
+				type = TYPE_COLLECTION;
+				break;
+			case LESSON:
+			case QURAN_RECITATION:
+				type = TYPE_LEAF;
+				break;
+			default:
+				type = TYPE_LEAF;
+		}
+		return type;
+	}
+
+	@Override
+	public int getViewTypeCount()
+	{
+		return 2;
 	}
 
 	/**
@@ -124,9 +156,19 @@ public class CollectionAdapter extends BaseAdapter
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		Collection collection = getItem( position );
-		holder.title.setText( collection.getTitle() );
-		int entity_count = collection.getEntriesCount();
+
+		switch ( getItemViewType( position ) ) {
+			case TYPE_COLLECTION:
+				Collection collection = (Collection) getItem( position );
+				holder.title.setText( collection.getTitle() );
+				int entity_count = collection.getEntriesCount();
+				holder.subTitle.setText( Integer.toString( entity_count ) );
+				break;
+			case TYPE_LEAF:
+				Entry entry = getItem( position );
+				holder.title.setText( entry.getTitle() );
+		}
+
 		/*String string;
 		if ( entity_count == 1 ) {
             string = String.format( Locale.US, "%s", mContext.getString( R.string.one_sura ) );
@@ -137,7 +179,6 @@ public class CollectionAdapter extends BaseAdapter
         } else {
             string = String.format( Locale.US, "%d %s", entity_count, mContext.getString( R.string.sura ) );
         }*/
-		holder.subTitle.setText( Integer.toString( entity_count ) );
 		return convertView;
 	}
 
@@ -160,7 +201,7 @@ public class CollectionAdapter extends BaseAdapter
 	public Filter getFilter()
 	{
 		if ( mFilter == null ) {
-			mFilter = new Utils.ArrayFilter<Collection>( this, mCollections );
+			mFilter = new Utils.ArrayFilter<Entry>( this, mEntries );
 		}
 		return mFilter;
 	}

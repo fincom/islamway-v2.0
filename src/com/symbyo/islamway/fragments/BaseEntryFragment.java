@@ -20,8 +20,9 @@ import com.symbyo.islamway.IWApplication;
 import com.symbyo.islamway.R;
 import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.Utils;
-import com.symbyo.islamway.adapters.CollectionAdapter;
+import com.symbyo.islamway.adapters.EntryAdapter;
 import com.symbyo.islamway.domain.Collection;
+import com.symbyo.islamway.domain.Entry;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
@@ -31,7 +32,7 @@ import java.util.List;
  * @author kdehairy
  * @since 2/27/13
  */
-public abstract class BaseCollectionFragment extends SherlockListFragment
+public abstract class BaseEntryFragment extends SherlockListFragment
 		implements
 		Searchable {
 
@@ -40,16 +41,16 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
 	 * This is the id of the latest request sent to the ServiceHelper.
 	 */
 	protected       int    mRequestId  = ServiceHelper.REQUEST_ID_NONE;
-	protected CollectionAdapter mAdapter;
+	protected EntryAdapter mAdapter;
 
 	protected Crouton mCrouton;
 
-	protected OnCollectionItemClick mListener;
-	protected MenuItem              mSearchMenuItem;
+	protected OnEntryItemClick mListener;
+	protected MenuItem         mSearchMenuItem;
 	protected final int SEARCH_MENU_ITEM_ID = 1;
 
-	public static interface OnCollectionItemClick {
-		public void onCollectionItemClick( Collection item );
+	public static interface OnEntryItemClick {
+		public void onEntryItemClick( Entry item );
 	}
 
 	@Override
@@ -89,8 +90,8 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
 							  R.string.err_connect_network, Style.ALERT )
 					.show();
 
-			mAdapter = new CollectionAdapter( getSherlockActivity(),
-											  null );
+			mAdapter = new EntryAdapter( getSherlockActivity(),
+										 null );
 			setListAdapter( mAdapter );
 		}
 		return super.onCreateView( inflater, container, savedInstanceState );
@@ -108,9 +109,9 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
 							AdapterView<?> parent, View view, int position,
 							long id )
 					{
-						Collection collection = (Collection) getListAdapter()
+						Entry collection = (Entry) getListAdapter()
 								.getItem( position );
-						mListener.onCollectionItemClick( collection );
+						mListener.onEntryItemClick( collection );
 					}
 				} );
 	}
@@ -119,10 +120,10 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
 	public void onAttach( Activity activity )
 	{
 		try {
-			mListener = (OnCollectionItemClick) activity;
+			mListener = (OnEntryItemClick) activity;
 		} catch ( ClassCastException e ) {
 			throw new ClassCastException( activity.toString()
-												  + " must implement OnCollectionItemClick" );
+												  + " must implement OnEntryItemClick" );
 		}
 		if ( mCrouton != null ) {
 			Crouton.hide( mCrouton );
@@ -186,11 +187,11 @@ public abstract class BaseCollectionFragment extends SherlockListFragment
 												  0 );
 					Crouton.hide( mCrouton );
 					@SuppressWarnings( "unchecked" )
-					List<Collection> collections =
-							(List<Collection>) IWApplication
+					List<Entry> entries =
+							(List<Entry>) IWApplication
 									.readDomainObjects( key );
-					mAdapter = new CollectionAdapter( getSherlockActivity(),
-													  collections );
+					mAdapter = new EntryAdapter( getSherlockActivity(),
+												 entries );
 					setListAdapter( mAdapter );
 				}
 			};
