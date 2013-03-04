@@ -30,9 +30,8 @@ public class ScholarProcessor extends Processor {
 							  @NonNull SQLiteDatabase db, Intent pIntent )
 	{
 		if ( mSection != null ) {
-			Utils.Log(
-					String.format( "processing %d scholars",
-								   collection.size() ) );
+			Utils.FormatedLog( "processing %d scholars",
+								   collection.size() );
 			for ( DomainObject obj : collection ) {
 				Scholar scholar = (Scholar) obj;
 				scholar.addSection( mSection );

@@ -64,8 +64,8 @@ public class IWService extends IntentService {
 		final Intent pIntent = (Intent) intent
 				.getParcelableExtra( EXTRA_CALLBACK_INTENT );
 		final int resource_id = intent.getIntExtra( EXTRA_RESOURCE_ID, -1 );
-		Utils.Log( String.format( Locale.US, "resource id: %d",
-								  resource_id ) );
+		Utils.FormatedLog( "resource id: %d",
+								  resource_id );
 		Utils.Log( "action: " + action );
 
 		if ( action == null ) {
@@ -88,8 +88,7 @@ public class IWService extends IntentService {
 					new LinkedList<DomainObject>();
 			Assert.assertNotNull( parser );
 			for ( Page page : response ) {
-				Utils.Log(
-						String.format( "page number: %d", page.getNumber() ) );
+				Utils.FormatedLog( "page number: %d", page.getNumber() );
 				String json = page.getResponseText();
 				domain_collection.addAll( parser.parse( json,
 														response.isCollection() ) );

@@ -87,13 +87,13 @@ public class RestClient {
 			conn.setReadTimeout( TIME_OUT );
 			/** < read the stream into mResponse */
 			int response_code = conn.getResponseCode();
-			Utils.Log( String.format( Locale.US, "response code: %d",
-									  response_code ) );
+			Utils.FormatedLog( "response code: %d",
+									  response_code );
 			if ( response_code == HttpURLConnection.HTTP_OK ) {
 				result = new Response( this,
 									   readResponse( conn.getInputStream() ) );
-				Utils.Log( String.format( Locale.US, "total items count: %d",
-										  result.getSize() ) );
+				Utils.FormatedLog( "total items count: %d",
+										  result.getSize() );
 			}
 
 		} catch ( MalformedURLException e ) {

@@ -241,6 +241,8 @@ public class ScholarListFragment extends SherlockListFragment implements
 				// the retrieving failed.
 				synchronized ( mLock ) {
 					if ( mIsReadingDatabase && result == null ) {
+						Utils.Log( "Failed to open database. " +
+										   "database is locked" );
 						return;
 					}
 				}
@@ -256,11 +258,14 @@ public class ScholarListFragment extends SherlockListFragment implements
 					synchronized ( mLock ) {
 
 						while ( mIsReadingDatabase && i < 2 ) {
+							Utils.Log( "waiting for database to unlock..." );
 							wait( 1000 );
 							i++;
 						}
 						// if the database is still being read, return
 						if ( mIsReadingDatabase ) {
+							Utils.Log( "Failed to open database. " +
+											   "database is locked" );
 							return null;
 						}
 					}
@@ -270,7 +275,9 @@ public class ScholarListFragment extends SherlockListFragment implements
 				if ( getSherlockActivity() == null ) {
 					return null;
 				}
+				Utils.Log( "database is unlocked..." );
 				if ( mSection == null ) {
+					Utils.Log( "Section is null. returning" );
 					return null;
 				}
 				ScholarsAdapter adapter = new ScholarsAdapter(

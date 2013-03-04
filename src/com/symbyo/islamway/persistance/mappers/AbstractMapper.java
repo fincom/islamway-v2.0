@@ -41,6 +41,7 @@ public abstract class AbstractMapper {
 		SQLiteDatabase db;
 		Cursor c = null;
 		try {
+			Utils.Log( "opening the database for read." );
 			db = Repository.getInstance( mContext ).getReadableDatabase();
 			Utils.Log( stmt.sql() );
 			c = db.rawQuery( stmt.sql(), stmt.parameters() );

@@ -73,7 +73,7 @@ public class CollectionParser extends Parser {
 		{
 			Entry.EntryType type;
 			Entry entry = null;
-			Utils.Log( String.format( Locale.US, "Entry type: %s", mEntrytype ) );
+			Utils.FormatedLog( "Entry type: %s", mEntrytype );
 			Assert.assertNotNull( mEntrytype );
 			if ( mEntrytype.equals( "lessons_series" ) ) {
 				type = Entry.EntryType.LESSON_SERIES;

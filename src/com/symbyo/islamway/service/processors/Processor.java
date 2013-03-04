@@ -41,9 +41,8 @@ public abstract class Processor {
 			if ( db == null ) {
 				throw new SQLiteException();
 			}
-			Utils.Log(
-					String.format( "processing %d objects",
-								   domain_collection.size() ) );
+			Utils.FormatedLog( "processing %d objects",
+								   domain_collection.size() );
 			doProcess( domain_collection, db, pIntent );
 		} catch ( SQLiteException e ) {
 			try {

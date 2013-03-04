@@ -69,9 +69,8 @@ public class ScholarParser extends Parser {
 		@Override
 		public Scholar toDomainObject()
 		{
-			Utils.Log(
-					String.format( "parsed Scholar server_id: %d",
-								   mServerId ) );
+			Utils.FormatedLog( "parsed Scholar server_id: %d",
+								   mServerId );
 			return new Scholar( mServerId, mName, mEmail, mPhone, mPageUrl,
 								mImageUrl, mImageFile, mViewCount,
 								mPopularity );

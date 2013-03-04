@@ -14,6 +14,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author kdehairy
@@ -126,6 +127,12 @@ public class Utils {
 	{
 		if ( BuildConfig.DEBUG ) {
 			Log.d( APP_TAG, message );
+		}
+	}
+
+	public static void FormatedLog( String format, Object... args ) {
+		if ( BuildConfig.DEBUG ) {
+			Log.d( APP_TAG, String.format( Locale.US, format, args ) );
 		}
 	}
 }

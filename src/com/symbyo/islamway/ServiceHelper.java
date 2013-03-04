@@ -337,12 +337,10 @@ public class ServiceHelper {
 			Utils.Log( "response received." );
 			String action = intent.getStringExtra( EXTRA_CALLBACK_ACTION );
 			int request_id = intent.getIntExtra( EXTRA_REQUEST_ID, -1 );
-			Utils.Log(
-					String.format( Locale.US, "request id: %d", request_id ) );
+			Utils.FormatedLog( "request id: %d", request_id );
 			boolean error = intent.getBooleanExtra(
 					IWService.EXTRA_RESPONSE_ERROR, false );
-			Utils.Log(
-					String.format( Locale.US, "error: %b", error ) );
+			Utils.FormatedLog( "error: %b", error );
 			int extra_data_key = intent.getIntExtra( IWService.EXTRA_DATA_KEY,
 													 -1 );
 

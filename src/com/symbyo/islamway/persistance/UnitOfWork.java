@@ -39,8 +39,8 @@ public class UnitOfWork {
 			return;
 		}
 		newObjects.add( object );
-		Utils.Log( String.format( "New Object registered: %s",
-								  object.toString() ) );
+		Utils.FormatedLog( "New Object registered: %s",
+								  object.toString() );
 	}
 
 	/**
@@ -56,9 +56,8 @@ public class UnitOfWork {
 	{
 		boolean result = true;
 		try {
-			Utils.Log(
-					String.format( "inserting %d objects",
-								   newObjects.size() ) );
+			Utils.FormatedLog( "inserting %d objects",
+								   newObjects.size() );
 			db.beginTransaction();
 			for ( DomainObject obj : newObjects ) {
 				AbstractMapper mapper = Repository.getInstance().getMapper(

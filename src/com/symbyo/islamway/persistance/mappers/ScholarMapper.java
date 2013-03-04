@@ -260,9 +260,8 @@ public class ScholarMapper extends AbstractMapper implements IScholarFinder {
 			throw new Error( "DomainObject not instance of Scholar" );
 		}
 		Scholar scholar = (Scholar) obj;
-		Utils.Log(
-				String.format( "Scholar server_id: %d",
-							   scholar.getServerId() ) );
+		Utils.FormatedLog( "Scholar server_id: %d",
+							   scholar.getServerId() );
 		try {
 			if ( db == null || !db.isOpen() ) {
 				db = Repository.getInstance( mContext ).getWritableDatabase();

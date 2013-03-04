@@ -27,8 +27,7 @@ public class Response implements Iterable<Page> {
 		mIsCollection = raw_response.isCollection();
 		mPagesCount = raw_response.getPagesNumber();
 		mTotalCount = raw_response.getTotalCount();
-		Utils.Log(
-				String.format( "pages count: %d", mPagesCount ) );
+		Utils.FormatedLog( "pages count: %d", mPagesCount );
 		mCurrentPage = new Page( 1, response );
 	}
 
