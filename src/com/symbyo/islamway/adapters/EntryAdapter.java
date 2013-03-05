@@ -26,8 +26,8 @@ public class EntryAdapter extends BaseAdapter
 	private List<Entry> mEntries;
 	private Context     mContext;
 
-	private final int TYPE_COLLECTION = 1;
-	private final int TYPE_LEAF       = 2;
+	private final int TYPE_COLLECTION = 0;
+	private final int TYPE_LEAF       = 1;
 
 
 	/**
