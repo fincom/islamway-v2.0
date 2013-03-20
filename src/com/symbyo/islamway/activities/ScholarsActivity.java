@@ -1,9 +1,9 @@
 package com.symbyo.islamway.activities;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import com.symbyo.islamway.R;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;

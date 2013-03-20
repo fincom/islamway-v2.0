@@ -216,11 +216,14 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
 					}
 
 				};
-		ThreadPoolExecutor executor =
+		/*ThreadPoolExecutor executor =
 				(ThreadPoolExecutor) AsyncTask.THREAD_POOL_EXECUTOR;
+		executor.setCorePoolSize( 5 );
+		executor.setMaximumPoolSize( 10 );
 		executor.setRejectedExecutionHandler(
 				new ThreadPoolExecutor.DiscardOldestPolicy() );
-		task.executeOnExecutor( executor );
+		task.executeOnExecutor( executor );*/
+		task.execute();
 	}
 
 	@Override
