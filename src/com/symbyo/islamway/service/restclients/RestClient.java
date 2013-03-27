@@ -22,7 +22,7 @@ public class RestClient {
 	/**
 	 * 70 is the max value accepted by the server
 	 */
-	private final int ENTRIES_PER_PAGE = 70;
+	private final int ENTRIES_PER_PAGE = 100;
 
 	private final int TIME_OUT = 20000;
 
