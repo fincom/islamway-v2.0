@@ -3,9 +3,12 @@ package com.symbyo.islamway.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import com.symbyo.islamway.ServiceHelper;
+import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import junit.framework.Assert;
+
+import java.util.List;
 
 /**
  * @author kdehairy
@@ -41,5 +44,21 @@ public class ScholarCollectionFragment extends BaseEntryFragment {
 	protected void setActivityTitle( Activity activity )
 	{
 		activity.setTitle( mScholar.getName() );
+	}
+
+	/**
+	 * get the collections from the database.
+	 */
+	@Override
+	protected List<? extends Entry> doRetrieveCollections()
+	{
+		return mScholar.getQuranCollections();
+	}
+
+	@Override
+	protected boolean isSavedLocally()
+	{
+		// check the sync_state of the scholar.
+		return false;
 	}
 }

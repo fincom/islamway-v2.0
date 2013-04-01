@@ -3,6 +3,8 @@ package com.symbyo.islamway.domain;
 import android.os.Parcel;
 import junit.framework.Assert;
 
+import java.util.*;
+
 /**
  * @author kdehairy
  * @since 2/27/13
@@ -11,25 +13,27 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 
 	private final int       mServerId;
 	private final String    mTitle;
-	private final int       mViewsCount;
 	private final EntryType mEntryType;
 
 	public enum EntryType {
-		LESSON_SERIES,
+		LESSONS_SERIES,
 		GROUP,
 		MUSHAF,
 		LESSON,
 		QURAN_RECITATION
 	}
 
+	public static interface IQuranCollectionFinder
+	{
+		List<Collection> getScholarQuranEntries( Scholar scholar );
+	}
+
 	public Entry(
-			int id, int server_id, String title, int view_counts,
-			EntryType type )
+			int id, int server_id, String title, EntryType type )
 	{
 		super( id );
 		mServerId = server_id;
 		mTitle = title;
-		mViewsCount = view_counts;
 		mEntryType = type;
 	}
 
@@ -38,7 +42,6 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 		super( source );
 		mServerId = source.readInt();
 		mTitle = source.readString();
-		mViewsCount = source.readInt();
 		mEntryType = EntryType.values()[source.readInt()];
 	}
 
@@ -47,7 +50,6 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 	{
 		dest.writeInt( getServerId() );
 		dest.writeString( getTitle() );
-		dest.writeInt( getViewsCount() );
 		dest.writeInt( mEntryType.ordinal() );
 		doWriteToParcel( dest );
 	}
@@ -74,11 +76,6 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 	public String getTitle()
 	{
 		return mTitle;
-	}
-
-	public int getViewsCount()
-	{
-		return mViewsCount;
 	}
 
 	public EntryType getType()

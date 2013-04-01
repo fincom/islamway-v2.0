@@ -3,9 +3,11 @@ package com.symbyo.islamway.persistance;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.persistance.mappers.AbstractMapper;
+import com.symbyo.islamway.persistance.mappers.QuranCollectionMapper;
 import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 import junit.framework.Assert;
 
@@ -166,6 +168,8 @@ public class Repository extends SQLiteOpenHelper {
 	{
 		if ( clazz.equals( Scholar.class ) ) {
 			return new ScholarMapper( mContext );
+		} else if ( clazz.equals( Entry.class ) ) {
+			return new QuranCollectionMapper( mContext );
 		}
 		return null;
 	}

@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.domain.Collection;
+import com.symbyo.islamway.domain.Entry;
 import junit.framework.Assert;
+
+import java.util.List;
 
 /**
  * @author kdehairy
@@ -34,5 +37,22 @@ public class SubCollectionsFragment extends BaseEntryFragment {
 	protected void setActivityTitle( Activity activity )
 	{
 		activity.setTitle( mParent.getTitle() );
+	}
+
+	/**
+	 * get the collections from the database.
+	 */
+	@Override
+	protected List<? extends Entry> doRetrieveCollections()
+	{
+		// TODO implement the method body
+		return null;
+	}
+
+	@Override
+	protected boolean isSavedLocally()
+	{
+		// TODO implement the method body
+		return false;
 	}
 }

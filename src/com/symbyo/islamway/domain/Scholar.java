@@ -2,72 +2,64 @@ package com.symbyo.islamway.domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.symbyo.islamway.persistance.Repository;
 import com.symbyo.islamway.persistance.UnitOfWork;
 import junit.framework.Assert;
 import org.eclipse.jdt.annotation.NonNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 public class Scholar extends DomainObject implements FilterableObject {
 
 	private final int    mServerId;
 	private final String mName;
-	private final String mEmail;
-	private final String mPhone;
-	private final String mPageUrl;
 	private final String mImageUrl;
 	private final String mImageFileName;
-	private final int    mViewCount;
-	private final int    mPopularity;
 
 	private final Set<Section> mSections = new HashSet<Section>( 2 );
+	private List<Collection> mQuranCollections;
 
-	/*
-	 * public enum Section { QURAN ("recitations"), LESSONS ("lessons");
-	 * 
-	 * private String mValue;
-	 * 
-	 * Section(String value) { mValue= value; }
-	 * 
-	 * @Override public String toString() { return mValue; } }
-	 */
+	public List<Collection> getQuranCollections()
+	{
+		if ( mQuranCollections == null ) {
+			mQuranCollections = new ArrayList<Collection>();
+			Entry.IQuranCollectionFinder mapper =
+					(Entry.IQuranCollectionFinder) Repository.getInstance()
+							.getMapper( Entry.class );
+			mQuranCollections.addAll( mapper.getScholarQuranEntries( this ) );
+		}
+		return mQuranCollections;
+	}
+
+	public static interface IScholarFinder {
+
+		public List<Scholar> findScholarsBySection( Section section );
+
+		SyncState getQuranSyncState( Scholar scholar );
+
+		SyncState getLessonsSyncState( Scholar scholar );
+	}
 
 	public Scholar(
-			int id, int server_id, String name, String email,
-			String phone, String page_url, String image_url, String image_file,
-			int view_count, int popularity )
+			int id, int server_id, String name, String image_url,
+			String image_file )
 	{
 		super( id );
 		mServerId = server_id;
 		mName = name;
-		mEmail = email;
-		mPhone = phone;
-		mPageUrl = page_url;
 		mImageUrl = image_url;
 		mImageFileName = image_file;
-		mViewCount = view_count;
-		mPopularity = popularity;
 
 	}
 
 	public Scholar(
-			int server_id, String name, String email, String phone,
-			String page_url, String image_url, String image_file,
-			int view_count, int popularity )
+			int server_id, String name, String image_url, String image_file )
 	{
 		super( INVALID_ID );
 		mServerId = server_id;
 		mName = name;
-		mEmail = email;
-		mPhone = phone;
-		mPageUrl = page_url;
 		mImageUrl = image_url;
 		mImageFileName = image_file;
-		mViewCount = view_count;
-		mPopularity = popularity;
 
 		/** < register the object as new */
 		UnitOfWork.getCurrent().registerNew( this );
@@ -78,13 +70,8 @@ public class Scholar extends DomainObject implements FilterableObject {
 		super( source );
 		mServerId = source.readInt();
 		mName = source.readString();
-		mEmail = source.readString();
-		mPhone = source.readString();
-		mPageUrl = source.readString();
 		mImageUrl = source.readString();
 		mImageFileName = source.readString();
-		mViewCount = source.readInt();
-		mPopularity = source.readInt();
 
 		/**
 		 * register the object as new. if the original object was already in the
@@ -108,13 +95,8 @@ public class Scholar extends DomainObject implements FilterableObject {
 	{
 		dest.writeInt( mServerId );
 		dest.writeString( mName );
-		dest.writeString( mEmail );
-		dest.writeString( mPhone );
-		dest.writeString( mPageUrl );
 		dest.writeString( mImageUrl );
 		dest.writeString( mImageFileName );
-		dest.writeInt( mViewCount );
-		dest.writeInt( mPopularity );
 	}
 
 	//@formatter:off
@@ -143,31 +125,6 @@ public class Scholar extends DomainObject implements FilterableObject {
 	public String getName()
 	{
 		return mName;
-	}
-
-	public String getEmail()
-	{
-		return mEmail;
-	}
-
-	public String getPhone()
-	{
-		return mPhone;
-	}
-
-	public String getPageUrl()
-	{
-		return mPageUrl;
-	}
-
-	public int getViewCount()
-	{
-		return mViewCount;
-	}
-
-	public int getPopularity()
-	{
-		return mPopularity;
 	}
 
 	public String getImageUrl()
@@ -233,5 +190,19 @@ public class Scholar extends DomainObject implements FilterableObject {
 	public String getTitle()
 	{
 		return getName();
+	}
+
+	public SyncState getQuranSyncState()
+	{
+		IScholarFinder mapper = (IScholarFinder) Repository.getInstance()
+				.getMapper( Scholar.class );
+		return mapper.getQuranSyncState( this );
+	}
+
+	public SyncState getLessonsSyncState()
+	{
+		IScholarFinder mapper = (IScholarFinder) Repository.getInstance()
+				.getMapper( Scholar.class );
+		return mapper.getLessonsSyncState( this );
 	}
 }

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
@@ -21,7 +22,6 @@ import com.symbyo.islamway.R;
 import com.symbyo.islamway.ServiceHelper;
 import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.adapters.EntryAdapter;
-import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Entry;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -83,7 +83,11 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 		if ( Utils.isNetworkAvailable( getSherlockActivity() ) ) {
 			setListAdapter( mAdapter );
 			if ( mAdapter == null ) {
-				requestCollections();
+				if ( isSavedLocally() ) {
+					retrieveCollections();
+				} else {
+					requestCollections();
+				}
 			}
 		} else {
 			Crouton.makeText( getSherlockActivity(),
@@ -96,6 +100,7 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 		}
 		return super.onCreateView( inflater, container, savedInstanceState );
 	}
+
 
 	@Override
 	public void onActivityCreated( Bundle savedInstanceState )
@@ -156,6 +161,28 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 										 Utils.CROUTON_PROGRESS_STYLE );
 			mCrouton.show();
 		}
+	}
+
+	/**
+	 * get the collections from the database.
+	 */
+	private void retrieveCollections()
+	{
+		AsyncTask<Void, Void, List<? extends Entry>> task =
+			new AsyncTask<Void, Void, List<? extends Entry>>() {
+				@Override
+				protected List<? extends Entry> doInBackground( Void... params )
+				{
+					return doRetrieveCollections();
+				}
+
+				@Override
+				protected void onPostExecute( List data )
+				{
+					mAdapter = new EntryAdapter( getSherlockActivity(), data );
+				}
+			};
+		task.execute();
 	}
 
 	private BroadcastReceiver mCollectionRequestReceiver =
@@ -252,4 +279,11 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 	protected abstract int doRequestCollections( ServiceHelper helper );
 
 	protected abstract void setActivityTitle( Activity activity );
+
+	/**
+	 * get the collections from the database.
+	 */
+	protected abstract List<? extends Entry> doRetrieveCollections();
+
+	protected abstract boolean isSavedLocally();
 }

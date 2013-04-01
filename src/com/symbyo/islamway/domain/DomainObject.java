@@ -14,6 +14,11 @@ public abstract class DomainObject implements Parcelable {
 		mId = id;
 	}
 
+	/**
+	 * SYNC_STATE_NONE: only server id is populated.
+	 * SYNC_STATE_BASIC: all data is populated.
+	 * SYNC_STATE_FULL: all data is populated and one-to-many relations populated.
+	 */
 	public enum SyncState {
 		SYNC_STATE_NONE,
 		SYNC_STATE_BASIC,

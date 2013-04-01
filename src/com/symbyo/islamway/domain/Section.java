@@ -104,16 +104,21 @@ public class Section extends DomainObject {
 
 	public List<Scholar> getSectionScholars()
 	{
-		IScholarFinder mapper = (IScholarFinder) Repository.getInstance()
+		Scholar.IScholarFinder mapper = (Scholar.IScholarFinder) Repository.getInstance()
 				.getMapper( Scholar.class );
 		return mapper.findScholarsBySection( this );
 	}
 
 	public SyncState getSyncState()
 	{
-		IScholarFinder mapper = (IScholarFinder) Repository.getInstance()
+		ISectionFinder mapper = (ISectionFinder) Repository.getInstance()
 				.getMapper( Scholar.class );
 		return mapper.getSectionSyncState( this );
 	}
 
+	public static interface ISectionFinder {
+
+		public SyncState getSectionSyncState( Section section );
+
+	}
 }

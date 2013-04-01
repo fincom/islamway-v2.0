@@ -60,7 +60,7 @@ public class ScholarsCollectionsActivity extends BaseSlidingActivity
 	{
 		switch ( item.getType() ) {
 			case MUSHAF:
-			case LESSON_SERIES:
+			case LESSONS_SERIES:
 				Intent intent = new Intent( this, LeafEntriesActivity.class );
 				intent.putExtra( LeafEntriesActivity.EXTRA_COLLECTION, item );
 				startActivity( intent );
@@ -79,7 +79,7 @@ public class ScholarsCollectionsActivity extends BaseSlidingActivity
 			Intent intent = new Intent( this, LeafEntriesActivity.class );
 			intent.putExtra( LeafEntriesActivity.EXTRA_COLLECTION, item );
 			startActivity( intent );
-		} else if ( item.getType() == Entry.EntryType.LESSON_SERIES ) {
+		} else if ( item.getType() == Entry.EntryType.LESSONS_SERIES ) {
 
 		} else if ( item.getType() == Entry.EntryType.GROUP ) {
 			Fragment content = new SubCollectionsFragment();

@@ -12,18 +12,16 @@ public class Collection extends Entry {
 	private final int mEntriesCount;
 
 	public Collection(
-			int id, int server_id, String title, int view_counts,
-			int entries_count, EntryType type )
+			int id, int server_id, String title, int entries_count, EntryType type )
 	{
-		super( id, server_id, title, view_counts, type );
+		super( id, server_id, title, type );
 		mEntriesCount = entries_count;
 	}
 
 	public Collection(
-			int server_id, String title, int view_counts,
-			int entries_count, EntryType type )
+			int server_id, String title, int entries_count, EntryType type )
 	{
-		super( INVALID_ID, server_id, title, view_counts, type );
+		super( INVALID_ID, server_id, title, type );
 		mEntriesCount = entries_count;
 	}
 

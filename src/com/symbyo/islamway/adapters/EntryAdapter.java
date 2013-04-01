@@ -86,7 +86,7 @@ public class EntryAdapter extends BaseAdapter
 		int type;
 		switch ( entry.getType() ) {
 			case GROUP:
-			case LESSON_SERIES:
+			case LESSONS_SERIES:
 			case MUSHAF:
 				type = TYPE_COLLECTION;
 				break;

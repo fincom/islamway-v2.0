@@ -13,7 +13,6 @@ import junit.framework.Assert;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author kdehairy
@@ -76,7 +75,7 @@ public class CollectionParser extends Parser {
 			Utils.FormatedLog( "Entry type: %s", mEntrytype );
 			Assert.assertNotNull( mEntrytype );
 			if ( mEntrytype.equals( "lessons_series" ) ) {
-				type = Entry.EntryType.LESSON_SERIES;
+				type = Entry.EntryType.LESSONS_SERIES;
 				entry = new Collection( mServerId, mName, mViewsCount,
 									   mEntriesCount, type );
 			} else if ( mEntrytype.equals( "group" ) ) {

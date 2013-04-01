@@ -1,35 +1,16 @@
-/**
- * This table is pre-populated.
- */
-CREATE TABLE classification (
-    _id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL
-);
-
-/**
- * This table is pre-populated.
- */
-CREATE TABLE narration (
-    _id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL
-);
-
-CREATE TABLE recitation (
-    _id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL
-);
-
 CREATE TABLE scholar (
     _id INTEGER PRIMARY KEY,
     server_id INTEGER UNIQUE NOT NULL,
-    name TEXT,
-    email TEXT,
-    phone TEXT,
-    page_url TEXT,
-    image_url TEXT,
-    image_file TEXT,
-    view_count INTEGER NOT NULL DEFAULT 0,
-    popularity INTEGER NOT NULL DEFAULT 0
+    name TEXT NOT NULL,
+    image_url TEXT UNIQUE,
+    image_local_path TEXT,
+    /**
+     * values are:
+     * - 0: SYNC_NONE
+     * - 2: SYNC_FULL
+     */
+    quran_sync_state INTEGER NOT NULL DEFAULT 0,
+    lessons_sync_state INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX index__scholar__name ON scholar (name ASC);
 
@@ -66,102 +47,78 @@ CREATE TABLE quran_collection (
     _id INTEGER PRIMARY KEY,
     server_id INTEGER UNIQUE NOT NULL,
     title TEXT,
-    description TEXT,
+    entries_count INTEGER,
     scholar_id INTEGER NOT NULL,
-    classification_id INTEGER,
-    narration_id INTEGER NOT NULL,
-    page_url TEXT,
-    views_count INTEGER NOT NULL DEFAULT 0,
+    /**
+     * values are:
+     * - 1: SYNC_BASIC
+     * - 2: SYNC_FULL
+     */
+    sync_state INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT fk__quran_collection__scholar FOREIGN KEY (scholar_id) 
-        REFERENCES scholar (_id) ON DELETE CASCADE,
-    CONSTRAINT fk__quran_collection__classification 
-        FOREIGN KEY (classification_id) 
-        REFERENCES classification (_id) ON DELETE SET NULL,
-    CONSTRAINT fk__quran_collection__narration FOREIGN KEY (narration_id) 
-        REFERENCES narration (_id) ON DELETE SET NULL
+        REFERENCES scholar (_id) ON DELETE CASCADE
 );
 CREATE INDEX ndx__quran_collection__scholar_id 
     ON quran_collection (scholar_id ASC);
-CREATE INDEX ndx__quran_collection__classification_id 
-    ON quran_collection (classification_id ASC);
-CREATE INDEX ndx__quran_collection__narration_id 
-    ON quran_collection (narration_id ASC);
 CREATE INDEX ndx__quran_collection__title ON quran_collection (title ASC);
 
-CREATE TABLE recitation_media (
+CREATE TABLE recitation (
     _id INTEGER PRIMARY KEY,
     server_id INTEGER UNIQUE NOT NULL,
+    title TEXT NOT NULL,
     quran_collection_id INTEGER NOT NULL,
-    recitation_id INTEGER NOT NULL,
+    view_order INTEGER,
     published_at INTEGER,
-    resource_id INTEGER UNIQUE NOT NULL,
-    resource_url TEXT UNIQUE NOT NULL,
-    resource_path TEXT,
-    size_kb INTEGER,
-    duration_sec INTEGER,
-    personal_views INTEGER NOT NULL DEFAULT 0,
-    views_count INTEGER NOT NULL DEFAULT 0,
-    vote_up_count INTEGER NOT NULL DEFAULT 0,
-    vote_down_count INTEGER NOT NULL DEFAULT 0,
-    popularity INTEGER NOT NULL DEFAULT 0,
-    CONSTRAINT fk__recitation_media__quran_collection 
+    narration TEXT,
+    CONSTRAINT fk__recitation__quran_collection
         FOREIGN KEY (quran_collection_id) 
-        REFERENCES quran_collection (_id) ON DELETE CASCADE,
-    CONSTRAINT fk__recitation_media__recitation FOREIGN KEY (recitation_id) 
-        REFERENCES recitation (_id)
+        REFERENCES quran_collection (_id) ON DELETE CASCADE
 );
-CREATE INDEX ndx__recitation_media__quran_collection_id 
-    ON recitation_media (quran_collection_id ASC);
-CREATE INDEX ndx__recitation_media__recitation_id 
-    ON recitation_media (recitation_id ASC);
-CREATE UNIQUE INDEX ndx_recitation_media__quran_collection__recitation 
-    ON recitation_media (quran_collection_id, recitation_id);
+CREATE INDEX ndx__recitation__quran_collection_id
+    ON recitation (quran_collection_id ASC);
+
+CREATE TABLE recitation_resource (
+    _id INTEGER PRIMARY KEY,
+    server_id INTEGER UNIQUE NOT NULL,
+    mime_type TEXT,
+    size_kb INTEGER,
+    bit_rate INTEGER,
+    playtime_sec INTEGER,
+    url TEXT NOT NULL UNIQUE,
+    local_path TEXT,
+    recitation_id INTEGER NOT NULL,
+    CONSTRAINT fk__recitation_resource__recitation
+         FOREIGN KEY (recitation_id)
+         REFERENCES recitation(_id) ON DELETE CASCADE
+);
+CREATE INDEX ndx__recitation_resource__recitation_id
+    ON recitation_resource (recitation_id ASC);
 
 CREATE TABLE lesson (
     _id INTEGER PRIMARY KEY,
     server_id INTEGER UNIQUE NOT NULL,
-    title TEXT,
-    key_words TEXT,
-    page_url TEXT,
-    parent_lesson_id INTEGER,
-    is_group INTEGER NOT NULL DEFAULT 0,
-    is_series INTEGER NOT NULL DEFAULT 0,
-    personal_views INTEGER NOT NULL DEFAULT 0,
-    is_favorite INTEGER NOT NULL DEFAULT 0,
-    published_at INTEGER,
-    views_count INTEGER NOT NULL DEFAULT 0,
-    vote_up_count INTEGER NOT NULL DEFAULT 0,
-    vote_down_count INTEGER NOT NULL DEFAULT 0,
-    popularity INTEGER NOT NULL DEFAULT 0
-);
-CREATE INDEX ndx__lesson__title ON lesson (title ASC);
-CREATE INDEX ndx__lesson__parent_lesson_id ON lesson (parent_lesson_id ASC);
-
-CREATE TABLE scholar_lesson (
-    _id INTEGER PRIMARY KEY,
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
     scholar_id INTEGER NOT NULL,
-    lesson_id INTEGER NOT NULL,
-    CONSTRAINT fk__scholar_lesson__scholar FOREIGN KEY (scholar_id) 
-        REFERENCES scholar (_id) ON DELETE CASCADE,
-    CONSTRAINT fk__scholar_lesson__lesson FOREIGN KEY (lesson_id) 
-        REFERENCES lesson (_id) ON DELETE CASCADE
+    parent_lesson_id INTEGER,
+    published_at TEXT,
+    sync_state INTEGER NOT NULL DEFAULT 0,
+    CONSTRAINT fk__lesson__scholar FOREIGN KEY (scholar_id)
+        REFERENCES scholar (_id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX ndx__scholar_lesson__scholar_id__lesson_id 
-    ON scholar_lesson (scholar_id, lesson_id);
-CREATE INDEX ndx__scholar_lesson__scholar_id
-    ON scholar_lesson (scholar_id ASC);
-CREATE INDEX ndx__scholar_lesson_lesson_id
-    ON scholar_lesson (lesson_id ASC);
+CREATE INDEX ndx__lesson__name ON lesson (name ASC);
+CREATE INDEX ndx__lesson__parent_lesson_id ON lesson (parent_lesson_id ASC);
 
 CREATE TABLE lesson_resource (
     _id INTEGER PRIMARY KEY,
     sever_id INTEGER UNIQUE NOT NULL,
-    url TEXT NOT NULL,
-    size_kb INTEGER,
-    duration_sec INTEGER,
     lesson_id INTEGER NOT NULL,
-    part_number NOT NULL DEFAULT 1,
-    type TEXT NOT NULL DEFAULT "audio",
+    mime_type TEXT NOT NULL,
+    size_kb INTEGER,
+    bit_rate INTEGER,
+    playtime INTEGER,
+    url TEXT NOT NULL UNIQUE,
+    local_path TEXT,
     CONSTRAINT fk__lesson_resource__lesson FOREIGN KEY (lesson_id) 
         REFERENCES lesson (_id) ON DELETE CASCADE
 );
