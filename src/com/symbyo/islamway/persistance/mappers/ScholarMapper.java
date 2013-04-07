@@ -22,7 +22,7 @@ public class ScholarMapper extends AbstractMapper implements
 		Section.ISectionFinder,
 		Scholar.IScholarFinder {
 
-	private enum ScholarField {
+	public enum ScholarField {
 		ID( "_id" ),
 		SERVER_ID( "server_id" ),
 		NAME( "name" ),
@@ -45,7 +45,7 @@ public class ScholarMapper extends AbstractMapper implements
 		}
 	}
 
-	private enum ScholarSectionField {
+	public enum ScholarSectionField {
 		ID( "_id" ),
 		SECTION_ID( "section_id" ),
 		SCHOLAR_ID( "scholar_id" );
@@ -64,7 +64,7 @@ public class ScholarMapper extends AbstractMapper implements
 		}
 	}
 
-	private enum SectionField {
+	public enum SectionField {
 		ID( "_id" ),
 		TITLE( "title" ),
 		SYNC_STATE( "sync_state" );
@@ -83,9 +83,9 @@ public class ScholarMapper extends AbstractMapper implements
 		}
 	}
 
-	private static final String SCHOLAR_TABLE_NAME         = "scholar";
-	private static final String SECTION_TABLE_NAME         = "section";
-	private static final String SCHOLAR_SECTION_TABLE_NAME = "scholar_section";
+	public static final String SCHOLAR_TABLE_NAME         = "scholar";
+	public static final String SECTION_TABLE_NAME         = "section";
+	public static final String SCHOLAR_SECTION_TABLE_NAME = "scholar_section";
 
 	/**
 	 * synthesize a SQL string with the shcolar fields.

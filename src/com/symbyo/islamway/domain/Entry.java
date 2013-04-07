@@ -17,22 +17,23 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 	private final int       mServerId;
 	private final String    mTitle;
 	private final EntryType mEntryType;
-	private       int       mScholarServerId;
+	private       int       mScholarId;
 	private       Scholar   mScholar = null;
 
 	public Scholar getScholar()
 	{
-		if ( mScholar == null && mScholarServerId != INVALID_ID ) {
+		/*if ( mScholar == null && mScholarServerId != INVALID_ID ) {
 			ScholarMapper mapper =
 					(ScholarMapper) Repository.getInstance()
 							.getMapper( Scholar.class );
 			mScholar = mapper.findScholarByServerId( mScholarServerId );
-		}
+		}*/
 		return mScholar;
 	}
 
 	public void setScholar( Scholar scholar ) {
 		mScholar = scholar;
+		mScholarId = scholar.getId();
 	}
 
 	public enum EntryType {
@@ -63,23 +64,34 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 	}
 
 	public Entry(
-			int id, int server_id, String title, EntryType type,
-			int scholar_server_id )
+			int id, int server_id, String title, EntryType type )
 	{
-		super( id );
-		mServerId = server_id;
-		mTitle = title;
-		mEntryType = type;
-		mScholarServerId = scholar_server_id;
+		this( id, server_id, title, type, INVALID_ID);
+	}
+
+	public Entry( int server_id, String title, EntryType type )
+	{
+		this( INVALID_ID , server_id, title, type, INVALID_ID);
+		/** < register the object as new */
+		UnitOfWork.getCurrent().registerNew( this );
+	}
+
+	public Entry( int server_id, String title, EntryType type, int scholar_id )
+	{
+		this( INVALID_ID, server_id, title, type, scholar_id );
 
 		/** < register the object as new */
 		UnitOfWork.getCurrent().registerNew( this );
 	}
 
 	public Entry(
-			int id, int server_id, String title, EntryType type )
+			int id, int server_id, String title, EntryType type, int scholar_id )
 	{
-		this( id, server_id, title, type, INVALID_ID );
+		super( id );
+		mServerId = server_id;
+		mTitle = title;
+		mEntryType = type;
+		mScholarId = scholar_id;
 	}
 
 	protected Entry( Parcel source )
@@ -88,7 +100,7 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 		mServerId = source.readInt();
 		mTitle = source.readString();
 		mEntryType = EntryType.values()[source.readInt()];
-		mScholarServerId = source.readInt();
+		mScholarId = source.readInt();
 
 		/**
 		 * register the object as new. if the original object was already in the
@@ -113,7 +125,7 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 		dest.writeInt( mServerId );
 		dest.writeString( mTitle );
 		dest.writeInt( mEntryType.ordinal() );
-		dest.writeInt( mScholarServerId );
+		dest.writeInt( mScholarId );
 		doWriteToParcel( dest );
 	}
 

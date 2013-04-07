@@ -104,7 +104,8 @@ public class CollectionMapper extends AbstractMapper implements
 			values.put( QuranCollectionField.TYPE.toString(),
 						collection.getType().toString() );
 			Utils.FormatedLog( "server_id: %d", collection.getServerId() );
-			Utils.FormatedLog( "scholar_id: %d", collection.getScholar().getId() );
+			Utils.FormatedLog( "scholar_id: %d",
+							   collection.getScholar().getId() );
 			switch ( collection.getType() ) {
 				case MUSHAF:
 					db.insertWithOnConflict( QURAN_COLLECTION_TABLE_NAME, null,
@@ -126,39 +127,87 @@ public class CollectionMapper extends AbstractMapper implements
 	@Override
 	protected DomainObject doLoad( @NonNull Cursor c )
 	{
-		Collection collection;
+		Collection collection = null;
 		try {
-			// TODO return a Collection object from cursor.
+			//_id
+			int c_index = c.getColumnIndexOrThrow(
+					QuranCollectionField.ID.toString() );
+			int id = c.getInt( c_index );
+
+			//server_id
+			c_index = c.getColumnIndexOrThrow(
+					QuranCollectionField.SERVER_ID.toString() );
+			int server_id = c.getInt( c_index );
+
+			//title
+			c_index = c.getColumnIndexOrThrow(
+					QuranCollectionField.TITLE.toString() );
+			String title = c.isNull( c_index ) ? null : c.getString( c_index );
+
+			//entries_count
+			c_index = c.getColumnIndexOrThrow(
+					QuranCollectionField.ENTRIES_COUNT.toString() );
+			int entries_count = c.getInt( c_index );
+
+			//scholar_id
+			c_index = c.getColumnIndexOrThrow(
+					QuranCollectionField.SCHOLAR_ID.toString() );
+			int scholar_id = c.getInt( c_index );
+
+			//type
+			c_index = c.getColumnIndexOrThrow(
+					QuranCollectionField.TYPE.toString() );
+			Entry.EntryType type =
+					Entry.EntryType.values()[c.getInt( c_index )];
+			collection =
+					new Collection( id, server_id, title, entries_count, type,
+									scholar_id );
+
 		} catch ( IllegalArgumentException e ) {
 			if ( BuildConfig.DEBUG ) {
 				throw new Error( "Column index does not exist" );
 			}
 		}
-		return null;
+		return collection;
 	}
 
 	@Override
-	public List<Collection> getScholarQuranCollections( Scholar scholar )
+	public List<Collection> getScholarQuranCollections( final Scholar scholar )
 	{
 		StatementSource stmt = new StatementSource() {
 			@Override
 			public String sql()
 			{
 				// TODO implement the method body
-//				StringBuilder bldr =
-//						new StringBuilder( "SELECT " + getQuranCollectionFields(
-//								"c" ) + " FROM " + QURAN_COLLECTION_TABLE_NAME + " AS c" );
-				return null;
+				StringBuilder bldr = new StringBuilder(
+						"SELECT " + getQuranCollectionFields( "c" ) );
+				bldr.append( " FROM " + QURAN_COLLECTION_TABLE_NAME + " AS c" )
+						.append( " INNER JOIN "
+										 + ScholarMapper.SCHOLAR_TABLE_NAME
+										 + " AS s" )
+						.append( " ON s." + ScholarMapper.ScholarField.ID )
+						.append( " = c." + QuranCollectionField.SCHOLAR_ID )
+						.append( " WHERE s." + ScholarMapper.ScholarField.ID )
+						.append( " = ?" );
+				Utils.Log( bldr.toString() );
+				return bldr.toString();
 			}
 
 			@Override
 			public String[] parameters()
 			{
-				// TODO implement the method body
-				return new String[0];
+				return new String[]{Integer.toString( scholar.getId() )};
 			}
 		};
-		return null;
+		List<Collection> result = null;
+		try {
+			// unchecked but safe enough.
+			result = (List<Collection>) findMany( stmt );
+		} catch ( ClassCastException e ) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
 	@Override

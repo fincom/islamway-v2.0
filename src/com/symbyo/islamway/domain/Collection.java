@@ -17,6 +17,13 @@ public class Collection extends Entry {
 
 	public Collection(
 			int id, int server_id, String title, int entries_count,
+			EntryType type )
+	{
+		this( id, server_id, title, entries_count, type, INVALID_ID );
+	}
+
+	public Collection(
+			int id, int server_id, String title, int entries_count,
 			EntryType type, int scholar_id )
 	{
 		super( id, server_id, title, type, scholar_id );
@@ -24,10 +31,17 @@ public class Collection extends Entry {
 	}
 
 	public Collection(
+			int server_id, String title, int entries_count, EntryType type )
+	{
+		this( server_id, title, entries_count, type, INVALID_ID );
+	}
+
+	public Collection(
 			int server_id, String title, int entries_count, EntryType type,
 			int scholar_id )
 	{
-		this( INVALID_ID, server_id, title, entries_count, type, scholar_id );
+		super( server_id, title, type, scholar_id );
+		mEntriesCount = entries_count;
 	}
 
 	protected Collection( Parcel source )
