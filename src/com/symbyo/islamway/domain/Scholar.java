@@ -23,10 +23,13 @@ public class Scholar extends DomainObject implements FilterableObject {
 	{
 		if ( mQuranCollections == null ) {
 			mQuranCollections = new ArrayList<Collection>();
-			Entry.IQuranCollectionFinder mapper =
-					(Entry.IQuranCollectionFinder) Repository.getInstance()
-							.getMapper( Entry.class );
-			mQuranCollections.addAll( mapper.getScholarQuranEntries( this ) );
+			Entry.ICollectionFinder mapper =
+					(Entry.ICollectionFinder) Repository.getInstance()
+							.getMapper( Collection.class );
+			List<Collection> list = mapper.getScholarQuranCollections( this );
+			if ( list != null ) {
+				mQuranCollections.addAll( list );
+			}
 		}
 		return mQuranCollections;
 	}
@@ -38,6 +41,8 @@ public class Scholar extends DomainObject implements FilterableObject {
 		SyncState getQuranSyncState( Scholar scholar );
 
 		SyncState getLessonsSyncState( Scholar scholar );
+
+		Scholar findScholarByServerId( int server_id );
 	}
 
 	public Scholar(

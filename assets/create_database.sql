@@ -55,6 +55,7 @@ CREATE TABLE quran_collection (
      * - 2: SYNC_FULL
      */
     sync_state INTEGER NOT NULL DEFAULT 0,
+    type TEXT NOT NULL DEFAULT 'quran',
     CONSTRAINT fk__quran_collection__scholar FOREIGN KEY (scholar_id) 
         REFERENCES scholar (_id) ON DELETE CASCADE
 );
@@ -70,6 +71,7 @@ CREATE TABLE recitation (
     view_order INTEGER,
     published_at INTEGER,
     narration TEXT,
+    type TEXT NOT NULL DEFAULT 'recitation',
     CONSTRAINT fk__recitation__quran_collection
         FOREIGN KEY (quran_collection_id) 
         REFERENCES quran_collection (_id) ON DELETE CASCADE
@@ -97,16 +99,16 @@ CREATE INDEX ndx__recitation_resource__recitation_id
 CREATE TABLE lesson (
     _id INTEGER PRIMARY KEY,
     server_id INTEGER UNIQUE NOT NULL,
-    type TEXT NOT NULL,
-    name TEXT NOT NULL,
+    title TEXT NOT NULL,
     scholar_id INTEGER NOT NULL,
     parent_lesson_id INTEGER,
     published_at TEXT,
+    type TEXT NOT NULL,
     sync_state INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT fk__lesson__scholar FOREIGN KEY (scholar_id)
         REFERENCES scholar (_id) ON DELETE CASCADE
 );
-CREATE INDEX ndx__lesson__name ON lesson (name ASC);
+CREATE INDEX ndx__lesson__title ON lesson (title ASC);
 CREATE INDEX ndx__lesson__parent_lesson_id ON lesson (parent_lesson_id ASC);
 
 CREATE TABLE lesson_resource (

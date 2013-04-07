@@ -7,9 +7,9 @@ import android.os.Parcel;
  * @since 3/3/13
  */
 public class Sura extends Entry {
-	public Sura( int server_id, String title, int views_count, EntryType type )
+	public Sura( int server_id, String title, int views_count, EntryType type, int scholar_id )
 	{
-		super( INVALID_ID, server_id, title, views_count, type );
+		super( INVALID_ID, server_id, title, type, scholar_id );
 	}
 
 	@Override

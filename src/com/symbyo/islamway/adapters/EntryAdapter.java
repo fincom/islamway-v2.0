@@ -40,8 +40,7 @@ public class EntryAdapter extends BaseAdapter
 
 	private final int ITEM_LAYOUT = R.layout.collection_list_item;
 
-	public EntryAdapter(
-			Context context, List<Entry> entries )
+	public EntryAdapter( Context context, List<Entry> entries )
 	{
 		mEntries = entries;
 		mContext = context;

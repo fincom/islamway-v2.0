@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class Parser {
 
-	protected final int INVALID_ID = -1;
+	public static final int INVALID_ID = -1;
 
 	public List<? extends DomainObject> parse( String json,
 											   boolean is_collection )
@@ -46,7 +46,7 @@ public abstract class Parser {
 		}
 	}
 
-	protected abstract class JSONDomainObject<T extends DomainObject> {
+	public static abstract class JSONDomainObject<T extends DomainObject> {
 		public abstract T toDomainObject();
 	}
 

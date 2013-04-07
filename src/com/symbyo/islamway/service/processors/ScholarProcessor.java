@@ -24,14 +24,13 @@ public class ScholarProcessor extends Processor {
 		mSection = section;
 	}
 
-	@SuppressWarnings( "null" )
+	@SuppressWarnings("null")
 	@Override
 	protected void doProcess( List<? extends DomainObject> collection,
 							  @NonNull SQLiteDatabase db, Intent pIntent )
 	{
 		if ( mSection != null ) {
-			Utils.FormatedLog( "processing %d scholars",
-								   collection.size() );
+			Utils.FormatedLog( "processing %d scholars", collection.size() );
 			for ( DomainObject obj : collection ) {
 				Scholar scholar = (Scholar) obj;
 				scholar.addSection( mSection );
@@ -41,8 +40,7 @@ public class ScholarProcessor extends Processor {
 		if ( result ) {
 			ScholarMapper mapper = (ScholarMapper) Repository
 					.getInstance( mContext )
-					.getMapper(
-							Scholar.class );
+					.getMapper( Scholar.class );
 			mapper.updateSectionSyncState( mSection,
 										   DomainObject.SyncState.SYNC_STATE_FULL );
 		}

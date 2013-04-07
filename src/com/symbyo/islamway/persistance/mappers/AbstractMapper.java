@@ -64,6 +64,36 @@ public abstract class AbstractMapper {
 	}
 
 	/**
+	 * Finds multiple DomainObjects of the same type based on a parameterized
+	 * Sql statement.
+	 *
+	 * @param stmt
+	 * @return
+	 */
+	protected DomainObject findOne( StatementSource stmt ) {
+		DomainObject obj = null;
+		SQLiteDatabase db;
+		Cursor c = null;
+		try {
+			Utils.Log( "opening the database for read." );
+			db = Repository.getInstance( mContext ).getReadableDatabase();
+			Utils.Log( stmt.sql() );
+			c = db.rawQuery( stmt.sql(), stmt.parameters() );
+			if ( c != null ) {
+				c.moveToFirst();
+				obj = load( c );
+			}
+		} catch ( SQLiteException e ) {
+			e.printStackTrace();
+		} finally {
+			if ( c != null ) {
+				c.close();
+			}
+		}
+		return obj;
+	}
+
+	/**
 	 * Loads a multiple row Cursor into a List of DomainObjects.
 	 *
 	 * @param c

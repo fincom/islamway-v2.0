@@ -2,6 +2,9 @@ package com.symbyo.islamway.domain;
 
 import android.os.Parcel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author kdehairy
  * @since 2/20/13
@@ -9,20 +12,22 @@ import android.os.Parcel;
 public class Collection extends Entry {
 
 
-	private final int mEntriesCount;
+	private int mEntriesCount = 0;
+	private ArrayList<Entry> mEntries;
 
 	public Collection(
-			int id, int server_id, String title, int entries_count, EntryType type )
+			int id, int server_id, String title, int entries_count,
+			EntryType type, int scholar_id )
 	{
-		super( id, server_id, title, type );
+		super( id, server_id, title, type, scholar_id );
 		mEntriesCount = entries_count;
 	}
 
 	public Collection(
-			int server_id, String title, int entries_count, EntryType type )
+			int server_id, String title, int entries_count, EntryType type,
+			int scholar_id )
 	{
-		super( INVALID_ID, server_id, title, type );
-		mEntriesCount = entries_count;
+		this( INVALID_ID, server_id, title, entries_count, type, scholar_id );
 	}
 
 	protected Collection( Parcel source )
@@ -56,5 +61,11 @@ public class Collection extends Entry {
 	public int getEntriesCount()
 	{
 		return mEntriesCount;
+	}
+
+	public List<Entry> getEntries()
+	{
+		// TODO implement the method body
+		return null;
 	}
 }

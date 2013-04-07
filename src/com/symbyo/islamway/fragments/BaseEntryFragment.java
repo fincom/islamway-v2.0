@@ -173,6 +173,9 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 				@Override
 				protected List<? extends Entry> doInBackground( Void... params )
 				{
+					if ( getSherlockActivity() == null ) {
+						return null;
+					}
 					return doRetrieveCollections();
 				}
 
@@ -180,6 +183,7 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 				protected void onPostExecute( List data )
 				{
 					mAdapter = new EntryAdapter( getSherlockActivity(), data );
+					setListAdapter( mAdapter );
 				}
 			};
 		task.execute();
@@ -210,7 +214,8 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 											  Style.ALERT ).show();
 						}
 					}
-					int key = intent.getIntExtra( ServiceHelper.EXTRA_DATA_KEY,
+					// TODO call retrieveCollections instead
+					/*int key = intent.getIntExtra( ServiceHelper.EXTRA_DATA_KEY,
 												  0 );
 					Crouton.hide( mCrouton );
 					@SuppressWarnings( "unchecked" )
@@ -219,7 +224,8 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 									.readDomainObjects( key );
 					mAdapter = new EntryAdapter( getSherlockActivity(),
 												 entries );
-					setListAdapter( mAdapter );
+					setListAdapter( mAdapter );*/
+					retrieveCollections();
 				}
 			};
 

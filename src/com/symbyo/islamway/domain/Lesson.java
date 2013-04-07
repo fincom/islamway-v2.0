@@ -8,9 +8,9 @@ import android.os.Parcel;
  */
 public class Lesson extends Entry {
 	public Lesson( int server_id, String title, int views_count,
-				   EntryType type )
+				   EntryType type, int scholar_id )
 	{
-		super( INVALID_ID, server_id, title, views_count, type );
+		super( INVALID_ID, server_id, title, type, scholar_id );
 	}
 
 	@Override

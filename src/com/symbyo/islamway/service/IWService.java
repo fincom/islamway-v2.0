@@ -8,7 +8,7 @@ import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.persistance.Repository;
-import com.symbyo.islamway.service.factories.CollectionResourceFactory;
+import com.symbyo.islamway.service.factories.QuranCollectionResourceFactory;
 import com.symbyo.islamway.service.factories.ResourceFactory;
 import com.symbyo.islamway.service.factories.ScholarResourceFactory;
 import com.symbyo.islamway.service.parsers.Parser;
@@ -23,7 +23,6 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * @author kdehairy
@@ -71,7 +70,7 @@ public class IWService extends IntentService {
 		if ( action == null ) {
 			throw new NullPointerException( "intent action can't be null" );
 		}
-		ResourceFactory factory = createResourceFactory( action );
+		ResourceFactory factory = createResourceFactory( action, resource_id );
 		RestClient rest_client = factory.createRestClient();
 		Parser parser = factory.createParser();
 		Processor processor = factory.createProcessor( this );
@@ -123,18 +122,18 @@ public class IWService extends IntentService {
 
 	private
 	@NonNull
-	ResourceFactory createResourceFactory( @NonNull String action )
+	ResourceFactory createResourceFactory( @NonNull String action, int resource_id )
 	{
 		ResourceFactory result = null;
 		String url_format = BASE_URL;
-		if ( action.equals( ACTION_GET_QURAN_SCHOLARS ) ) {
+		if ( ACTION_GET_QURAN_SCHOLARS.equals( action ) ) {
 			final Section section = Repository.getInstance(
 					getApplicationContext() ).getSection( SectionType.QURAN );
 			url_format += section.toString() + "/scholars";
 			result = new ScholarResourceFactory( url_format,
 												 RestClient.HTTPMethod.GET,
 												 section );
-		} else if ( action.equals( ACTION_GET_LESSONS_SCHOLARS ) ) {
+		} else if ( ACTION_GET_LESSONS_SCHOLARS.equals( action ) ) {
 			final Section section = Repository.getInstance(
 					getApplicationContext() )
 					.getSection(
@@ -143,22 +142,25 @@ public class IWService extends IntentService {
 			result = new ScholarResourceFactory( url_format,
 												 RestClient.HTTPMethod.GET,
 												 section );
-		} else if ( action.equals( ACTION_GET_SCHOLAR_QURAN_COLLECTION ) ) {
+		} else if ( ACTION_GET_SCHOLAR_QURAN_COLLECTION.equals( action ) ) {
 			final Section section = Repository.getInstance(
 					getApplicationContext() ).getSection( SectionType.QURAN );
 			url_format += section.toString() + "/scholar/%d/collections";
-			result = new CollectionResourceFactory( url_format,
-													RestClient.HTTPMethod.GET );
-		} else if ( action.equals( ACTION_GET_SCHOLAR_LESSON_COLLECTION ) ) {
+			result = new QuranCollectionResourceFactory( url_format,
+													RestClient.HTTPMethod.GET,
+													resource_id );
+		} else if ( ACTION_GET_SCHOLAR_LESSON_COLLECTION.equals( action ) ) {
 			final Section section = Repository.getInstance(
 					getApplicationContext() ).getSection( SectionType.LESSONS );
 			url_format += section.toString() + "/scholar/%d/collections";
-			result = new CollectionResourceFactory( url_format,
-													RestClient.HTTPMethod.GET );
-		} else if ( action.equals( ACTION_GET_SUB_ENTRIES ) ) {
+			result = new QuranCollectionResourceFactory( url_format,
+													RestClient.HTTPMethod.GET,
+													resource_id );
+		} else if ( ACTION_GET_SUB_ENTRIES.equals( action ) ) {
 			url_format += "collection/%d/entries";
-			result = new CollectionResourceFactory( url_format,
-													RestClient.HTTPMethod.GET );
+			result = new QuranCollectionResourceFactory( url_format,
+													RestClient.HTTPMethod.GET,
+													resource_id );
 		}
 
 		if ( result == null ) {

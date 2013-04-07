@@ -1,9 +1,9 @@
 package com.symbyo.islamway.service.factories;
 
 import android.content.Context;
-import com.symbyo.islamway.service.parsers.CollectionParser;
+import com.symbyo.islamway.service.parsers.QuranCollectionParser;
 import com.symbyo.islamway.service.parsers.Parser;
-import com.symbyo.islamway.service.processors.CollectionsProcessor;
+import com.symbyo.islamway.service.processors.QuranCollectionsProcessor;
 import com.symbyo.islamway.service.processors.Processor;
 import com.symbyo.islamway.service.restclients.RestClient;
 
@@ -11,12 +11,14 @@ import com.symbyo.islamway.service.restclients.RestClient;
  * @author kdehairy
  * @since 2/20/13
  */
-public class CollectionResourceFactory extends ResourceFactory {
+public class QuranCollectionResourceFactory extends ResourceFactory {
+	private final int mResourceId;
 
-	public CollectionResourceFactory(
-			String url_format, RestClient.HTTPMethod method )
+	public QuranCollectionResourceFactory(
+			String url_format, RestClient.HTTPMethod method, int resource_id )
 	{
 		super( url_format, method );
+		mResourceId = resource_id;
 	}
 
 	@Override
@@ -28,12 +30,12 @@ public class CollectionResourceFactory extends ResourceFactory {
 	@Override
 	public Parser createParser()
 	{
-		return new CollectionParser();
+		return new QuranCollectionParser();
 	}
 
 	@Override
 	public Processor createProcessor( Context context )
 	{
-		return new CollectionsProcessor( context );
+		return new QuranCollectionsProcessor( context, mResourceId );
 	}
 }

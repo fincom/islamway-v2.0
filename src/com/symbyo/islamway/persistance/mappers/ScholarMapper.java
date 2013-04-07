@@ -313,6 +313,37 @@ public class ScholarMapper extends AbstractMapper implements
 	}
 
 	@Override
+	public Scholar findScholarByServerId( final int server_id )
+	{
+		StatementSource stmt = new StatementSource() {
+			@Override
+			public String sql()
+			{
+				StringBuilder bldr;
+				bldr = new StringBuilder( "SELECT * FROM " )
+						.append( SCHOLAR_TABLE_NAME )
+						.append( " WHERE " + ScholarField.SERVER_ID + " = ?" );
+				return bldr.toString();
+			}
+
+			@Override
+			public String[] parameters()
+			{
+				// TODO implement the method body
+				return new String[]{Integer.toString( server_id )};
+			}
+		};
+
+		Scholar scholar = null;
+		try {
+			scholar = (Scholar) findOne( stmt );
+		} catch ( ClassCastException e ) {
+			e.printStackTrace();
+		}
+		return scholar;
+	}
+
+	@Override
 	public SyncState getSectionSyncState( Section section )
 	{
 		SyncState sync_state = null;

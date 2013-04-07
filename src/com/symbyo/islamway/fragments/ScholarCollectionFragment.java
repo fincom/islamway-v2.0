@@ -52,6 +52,9 @@ public class ScholarCollectionFragment extends BaseEntryFragment {
 	@Override
 	protected List<? extends Entry> doRetrieveCollections()
 	{
+		if ( mScholar == null ) {
+			return null;
+		}
 		return mScholar.getQuranCollections();
 	}
 
