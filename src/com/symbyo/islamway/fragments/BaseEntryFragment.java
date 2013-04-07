@@ -195,17 +195,20 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 				public void onReceive(
 						Context context, Intent intent )
 				{
+					Utils.Log( "broadcast received." );
 					final LocalBroadcastManager mngr = LocalBroadcastManager
 							.getInstance( getSherlockActivity() );
 					mngr.unregisterReceiver( this );
 					int request_id =
 							intent.getIntExtra( ServiceHelper.EXTRA_REQUEST_ID,
 												ServiceHelper.REQUEST_ID_NONE );
+					Utils.FormatedLog( "request id: %d", request_id );
 					if ( request_id != mRequestId ) {
 						return;
 					}
 					boolean error = intent.getBooleanExtra(
 							ServiceHelper.EXTRA_RESPONSE_ERROR, false );
+					Utils.FormatedLog( "error: %b", error );
 					if ( error ) {
 						if ( getSherlockActivity() != null ) {
 							Crouton.hide( mCrouton );
@@ -225,6 +228,7 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 					mAdapter = new EntryAdapter( getSherlockActivity(),
 												 entries );
 					setListAdapter( mAdapter );*/
+					Crouton.hide( mCrouton );
 					retrieveCollections();
 				}
 			};

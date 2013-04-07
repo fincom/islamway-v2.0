@@ -42,7 +42,10 @@ public class QuranCollectionsProcessor extends Processor {
 			Entry entry = (Entry) obj;
 			entry.setScholar( scholar );
 		}
-		UnitOfWork.getCurrent().commit( db );
+		boolean result = UnitOfWork.getCurrent().commit( db );
+		if ( result ) {
+			scholar.setQuranSyncState( DomainObject.SyncState.SYNC_STATE_FULL );
+		}
 
 		/*int key = IWApplication.putDomainObjects( collection );
 		pIntent.putExtra( IWService.EXTRA_DATA_KEY, key );*/

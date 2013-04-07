@@ -3,6 +3,7 @@ package com.symbyo.islamway.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import com.symbyo.islamway.ServiceHelper;
+import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
@@ -61,7 +62,10 @@ public class ScholarCollectionFragment extends BaseEntryFragment {
 	@Override
 	protected boolean isSavedLocally()
 	{
-		// check the sync_state of the scholar.
+		DomainObject.SyncState state = mScholar.getQuranSyncState();
+		if ( DomainObject.SyncState.SYNC_STATE_FULL.equals( state ) ) {
+			return true;
+		}
 		return false;
 	}
 }

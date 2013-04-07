@@ -43,6 +43,8 @@ public class Scholar extends DomainObject implements FilterableObject {
 		SyncState getLessonsSyncState( Scholar scholar );
 
 		Scholar findScholarByServerId( int server_id );
+
+		void updateScholarSyncState( Scholar scholar, SyncState state );
 	}
 
 	public Scholar(
@@ -202,6 +204,13 @@ public class Scholar extends DomainObject implements FilterableObject {
 		IScholarFinder mapper = (IScholarFinder) Repository.getInstance()
 				.getMapper( Scholar.class );
 		return mapper.getQuranSyncState( this );
+	}
+
+	public void setQuranSyncState( SyncState state )
+	{
+		IScholarFinder mapper = (IScholarFinder) Repository.getInstance()
+				.getMapper( Scholar.class );
+		mapper.updateScholarSyncState( this, state );
 	}
 
 	public SyncState getLessonsSyncState()
