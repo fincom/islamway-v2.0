@@ -64,8 +64,6 @@ public class Response implements Iterable<Page> {
 			@Override
 			public void remove()
 			{
-				// TODO Auto-generated method stub
-
 			}
 
 		};

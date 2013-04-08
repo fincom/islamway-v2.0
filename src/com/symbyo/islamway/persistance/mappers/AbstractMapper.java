@@ -43,7 +43,6 @@ public abstract class AbstractMapper {
 		try {
 			Utils.Log( "opening the database for read." );
 			db = Repository.getInstance( mContext ).getReadableDatabase();
-			Utils.Log( stmt.sql() );
 			c = db.rawQuery( stmt.sql(), stmt.parameters() );
 			if ( c != null ) {
 				objects = loadAll( c );

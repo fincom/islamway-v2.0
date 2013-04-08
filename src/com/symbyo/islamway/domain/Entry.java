@@ -59,8 +59,8 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 
 	public static interface ICollectionFinder {
 		List<Collection> getScholarQuranCollections( Scholar scholar );
+		List<Collection> getScholarLessonCollections( Scholar scholar );
 
-		List<Entry> getEntries( Collection collection );
 	}
 
 	public Entry(

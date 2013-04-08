@@ -56,7 +56,7 @@ public class ScholarCollectionFragment extends BaseEntryFragment {
 		if ( mScholar == null ) {
 			return null;
 		}
-		return mScholar.getQuranCollections();
+		return mScholar.getCollectionsBySection( mSection );
 	}
 
 	@Override

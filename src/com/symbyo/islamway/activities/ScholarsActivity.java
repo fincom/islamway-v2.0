@@ -128,8 +128,7 @@ public class ScholarsActivity extends BaseSlidingActivity implements
 					.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE )
 					.commit();
 		} else if ( item.type == SlideMenuFragment.MenuItemType.PLAYING_LIST ) {
-			// TODO remove the following lines and start the playing list
-			// activity
+			// TODO remove the following lines and start the playing list activity
 			Fragment frgmnt = getSupportFragmentManager().findFragmentById(
 					R.id.content_frame );
 			getSupportFragmentManager().beginTransaction().remove( frgmnt )

@@ -101,6 +101,7 @@ CREATE TABLE lesson (
     server_id INTEGER UNIQUE NOT NULL,
     title TEXT NOT NULL,
     scholar_id INTEGER NOT NULL,
+    entries_count INTEGER,
     parent_lesson_id INTEGER,
     published_at TEXT,
     type TEXT NOT NULL,

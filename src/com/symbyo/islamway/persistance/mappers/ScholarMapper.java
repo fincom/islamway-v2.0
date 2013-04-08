@@ -329,7 +329,6 @@ public class ScholarMapper extends AbstractMapper implements
 			@Override
 			public String[] parameters()
 			{
-				// TODO implement the method body
 				return new String[]{Integer.toString( server_id )};
 			}
 		};

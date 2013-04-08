@@ -7,10 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import com.symbyo.islamway.BuildConfig;
 import com.symbyo.islamway.Utils;
-import com.symbyo.islamway.domain.Collection;
-import com.symbyo.islamway.domain.DomainObject;
-import com.symbyo.islamway.domain.Entry;
-import com.symbyo.islamway.domain.Scholar;
+import com.symbyo.islamway.domain.*;
 import com.symbyo.islamway.persistance.Repository;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -23,7 +20,7 @@ import java.util.List;
 public class CollectionMapper extends AbstractMapper implements
 		Entry.ICollectionFinder {
 
-	private enum QuranCollectionField {
+	public enum QuranCollectionField {
 		ID( "_id" ),
 		SERVER_ID( "server_id" ),
 		TITLE( "title" ),
@@ -46,8 +43,34 @@ public class CollectionMapper extends AbstractMapper implements
 		}
 	}
 
-	private static final String QURAN_COLLECTION_TABLE_NAME =
+	public enum LessonField {
+		ID( "_id" ),
+		SERVER_ID( "server_id" ),
+		TITLE( "title" ),
+		SCHOLAR_ID( "scholar_id" ),
+		ENTRIES_COUNT ( "entries_count" ),
+		PARENT_LESSON_ID( "parent_lesson_id" ),
+		PUBLISHED_AT( "published_at" ),
+		TYPE( "type" ),
+		SYNC_STATE( "sync_state" );
+
+		private final String mValue;
+
+		LessonField( String value )
+		{
+			mValue = value;
+		}
+
+		@Override
+		public String toString()
+		{
+			return mValue;
+		}
+	}
+
+	public static final String QURAN_COLLECTION_TABLE_NAME =
 			"quran_collection";
+	public static final String LESSON_TABLE_NAME = "lesson";
 
 	private static String getQuranCollectionFields( String tableAliase )
 	{
@@ -58,6 +81,25 @@ public class CollectionMapper extends AbstractMapper implements
 		}
 		StringBuilder bldr = new StringBuilder();
 		QuranCollectionField[] fields = QuranCollectionField.values();
+		for ( int i = 0, len = fields.length; i < len; i++ ) {
+			bldr.append( tableAliase ).append( fields[i].toString() );
+			if ( i == len - 1 ) {
+				break;
+			}
+			bldr.append( "," );
+		}
+		return bldr.toString();
+	}
+
+	private static String getLessonCollectionFields( String tableAliase )
+	{
+		if ( tableAliase == null ) {
+			tableAliase = "";
+		} else {
+			tableAliase = tableAliase + ".";
+		}
+		StringBuilder bldr = new StringBuilder();
+		LessonField[] fields = LessonField.values();
 		for ( int i = 0, len = fields.length; i < len; i++ ) {
 			bldr.append( tableAliase ).append( fields[i].toString() );
 			if ( i == len - 1 ) {
@@ -103,12 +145,16 @@ public class CollectionMapper extends AbstractMapper implements
 						DomainObject.SyncState.SYNC_STATE_NONE.ordinal() );
 			values.put( QuranCollectionField.TYPE.toString(),
 						collection.getType().toString() );
-			Utils.FormatedLog( "server_id: %d", collection.getServerId() );
-			Utils.FormatedLog( "scholar_id: %d",
-							   collection.getScholar().getId() );
 			switch ( collection.getType() ) {
 				case MUSHAF:
 					db.insertWithOnConflict( QURAN_COLLECTION_TABLE_NAME, null,
+											 values,
+											 SQLiteDatabase.CONFLICT_REPLACE );
+					Utils.FormatedLog( "Collection saved as %s",
+									   collection.getType().toString() );
+				case LESSONS_SERIES:
+				case GROUP:
+					db.insertWithOnConflict( LESSON_TABLE_NAME, null,
 											 values,
 											 SQLiteDatabase.CONFLICT_REPLACE );
 					Utils.FormatedLog( "Collection saved as %s",
@@ -178,7 +224,6 @@ public class CollectionMapper extends AbstractMapper implements
 			@Override
 			public String sql()
 			{
-				// TODO implement the method body
 				StringBuilder bldr = new StringBuilder(
 						"SELECT " + getQuranCollectionFields( "c" ) );
 				bldr.append( " FROM " + QURAN_COLLECTION_TABLE_NAME + " AS c" )
@@ -211,9 +256,40 @@ public class CollectionMapper extends AbstractMapper implements
 	}
 
 	@Override
-	public List<Entry> getEntries( Collection collection )
+	public List<Collection> getScholarLessonCollections( final Scholar scholar )
 	{
-		// TODO implement the method body
-		return null;
+		StatementSource stmt = new StatementSource() {
+			@Override
+			public String sql()
+			{
+				StringBuilder bldr = new StringBuilder(
+						"SELECT " + getLessonCollectionFields( "c" ) );
+				bldr.append( " FROM " + LESSON_TABLE_NAME + " AS c" )
+						.append( " INNER JOIN "
+										 + ScholarMapper.SCHOLAR_TABLE_NAME
+										 + " AS s" )
+						.append( " ON s." + ScholarMapper.ScholarField.ID )
+						.append( " = c." + LessonField.SCHOLAR_ID )
+						.append( " WHERE s." + ScholarMapper.ScholarField.ID )
+						.append( " = ?" );
+				Utils.Log( bldr.toString() );
+				return bldr.toString();
+			}
+
+			@Override
+			public String[] parameters()
+			{
+				return new String[]{Integer.toString( scholar.getId() )};
+			}
+		};
+		List<Collection> result = null;
+		try {
+			// unchecked but safe enough.
+			result = (List<Collection>) findMany( stmt );
+		} catch ( ClassCastException e ) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 }

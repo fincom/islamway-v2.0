@@ -154,8 +154,7 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
 						try {
 							// download the file
 							URL url = new URL( imageUrl );
-							cnn = (HttpURLConnection) url
-									.openConnection();
+							cnn = (HttpURLConnection) url.openConnection();
 							reader = new BufferedInputStream(
 									cnn.getInputStream() );
 							//bmp = BitmapFactory.decodeStream( reader );
@@ -207,7 +206,6 @@ public class ScholarsAdapter extends BaseAdapter implements Filterable {
 												image_file ) );
 							} catch ( FileNotFoundException e ) {
 								e.printStackTrace();
-								// TODO implement error handling
 							}
 							if ( bmp != null ) {
 								image_view.setImageBitmap( bmp );

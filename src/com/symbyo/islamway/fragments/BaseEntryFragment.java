@@ -217,17 +217,6 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 											  Style.ALERT ).show();
 						}
 					}
-					// TODO call retrieveCollections instead
-					/*int key = intent.getIntExtra( ServiceHelper.EXTRA_DATA_KEY,
-												  0 );
-					Crouton.hide( mCrouton );
-					@SuppressWarnings( "unchecked" )
-					List<Entry> entries =
-							(List<Entry>) IWApplication
-									.readDomainObjects( key );
-					mAdapter = new EntryAdapter( getSherlockActivity(),
-												 entries );
-					setListAdapter( mAdapter );*/
 					Crouton.hide( mCrouton );
 					retrieveCollections();
 				}

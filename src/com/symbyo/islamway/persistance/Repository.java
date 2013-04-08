@@ -112,14 +112,6 @@ public class Repository extends SQLiteOpenHelper {
 			for ( String statement : statements ) {
 				db.execSQL( statement );
 			}
-			// insert test data.
-			// TODO: remove the insert test data.
-			/*
-			 * in_stream.close(); in_stream = null; in_stream =
-			 * mContext.getResources().getAssets().open("insert_data.sql");
-			 * statements = parseSqlFile(in_stream); for (String statement :
-			 * statements) { db.execSQL(statement); }
-			 */
 		} catch ( IOException e ) {
 			e.printStackTrace();
 		} finally {

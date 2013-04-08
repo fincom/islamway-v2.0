@@ -19,14 +19,22 @@ public class Scholar extends DomainObject implements FilterableObject {
 	private final Set<Section> mSections = new HashSet<Section>( 2 );
 	private List<Collection> mQuranCollections;
 
-	public List<Collection> getQuranCollections()
+	public List<Collection> getCollectionsBySection( Section section )
 	{
 		if ( mQuranCollections == null ) {
 			mQuranCollections = new ArrayList<Collection>();
 			Entry.ICollectionFinder mapper =
 					(Entry.ICollectionFinder) Repository.getInstance()
 							.getMapper( Collection.class );
-			List<Collection> list = mapper.getScholarQuranCollections( this );
+			List<Collection> list = null;
+			switch ( section.getType() ) {
+				case QURAN:
+					list = mapper.getScholarQuranCollections( this );
+					break;
+				case LESSONS:
+					list = mapper.getScholarLessonCollections( this );
+			}
+
 			if ( list != null ) {
 				mQuranCollections.addAll( list );
 			}
@@ -149,27 +157,9 @@ public class Scholar extends DomainObject implements FilterableObject {
 		mSections.add( section );
 	}
 
-	public void removeSection( @NonNull String section )
-	{
-		mSections.remove( section );
-	}
-
-	public void clearSections()
-	{
-		mSections.clear();
-	}
-
 	public Set<Section> getSections()
 	{
-		if ( getId() == INVALID_ID ) {
-			hydrateSections();
-		}
 		return Collections.unmodifiableSet( mSections );
-	}
-
-	private void hydrateSections()
-	{
-		// TODO fetch the scholar sections from the database.
 	}
 
 	@Override

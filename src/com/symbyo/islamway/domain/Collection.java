@@ -13,7 +13,6 @@ public class Collection extends Entry {
 
 
 	private int mEntriesCount = 0;
-	private ArrayList<Entry> mEntries;
 
 	public Collection(
 			int id, int server_id, String title, int entries_count,
@@ -75,11 +74,5 @@ public class Collection extends Entry {
 	public int getEntriesCount()
 	{
 		return mEntriesCount;
-	}
-
-	public List<Entry> getEntries()
-	{
-		// TODO implement the method body
-		return null;
 	}
 }
