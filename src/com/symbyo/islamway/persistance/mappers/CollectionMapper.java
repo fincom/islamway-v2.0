@@ -292,4 +292,11 @@ public class CollectionMapper extends AbstractMapper implements
 
 		return result;
 	}
+
+	@Override
+	public Collection findCollectionByServerId( int server_id )
+	{
+		// TODO implement the method body
+		return null;
+	}
 }

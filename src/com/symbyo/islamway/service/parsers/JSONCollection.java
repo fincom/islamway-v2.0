@@ -10,10 +10,11 @@ import junit.framework.Assert;
 
 /**
  * The JSON Entry object.
+ *
  * @author kdehairy
  * @since 4/7/13
  */
-class JSONQuranCollection extends Parser.JSONDomainObject<Entry> {
+class JSONCollection extends Parser.JSONDomainObject<Entry> {
 
 	@SerializedName( "id" )
 	private int mServerId = Parser.INVALID_ID;
@@ -33,6 +34,12 @@ class JSONQuranCollection extends Parser.JSONDomainObject<Entry> {
 	@SerializedName( "type" )
 	private String mEntrytype = null;
 
+	@SerializedName( "view_order" )
+	private int mViewOrder = 0;
+
+	@SerializedName( "narration" )
+	private String mNarration = null;
+
 	@Override
 	public Entry toDomainObject()
 	{
@@ -43,19 +50,23 @@ class JSONQuranCollection extends Parser.JSONDomainObject<Entry> {
 		Assert.assertNotNull( mEntrytype );
 		if ( mEntrytype.equals( "lessons_series" ) ) {
 			type = Entry.EntryType.LESSONS_SERIES;
-			entry = new Collection( mServerId, mName, mEntriesCount, type, scholar_id );
+			entry = new Collection( mServerId, mName, mEntriesCount, type,
+									scholar_id );
 		} else if ( mEntrytype.equals( "group" ) ) {
 			type = Entry.EntryType.GROUP;
-			entry = new Collection( mServerId, mName, mEntriesCount, type, scholar_id );
+			entry = new Collection( mServerId, mName, mEntriesCount, type,
+									scholar_id );
 		} else if ( mEntrytype.equals( "mushaf" ) ) {
 			type = Entry.EntryType.MUSHAF;
-			entry = new Collection( mServerId, mName, mEntriesCount, type, scholar_id );
+			entry = new Collection( mServerId, mName, mEntriesCount, type,
+									scholar_id );
 		} else if ( mEntrytype.equals( "lesson" ) ) {
 			type = Entry.EntryType.LESSON;
-			entry = new Lesson( mServerId, mTitle, mViewsCount, type, scholar_id );
+			entry = new Lesson( mServerId, mTitle, mViewsCount, type,
+								scholar_id );
 		} else if ( mEntrytype.equals( "quran-recitation" ) ) {
-			type = Entry.EntryType.QURAN_RECITATION;
-			entry = new Sura( mServerId, mTitle, mViewsCount, type, scholar_id );
+			entry = new Sura( mServerId, mTitle, mViewOrder, mNarration,
+							  scholar_id );
 		}
 		Assert.assertNotNull( entry );
 		return entry;

@@ -343,12 +343,30 @@ public class ScholarMapper extends AbstractMapper implements
 	}
 
 	@Override
-	public void updateScholarSyncState( Scholar scholar, SyncState state )
+	public void updateScholarQuranSyncState( Scholar scholar, SyncState state )
 	{
 		SQLiteDatabase db;
 		try {
 			ContentValues values = new ContentValues();
 			values.put( ScholarField.QURAN_SYNC_STATE.toString(),
+						Integer.toString( state.ordinal() ) );
+			String whereClause = ScholarField.ID + " = ?";
+			String[] whereArgs = new String[]{Integer.toString( scholar.getId() )};
+			db = Repository.getInstance( mContext ).getReadableDatabase();
+			db.update( SCHOLAR_TABLE_NAME, values, whereClause, whereArgs );
+		} catch ( SQLiteException e ) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void updateScholarLessonSyncState( Scholar scholar,
+											  SyncState state )
+	{
+		SQLiteDatabase db;
+		try {
+			ContentValues values = new ContentValues();
+			values.put( ScholarField.LESSONS_SYNC_STATE.toString(),
 						Integer.toString( state.ordinal() ) );
 			String whereClause = ScholarField.ID + " = ?";
 			String[] whereArgs = new String[]{Integer.toString( scholar.getId() )};

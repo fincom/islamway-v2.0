@@ -1,19 +1,20 @@
 package com.symbyo.islamway.service;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.domain.Section.SectionType;
 import com.symbyo.islamway.persistance.Repository;
-import com.symbyo.islamway.service.factories.QuranCollectionResourceFactory;
-import com.symbyo.islamway.service.factories.ResourceFactory;
-import com.symbyo.islamway.service.factories.ScholarResourceFactory;
+import com.symbyo.islamway.service.factories.*;
 import com.symbyo.islamway.service.parsers.Parser;
 import com.symbyo.islamway.service.processors.ProcessingException;
 import com.symbyo.islamway.service.processors.Processor;
+import com.symbyo.islamway.service.processors.QuranCollectionResourceFactory;
 import com.symbyo.islamway.service.restclients.NetworkException;
 import com.symbyo.islamway.service.restclients.RestClient;
 import com.symbyo.islamway.service.restclients.response.Page;
@@ -51,9 +52,14 @@ public class IWService extends IntentService {
 	public static final String ACTION_GET_SUB_ENTRIES               =
 			"iw.service.get_sub_collection";
 
+	private PowerManager.WakeLock mWakeLock;
+
 	public IWService()
 	{
 		super( "IslamWay" );
+		PowerManager pm = (PowerManager) getSystemService( Context.POWER_SERVICE );
+		mWakeLock = pm.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK, "network_wakelock" );
+		mWakeLock.setReferenceCounted( false );
 	}
 
 	@Override
@@ -86,6 +92,8 @@ public class IWService extends IntentService {
 			List<DomainObject> domain_collection =
 					new LinkedList<DomainObject>();
 			Assert.assertNotNull( parser );
+			// TODO acquire a wakelock here
+			mWakeLock.acquire();
 			for ( Page page : response ) {
 				Utils.FormatedLog( "page number: %d", page.getNumber() );
 				String json = page.getResponseText();
@@ -95,6 +103,8 @@ public class IWService extends IntentService {
 			}
 			Assert.assertNotNull( processor );
 			processor.process( domain_collection, pIntent );
+			// TODO release the wakelock here
+			mWakeLock.release();
 			Utils.Log( "==finished==" );
 		} catch ( NullPointerException e ) {
 			/**
@@ -116,6 +126,9 @@ public class IWService extends IntentService {
 			LocalBroadcastManager mngr = LocalBroadcastManager
 					.getInstance( this );
 			mngr.sendBroadcast( pIntent );
+			if ( mWakeLock.isHeld() ) {
+				mWakeLock.release();
+			}
 		}
 
 	}
@@ -153,12 +166,12 @@ public class IWService extends IntentService {
 			final Section section = Repository.getInstance(
 					getApplicationContext() ).getSection( SectionType.LESSONS );
 			url_format += section.toString() + "/scholar/%d/collections";
-			result = new QuranCollectionResourceFactory( url_format,
+			result = new LessonCollectionResourceFactory( url_format,
 													RestClient.HTTPMethod.GET,
 													resource_id );
 		} else if ( ACTION_GET_SUB_ENTRIES.equals( action ) ) {
 			url_format += "collection/%d/entries";
-			result = new QuranCollectionResourceFactory( url_format,
+			result = new SubCollectionResourceFactory( url_format,
 													RestClient.HTTPMethod.GET,
 													resource_id );
 		}

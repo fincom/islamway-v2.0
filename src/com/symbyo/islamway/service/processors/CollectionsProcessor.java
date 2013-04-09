@@ -19,10 +19,10 @@ import java.util.List;
  * @author kdehairy
  * @since 2/24/13
  */
-public class QuranCollectionsProcessor extends Processor {
-	private final int mResourceId;
+public abstract class CollectionsProcessor extends Processor {
+	protected final int mResourceId;
 
-	public QuranCollectionsProcessor( Context context, int resource_id )
+	public CollectionsProcessor( Context context, int resource_id )
 	{
 		super( context );
 		mResourceId = resource_id;
@@ -34,7 +34,7 @@ public class QuranCollectionsProcessor extends Processor {
 			Intent pIntent )
 	{
 		Utils.FormatedLog( "processing %d collections", collection.size() );
-		Utils.FormatedLog( "scholar id: %d", mResourceId );
+		Utils.FormatedLog( "resource id: %d", mResourceId );
 		ScholarMapper mapper = (ScholarMapper) Repository.getInstance()
 				.getMapper( Scholar.class );
 		Scholar scholar = mapper.findScholarByServerId( mResourceId );
@@ -44,11 +44,13 @@ public class QuranCollectionsProcessor extends Processor {
 		}
 		boolean result = UnitOfWork.getCurrent().commit( db );
 		if ( result ) {
-			scholar.setQuranSyncState( DomainObject.SyncState.SYNC_STATE_FULL );
+			updateSyncState( scholar );
 		}
 
 		/*int key = IWApplication.putDomainObjects( collection );
 		pIntent.putExtra( IWService.EXTRA_DATA_KEY, key );*/
 	}
+
+	protected abstract void updateSyncState( DomainObject obj );
 
 }

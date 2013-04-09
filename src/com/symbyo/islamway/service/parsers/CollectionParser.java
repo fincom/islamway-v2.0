@@ -12,13 +12,13 @@ import java.util.List;
  * @author kdehairy
  * @since 2/21/13
  */
-public class QuranCollectionParser extends Parser {
+public class CollectionParser extends Parser {
 	@Override
 	protected List<Entry> doParse( String json )
 	{
 		Gson gson = new Gson();
-		JSONQuranCollection
-				collection_raw = gson.fromJson( json, JSONQuranCollection.class );
+		JSONCollection
+				collection_raw = gson.fromJson( json, JSONCollection.class );
 		List<Entry> result = new ArrayList<Entry>();
 		result.add( collection_raw.toDomainObject() );
 		return result;
@@ -29,13 +29,13 @@ public class QuranCollectionParser extends Parser {
 			String json )
 	{
 		Gson gson = new Gson();
-		Type response_type = new TypeToken<JSONResponse<JSONQuranCollection>>() {
+		Type response_type = new TypeToken<JSONResponse<JSONCollection>>() {
 		}.getType();
-		JSONResponse<JSONQuranCollection> response = gson.fromJson( json,
+		JSONResponse<JSONCollection> response = gson.fromJson( json,
 															   response_type );
 		List<Entry> result = new ArrayList<Entry>(
 				response.getDomainObjects().size() );
-		for ( JSONQuranCollection collection_raw : response.getDomainObjects() ) {
+		for ( JSONCollection collection_raw : response.getDomainObjects() ) {
 			result.add( collection_raw.toDomainObject() );
 		}
 		return result;

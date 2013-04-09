@@ -62,7 +62,13 @@ public class ScholarCollectionFragment extends BaseEntryFragment {
 	@Override
 	protected boolean isSavedLocally()
 	{
-		DomainObject.SyncState state = mScholar.getQuranSyncState();
+		DomainObject.SyncState state;
+		if ( mSection.getType().equals( Section.SectionType.QURAN ) ) {
+			state = mScholar.getQuranSyncState();
+		} else {
+			state = mScholar.getLessonsSyncState();
+		}
+
 		if ( DomainObject.SyncState.SYNC_STATE_FULL.equals( state ) ) {
 			return true;
 		}
