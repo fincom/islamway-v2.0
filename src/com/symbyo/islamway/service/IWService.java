@@ -14,7 +14,6 @@ import com.symbyo.islamway.service.factories.*;
 import com.symbyo.islamway.service.parsers.Parser;
 import com.symbyo.islamway.service.processors.ProcessingException;
 import com.symbyo.islamway.service.processors.Processor;
-import com.symbyo.islamway.service.processors.QuranCollectionResourceFactory;
 import com.symbyo.islamway.service.restclients.NetworkException;
 import com.symbyo.islamway.service.restclients.RestClient;
 import com.symbyo.islamway.service.restclients.response.Page;
@@ -30,7 +29,7 @@ import java.util.List;
  */
 public class IWService extends IntentService {
 
-	@SuppressWarnings( "FieldCanBeLocal" )
+	@SuppressWarnings("FieldCanBeLocal")
 	private final       String BASE_URL                             =
 			"http://ar.islamway.net/api/";
 	public static final String ACTION_GET_QURAN_SCHOLARS            =
@@ -57,20 +56,24 @@ public class IWService extends IntentService {
 	public IWService()
 	{
 		super( "IslamWay" );
-		PowerManager pm = (PowerManager) getSystemService( Context.POWER_SERVICE );
-		mWakeLock = pm.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK, "network_wakelock" );
-		mWakeLock.setReferenceCounted( false );
 	}
 
 	@Override
 	protected void onHandleIntent( Intent intent )
 	{
+		if ( mWakeLock == null ) {
+			PowerManager pm =
+					(PowerManager) getSystemService( Context.POWER_SERVICE );
+			mWakeLock = pm.newWakeLock( PowerManager.PARTIAL_WAKE_LOCK,
+										"network_wakelock" );
+			mWakeLock.setReferenceCounted( false );
+		}
 		final String action = intent.getAction();
 		final Intent pIntent = (Intent) intent
 				.getParcelableExtra( EXTRA_CALLBACK_INTENT );
 		final int resource_id = intent.getIntExtra( EXTRA_RESOURCE_ID, -1 );
 		Utils.FormatedLog( "resource id: %d",
-								  resource_id );
+						   resource_id );
 		Utils.Log( "action: " + action );
 
 		if ( action == null ) {
@@ -135,7 +138,8 @@ public class IWService extends IntentService {
 
 	private
 	@NonNull
-	ResourceFactory createResourceFactory( @NonNull String action, int resource_id )
+	ResourceFactory createResourceFactory( @NonNull String action,
+										   int resource_id )
 	{
 		ResourceFactory result = null;
 		String url_format = BASE_URL;
@@ -160,20 +164,20 @@ public class IWService extends IntentService {
 					getApplicationContext() ).getSection( SectionType.QURAN );
 			url_format += section.toString() + "/scholar/%d/collections";
 			result = new QuranCollectionResourceFactory( url_format,
-													RestClient.HTTPMethod.GET,
-													resource_id );
+														 RestClient.HTTPMethod.GET,
+														 resource_id );
 		} else if ( ACTION_GET_SCHOLAR_LESSON_COLLECTION.equals( action ) ) {
 			final Section section = Repository.getInstance(
 					getApplicationContext() ).getSection( SectionType.LESSONS );
 			url_format += section.toString() + "/scholar/%d/collections";
 			result = new LessonCollectionResourceFactory( url_format,
-													RestClient.HTTPMethod.GET,
-													resource_id );
+														  RestClient.HTTPMethod.GET,
+														  resource_id );
 		} else if ( ACTION_GET_SUB_ENTRIES.equals( action ) ) {
 			url_format += "collection/%d/entries";
 			result = new SubCollectionResourceFactory( url_format,
-													RestClient.HTTPMethod.GET,
-													resource_id );
+													   RestClient.HTTPMethod.GET,
+													   resource_id );
 		}
 
 		if ( result == null ) {

@@ -3,7 +3,6 @@ package com.symbyo.islamway.domain;
 import android.os.Parcel;
 import com.symbyo.islamway.persistance.Repository;
 import com.symbyo.islamway.persistance.UnitOfWork;
-import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 import junit.framework.Assert;
 
 import java.util.List;
@@ -12,13 +11,19 @@ import java.util.List;
  * @author kdehairy
  * @since 2/27/13
  */
-public abstract class Entry extends DomainObject implements FilterableObject {
+public class Entry extends DomainObject implements FilterableObject {
 
-	private final int       mServerId;
-	private final String    mTitle;
+	private final int    mServerId;
+	private final String mTitle;
+	private int     mEntriesCount  = 0;
+	private int     mScholarId     = INVALID_ID;
+	private Scholar mScholar       = null;
+	private int     mParentEntryId = INVALID_ID;
+	private Entry   mParentEntry   = null;
+	private String mPublishedAt;
+	private int mViewOrder = 0;
+	private       String    mNarration;
 	private final EntryType mEntryType;
-	private       int       mScholarId;
-	private       Scholar   mScholar = null;
 
 	public Scholar getScholar()
 	{
@@ -31,9 +36,83 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 		return mScholar;
 	}
 
-	public void setScholar( Scholar scholar ) {
+	public int getScholarId()
+	{
+		return mScholarId;
+	}
+
+	public void setScholar( Scholar scholar )
+	{
 		mScholar = scholar;
 		mScholarId = scholar.getId();
+	}
+
+	public Entry getParentEntry()
+	{
+		return mParentEntry;
+	}
+
+	public int getParentEntryId()
+	{
+		return mParentEntryId;
+	}
+
+	public String getPublishedAt()
+	{
+		return mPublishedAt;
+	}
+
+	public int getViewOrder()
+	{
+		return mViewOrder;
+	}
+
+	public String getNarration()
+	{
+		return mNarration;
+	}
+
+	public void setEntriesCount( int entry_count )
+	{
+		mEntriesCount = entry_count;
+	}
+
+	public void setScholarId( int scholar_id )
+	{
+		mScholarId = scholar_id;
+	}
+
+	public void setParentEntryId( int parent_entry_id )
+	{
+		mParentEntryId = parent_entry_id;
+	}
+
+	public void setParentEntry( Entry parent_entry )
+	{
+		mParentEntry = parent_entry;
+		mParentEntryId = parent_entry.getId();
+	}
+
+	public void setPublishedAt( String published_at )
+	{
+		mPublishedAt = published_at;
+	}
+
+	public void setViewOrder( int view_order )
+	{
+		mViewOrder = view_order;
+	}
+
+	public void setNarration( String narration )
+	{
+		mNarration = narration;
+	}
+
+	public void setSyncState( SyncState sync_state )
+	{
+		EntryFinder mapper = (EntryFinder) Repository.getInstance().getMapper( Entry.class );
+		mapper.updateSyncState( this, sync_state );
+
 	}
 
 	public enum EntryType {
@@ -57,41 +136,29 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 		}
 	}
 
-	public static interface ICollectionFinder {
-		List<Collection> getScholarQuranCollections( Scholar scholar );
-		List<Collection> getScholarLessonCollections( Scholar scholar );
-		Collection findCollectionByServerId( int server_id );
+	public static interface EntryFinder {
+		List<Entry> getScholarEntriesByTypes( final Scholar scholar,
+											  final EntryType[] types );
+		Entry findEntryByServerId( int mResourceId );
+
+		void updateSyncState( Entry entry, SyncState sync_state );
 	}
 
 	public Entry(
 			int id, int server_id, String title, EntryType type )
 	{
-		this( id, server_id, title, type, INVALID_ID);
-	}
-
-	public Entry( int server_id, String title, EntryType type )
-	{
-		this( INVALID_ID , server_id, title, type, INVALID_ID);
-		/** < register the object as new */
-		UnitOfWork.getCurrent().registerNew( this );
-	}
-
-	public Entry( int server_id, String title, EntryType type, int scholar_id )
-	{
-		this( INVALID_ID, server_id, title, type, scholar_id );
-
-		/** < register the object as new */
-		UnitOfWork.getCurrent().registerNew( this );
-	}
-
-	public Entry(
-			int id, int server_id, String title, EntryType type, int scholar_id )
-	{
 		super( id );
 		mServerId = server_id;
 		mTitle = title;
 		mEntryType = type;
-		mScholarId = scholar_id;
+		mScholarId = INVALID_ID;
+	}
+
+	public Entry( int server_id, String title, EntryType type )
+	{
+		this( INVALID_ID, server_id, title, type );
+		/** < register the object as new */
+		UnitOfWork.getCurrent().registerNew( this );
 	}
 
 	protected Entry( Parcel source )
@@ -99,8 +166,14 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 		super( source );
 		mServerId = source.readInt();
 		mTitle = source.readString();
-		mEntryType = EntryType.values()[source.readInt()];
+		mEntriesCount = source.readInt();
 		mScholarId = source.readInt();
+		mParentEntryId = source.readInt();
+		mPublishedAt = source.readString();
+		mViewOrder = source.readInt();
+		mNarration = source.readString();
+		mEntryType = EntryType.values()[source.readInt()];
+
 
 		/**
 		 * register the object as new. if the original object was already in the
@@ -124,9 +197,13 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 	{
 		dest.writeInt( mServerId );
 		dest.writeString( mTitle );
-		dest.writeInt( mEntryType.ordinal() );
+		dest.writeInt( mEntriesCount );
 		dest.writeInt( mScholarId );
-		doWriteToParcel( dest );
+		dest.writeInt( mParentEntryId );
+		dest.writeString( mPublishedAt );
+		dest.writeInt( mViewOrder );
+		dest.writeString( mNarration );
+		dest.writeInt( mEntryType.ordinal() );
 	}
 
 	@Override
@@ -158,5 +235,24 @@ public abstract class Entry extends DomainObject implements FilterableObject {
 		return mEntryType;
 	}
 
-	protected abstract void doWriteToParcel( Parcel dest );
+	public int getEntriesCount()
+	{
+		return mEntriesCount;
+	}
+
+	public static final Creator<Entry> CREATOR =
+			new Creator<Entry>() {
+
+				@Override
+				public Entry createFromParcel( Parcel source )
+				{
+					return new Entry( source );
+				}
+
+				@Override
+				public Entry[] newArray( int size )
+				{
+					return new Entry[size];
+				}
+			};
 }

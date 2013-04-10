@@ -3,7 +3,6 @@ package com.symbyo.islamway.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import com.symbyo.islamway.ServiceHelper;
-import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Entry;
 import junit.framework.Assert;
 
@@ -17,12 +16,12 @@ public class SubCollectionsFragment extends BaseEntryFragment {
 
 	public final static String PARENT_KEY = "parent_key";
 
-	private Collection mParent;
+	private Entry mParent;
 
 	@Override
 	protected void doOnCreate( Bundle savedInstanceState )
 	{
-		mParent = (Collection) getArguments().getParcelable( PARENT_KEY );
+		mParent = (Entry) getArguments().getParcelable( PARENT_KEY );
 		Assert.assertNotNull( mParent );
 		getSherlockActivity().setTitle( mParent.getTitle() );
 	}
@@ -43,7 +42,7 @@ public class SubCollectionsFragment extends BaseEntryFragment {
 	 * get the collections from the database.
 	 */
 	@Override
-	protected List<? extends Entry> doRetrieveCollections()
+	protected List<Entry> doRetrieveCollections()
 	{
 		// TODO implement the method body
 		return null;

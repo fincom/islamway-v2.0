@@ -2,10 +2,7 @@ package com.symbyo.islamway.service.parsers;
 
 import com.google.gson.annotations.SerializedName;
 import com.symbyo.islamway.Utils;
-import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Entry;
-import com.symbyo.islamway.domain.Lesson;
-import com.symbyo.islamway.domain.Sura;
 import junit.framework.Assert;
 
 /**
@@ -24,9 +21,6 @@ class JSONCollection extends Parser.JSONDomainObject<Entry> {
 
 	@SerializedName( "title" )
 	private String mTitle = null;
-
-	@SerializedName( "views_count" )
-	private int mViewsCount = 0;
 
 	@SerializedName( "entries_count" )
 	private int mEntriesCount = 0;
@@ -47,26 +41,30 @@ class JSONCollection extends Parser.JSONDomainObject<Entry> {
 		Entry.EntryType type;
 		Entry entry = null;
 		Utils.FormatedLog( "Entry type: %s", mEntrytype );
+		// FIXME assertion fails with type 'quran recitation'. It appears to be missing from the response!
 		Assert.assertNotNull( mEntrytype );
 		if ( mEntrytype.equals( "lessons_series" ) ) {
 			type = Entry.EntryType.LESSONS_SERIES;
-			entry = new Collection( mServerId, mName, mEntriesCount, type,
-									scholar_id );
+			entry = new Entry( mServerId, mName, type );
+			entry.setEntriesCount( mEntriesCount );
 		} else if ( mEntrytype.equals( "group" ) ) {
 			type = Entry.EntryType.GROUP;
-			entry = new Collection( mServerId, mName, mEntriesCount, type,
-									scholar_id );
+			entry = new Entry( mServerId, mName, type );
+			entry.setEntriesCount( mEntriesCount );
 		} else if ( mEntrytype.equals( "mushaf" ) ) {
 			type = Entry.EntryType.MUSHAF;
-			entry = new Collection( mServerId, mName, mEntriesCount, type,
-									scholar_id );
+			entry = new Entry( mServerId, mName, type );
+			entry.setEntriesCount( mEntriesCount );
 		} else if ( mEntrytype.equals( "lesson" ) ) {
 			type = Entry.EntryType.LESSON;
-			entry = new Lesson( mServerId, mTitle, mViewsCount, type,
-								scholar_id );
+			entry = new Entry( mServerId, mTitle, type );
+			entry.setEntriesCount( mEntriesCount );
 		} else if ( mEntrytype.equals( "quran-recitation" ) ) {
-			entry = new Sura( mServerId, mTitle, mViewOrder, mNarration,
-							  scholar_id );
+			type = Entry.EntryType.QURAN_RECITATION;
+			entry = new Entry( mServerId, mTitle, type );
+			entry.setEntriesCount( mEntriesCount );
+			entry.setViewOrder( mViewOrder );
+			entry.setNarration( mNarration );
 		}
 		Assert.assertNotNull( entry );
 		return entry;

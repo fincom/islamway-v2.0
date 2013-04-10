@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import com.symbyo.islamway.R;
-import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.fragments.BaseEntryFragment;
 import com.symbyo.islamway.fragments.CollectionEntriesFragment;
@@ -18,7 +17,7 @@ import junit.framework.Assert;
 public class LeafEntriesActivity extends BaseSlidingActivity
 		implements BaseEntryFragment.OnEntryItemClick {
 
-	public static final String EXTRA_COLLECTION = "extra_collection";
+	public static final String EXTRA_ENTRY = "extra_collection";
 
 	/**
 	 * Called when an item in the sliding menu is clicked.
@@ -38,12 +37,12 @@ public class LeafEntriesActivity extends BaseSlidingActivity
 	{
 		super.onCreate( savedInstanceState );
 		Intent intent = getIntent();
-		Collection collection =
-				(Collection) intent.getParcelableExtra( EXTRA_COLLECTION );
-		Assert.assertNotNull( collection );
+		Entry entry =
+				(Entry) intent.getParcelableExtra( EXTRA_ENTRY );
+		Assert.assertNotNull( entry );
 		if ( savedInstanceState == null ) {
 			Bundle bndl = new Bundle();
-			bndl.putParcelable( CollectionEntriesFragment.COLLECTION_KEY, collection );
+			bndl.putParcelable( CollectionEntriesFragment.ENTRY_KEY, entry );
 			Fragment content = new CollectionEntriesFragment();
 			content.setArguments( bndl );
 			getSupportFragmentManager().beginTransaction()

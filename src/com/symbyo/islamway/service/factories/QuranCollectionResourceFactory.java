@@ -1,7 +1,8 @@
-package com.symbyo.islamway.service.processors;
+package com.symbyo.islamway.service.factories;
 
 import android.content.Context;
-import com.symbyo.islamway.service.factories.CollectionResourceFactory;
+import com.symbyo.islamway.service.processors.Processor;
+import com.symbyo.islamway.service.processors.QurranCollectionProcessor;
 import com.symbyo.islamway.service.restclients.RestClient;
 
 /**

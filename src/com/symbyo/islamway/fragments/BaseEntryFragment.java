@@ -282,7 +282,7 @@ public abstract class BaseEntryFragment extends SherlockListFragment
 	/**
 	 * get the collections from the database.
 	 */
-	protected abstract List<? extends Entry> doRetrieveCollections();
+	protected abstract List<Entry> doRetrieveCollections();
 
 	protected abstract boolean isSavedLocally();
 }

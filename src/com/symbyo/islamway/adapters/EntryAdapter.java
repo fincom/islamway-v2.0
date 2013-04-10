@@ -11,7 +11,6 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import com.symbyo.islamway.R;
 import com.symbyo.islamway.Utils;
-import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Entry;
 
 import java.util.List;
@@ -155,17 +154,18 @@ public class EntryAdapter extends BaseAdapter
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-
 		switch ( getItemViewType( position ) ) {
-			case TYPE_COLLECTION:
-				Collection collection = (Collection) getItem( position );
-				holder.title.setText( collection.getTitle() );
-				int entity_count = collection.getEntriesCount();
-				holder.subTitle.setText( Integer.toString( entity_count ) );
-				break;
-			case TYPE_LEAF:
+			case TYPE_COLLECTION: {
 				Entry entry = getItem( position );
 				holder.title.setText( entry.getTitle() );
+				int entity_count = entry.getEntriesCount();
+				holder.subTitle.setText( Integer.toString( entity_count ) );
+				break;
+			}
+			case TYPE_LEAF: {
+				Entry entry = getItem( position );
+				holder.title.setText( entry.getTitle() );
+			}
 		}
 
 		/*String string;

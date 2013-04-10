@@ -51,7 +51,7 @@ public class ScholarCollectionFragment extends BaseEntryFragment {
 	 * get the collections from the database.
 	 */
 	@Override
-	protected List<? extends Entry> doRetrieveCollections()
+	protected List<Entry> doRetrieveCollections()
 	{
 		if ( mScholar == null ) {
 			return null;

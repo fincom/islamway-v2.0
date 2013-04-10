@@ -62,7 +62,7 @@ public class ScholarsCollectionsActivity extends BaseSlidingActivity
 			case MUSHAF:
 			case LESSONS_SERIES:
 				Intent intent = new Intent( this, LeafEntriesActivity.class );
-				intent.putExtra( LeafEntriesActivity.EXTRA_COLLECTION, item );
+				intent.putExtra( LeafEntriesActivity.EXTRA_ENTRY, item );
 				startActivity( intent );
 				break;
 			case GROUP:
@@ -77,7 +77,7 @@ public class ScholarsCollectionsActivity extends BaseSlidingActivity
 		}
 		/*if ( item.getType() == Entry.EntryType.MUSHAF ) {
 			Intent intent = new Intent( this, LeafEntriesActivity.class );
-			intent.putExtra( LeafEntriesActivity.EXTRA_COLLECTION, item );
+			intent.putExtra( LeafEntriesActivity.EXTRA_ENTRY, item );
 			startActivity( intent );
 		} else if ( item.getType() == Entry.EntryType.LESSONS_SERIES ) {
 

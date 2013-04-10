@@ -3,7 +3,6 @@ package com.symbyo.islamway.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import com.symbyo.islamway.ServiceHelper;
-import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Entry;
 import junit.framework.Assert;
 
@@ -14,30 +13,30 @@ import java.util.List;
  * @since 3/3/13
  */
 public class CollectionEntriesFragment extends BaseEntryFragment {
-	public static final String COLLECTION_KEY = "collection_key";
+	public static final String ENTRY_KEY = "entry_key";
 
-	private Collection mCollection;
+	private Entry mEntry;
 
 	@Override
 	protected void doOnCreate( Bundle savedInstanceState )
 	{
 		Bundle bndl = getArguments();
 		Assert.assertNotNull( bndl );
-		mCollection = (Collection) bndl.getParcelable( COLLECTION_KEY );
-		Assert.assertNotNull( mCollection );
-		getSherlockActivity().setTitle( mCollection.getTitle() );
+		mEntry = (Entry) bndl.getParcelable( ENTRY_KEY );
+		Assert.assertNotNull( mEntry );
+		getSherlockActivity().setTitle( mEntry.getTitle() );
 	}
 
 	@Override
 	protected int doRequestCollections( ServiceHelper helper )
 	{
-		return helper.getCollectionEntries( mCollection );
+		return helper.getCollectionEntries( mEntry );
 	}
 
 	@Override
 	protected void setActivityTitle( Activity activity )
 	{
-		activity.setTitle( mCollection.getTitle() );
+		activity.setTitle( mEntry.getTitle() );
 	}
 
 	/**

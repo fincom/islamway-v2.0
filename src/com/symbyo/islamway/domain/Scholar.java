@@ -17,22 +17,33 @@ public class Scholar extends DomainObject implements FilterableObject {
 	private final String mImageFileName;
 
 	private final Set<Section> mSections = new HashSet<Section>( 2 );
-	private List<Collection> mQuranCollections;
+	private List<Entry> mQuranCollections;
 
-	public List<Collection> getCollectionsBySection( Section section )
+	public List<Entry> getCollectionsBySection( Section section )
 	{
 		if ( mQuranCollections == null ) {
-			mQuranCollections = new ArrayList<Collection>();
-			Entry.ICollectionFinder mapper =
-					(Entry.ICollectionFinder) Repository.getInstance()
-							.getMapper( Collection.class );
-			List<Collection> list = null;
+			mQuranCollections = new ArrayList<Entry>();
+			Entry.EntryFinder mapper =
+					(Entry.EntryFinder) Repository.getInstance()
+							.getMapper( Entry.class );
+			List<Entry> list = null;
 			switch ( section.getType() ) {
-				case QURAN:
-					list = mapper.getScholarQuranCollections( this );
+				case QURAN: {
+					Entry.EntryType[] types = {
+							Entry.EntryType.MUSHAF,
+							Entry.EntryType.QURAN_RECITATION
+					};
+					list = mapper.getScholarEntriesByTypes( this, types );
 					break;
-				case LESSONS:
-					list = mapper.getScholarLessonCollections( this );
+				}
+				case LESSONS: {
+					Entry.EntryType[] types = {
+							Entry.EntryType.GROUP,
+							Entry.EntryType.LESSONS_SERIES,
+							Entry.EntryType.LESSON
+					};
+					list = mapper.getScholarEntriesByTypes( this, types );
+				}
 			}
 
 			if ( list != null ) {

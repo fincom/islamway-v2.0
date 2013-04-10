@@ -6,14 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.SparseArray;
-import com.symbyo.islamway.domain.Collection;
+import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.service.IWService;
 import junit.framework.Assert;
 import org.eclipse.jdt.annotation.NonNull;
-
-import java.util.Locale;
 
 public class ServiceHelper {
 
@@ -198,7 +196,7 @@ public class ServiceHelper {
 		return result;
 	}
 
-	private int getSubCollections( int request_id, Collection parent )
+	private int getSubCollections( int request_id, Entry parent )
 	{
 		Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
@@ -234,7 +232,7 @@ public class ServiceHelper {
 	}
 
 	private int getCollectionEntries( int request_id,
-									  Collection collection )
+									  Entry entry )
 	{
 		Assert.assertTrue( request_id >= REQUEST_ID_NONE );
 
@@ -262,7 +260,7 @@ public class ServiceHelper {
 						IWService.ACTION_GET_SUB_ENTRIES,
 						ACTION_INVALIDATE_COLLECTION_LIST,
 						result,
-						collection.getServerId() );
+						entry.getServerId() );
 		}
 		return result;
 	}
@@ -381,12 +379,12 @@ public class ServiceHelper {
 		return getScholarQuranCollection( REQUEST_ID_NONE, scholar, section );
 	}
 
-	public int getSubCollections( Collection parent )
+	public int getSubCollections( Entry parent )
 	{
 		return getSubCollections( REQUEST_ID_NONE, parent );
 	}
 
-	public int getCollectionEntries( Collection collection )
+	public int getCollectionEntries( Entry collection )
 	{
 		return getCollectionEntries( REQUEST_ID_NONE, collection );
 	}

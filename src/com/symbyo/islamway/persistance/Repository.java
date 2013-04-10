@@ -3,12 +3,11 @@ package com.symbyo.islamway.persistance;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.symbyo.islamway.domain.Collection;
 import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.domain.Scholar;
 import com.symbyo.islamway.domain.Section;
 import com.symbyo.islamway.persistance.mappers.AbstractMapper;
-import com.symbyo.islamway.persistance.mappers.CollectionMapper;
+import com.symbyo.islamway.persistance.mappers.EntryMapper;
 import com.symbyo.islamway.persistance.mappers.ScholarMapper;
 import junit.framework.Assert;
 
@@ -161,10 +160,12 @@ public class Repository extends SQLiteOpenHelper {
 	{
 		if ( clazz.equals( Scholar.class ) ) {
 			return new ScholarMapper( mContext );
-		} else if ( clazz.equals( Collection.class ) ) {
-			return new CollectionMapper( mContext );
+		} else if ( clazz.equals( Entry.class ) ) {
+			return new EntryMapper( mContext );
+		} else {
+			throw new IllegalArgumentException(
+					"Class Type does not have a mapper." );
 		}
-		return null;
 	}
 
 	// Persistence public interface ////////////////////////////////////////////

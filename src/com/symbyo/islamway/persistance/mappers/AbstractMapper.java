@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import com.symbyo.islamway.Utils;
 import com.symbyo.islamway.domain.DomainObject;
+import com.symbyo.islamway.domain.Entry;
 import com.symbyo.islamway.persistance.Repository;
 import org.eclipse.jdt.annotation.NonNull;
 
